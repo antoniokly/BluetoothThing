@@ -14,17 +14,22 @@ import os.log
 let serviceUUIDs: [CBUUID] = []
 let characteristicUUIDs: [CBUUID: [CBUUID]] = [:]
 
-public class BluetoothThingManager: NSObject {
-    var isPendingForScan = false
-    var knownPeripherals: Set<CBPeripheral> = []
+public class BluetoothThingManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    let bluetoothWorker: BluetoothWorkerInterface = BluetoothWorker()
+
+    var centralManager: CBCentralManager!
     
-    var centralManager: CBCentralManager
+    private var isPendingForScan = false
+    private var knownPeripherals: Set<CBPeripheral> = []
     
-    public init(centralManager: CBCentralManager) {
-        self.centralManager = centralManager
+    public init(delegate: BluetoothThingManagerDelegate) {
+        super.init()
+        centralManager = CBCentralManager(delegate: self,
+                                          queue: nil,
+                                          options: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!])
     }
     
-    func startScanning() {
+    func start() {
         guard centralManager.state == .poweredOn else {
             isPendingForScan = true
             return
@@ -33,11 +38,11 @@ public class BluetoothThingManager: NSObject {
         centralManager.scanForPeripherals(withServices: serviceUUIDs)
         
         if let peripheral = getCurrentPeripheral() {
-//            bluetoothWorker.subscribePeripheral(peripheral)
+            bluetoothWorker.subscribePeripheral(peripheral)
         }
     }
     
-    func stopScanning() {
+    func stop() {
         guard centralManager.state == .poweredOn else {
             isPendingForScan = false
             return
@@ -46,7 +51,7 @@ public class BluetoothThingManager: NSObject {
         centralManager.stopScan()
         
         if let peripheral = getCurrentPeripheral() {
-//            bluetoothWorker.unsubscribePeripheral(peripheral)
+            bluetoothWorker.unsubscribePeripheral(peripheral)
         }
     }
     
@@ -58,9 +63,8 @@ public class BluetoothThingManager: NSObject {
 //        return knownPeripherals.first(where: {$0.identifier == thing.id})
         return knownPeripherals.first
     }
-}
 
-extension BluetoothThingManager: CBCentralManagerDelegate {
+    //MARK: - CBCentralManagerDelegate
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
         /*
          case unknown
@@ -71,25 +75,25 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
          case poweredOn
          */
         os_log("centralManagerDidUpdateState: %d", central.state.rawValue)
-        
+                    
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
                 switch peripheral.state {
-                case .connected:
-                    peripheral.discoverServices(serviceUUIDs)
-                case .connecting:
-                    central.connect(peripheral)
+                    case .connected:
+                        peripheral.discoverServices(serviceUUIDs)
+                    case .connecting:
+                        central.connect(peripheral)
                 default:
                     break
                 }
             }
             
             if isPendingForScan {
-                startScanning()
+                start()
             }
         } else {
             for peripheral in knownPeripherals {
-//                bluetoothWorker.updatePeripheral(peripheral)
+                bluetoothWorker.didUpdatePeripheral(peripheral)
             }
         }
     }
@@ -100,28 +104,31 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
             knownPeripherals = Set(peripherals)
             for peripheral in peripherals {
-//                bluetoothWorker.updatePeripheral(peripheral)
+                bluetoothWorker.didUpdatePeripheral(peripheral)
                 peripheral.delegate = self
-                peripheral.discoverServices(serviceUUIDs)
+                
+                if peripheral.state == .connected {
+                    peripheral.discoverServices(serviceUUIDs)
+                }
             }
         } else if let services = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID] {
             if Set(serviceUUIDs) != Set(services) {
-                startScanning()
+                start()
             }
         }
     }
     
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         os_log("didDiscover %@ %@ %@", peripheral, advertisementData, RSSI)
-//        bluetoothWorker.updatePeripheral(peripheral)
-        
+        bluetoothWorker.didUpdatePeripheral(peripheral)
+        bluetoothWorker.didUpdateRSSI(RSSI, for: peripheral)
         knownPeripherals.insert(peripheral)
         central.connect(peripheral)
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
-//        bluetoothWorker.updatePeripheral(peripheral)
+        bluetoothWorker.didUpdatePeripheral(peripheral)
         
         peripheral.delegate = self
         peripheral.discoverServices(serviceUUIDs)
@@ -129,13 +136,12 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         os_log("didDisconnectPeripheral %@", peripheral)
-//        bluetoothWorker.updatePeripheral(peripheral)
+        bluetoothWorker.didUpdatePeripheral(peripheral)
         central.connect(peripheral)
 //        locationManager.requestLocation()
     }
-}
 
-extension BluetoothThingManager: CBPeripheralDelegate {
+    //MARK: - CBPeripheralDelegate
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
@@ -160,7 +166,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         os_log("didUpdateValueFor %@ %@", peripheral, characteristic)
-//        bluetoothWorker.updateCharacteristic(characteristic, of: peripheral)
+        bluetoothWorker.didUpdateCharacteristic(characteristic, for: peripheral)
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
@@ -169,6 +175,6 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         os_log("didReadRSSI %d", RSSI)
-//        bluetoothWorker.updateRSSI(RSSI, of: peripheral)
+        bluetoothWorker.didUpdateRSSI(RSSI, for: peripheral)
     }
 }

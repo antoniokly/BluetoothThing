@@ -11,6 +11,16 @@
 		A4553C6A23C5D99000C49AC2 /* BluetoothThingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C6923C5D99000C49AC2 /* BluetoothThingTests.swift */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A4AB9E5E23C680B600327FE5 /* BluetoothWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */; };
+		A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6223C682F800327FE5 /* Helpers.swift */; };
+		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
+		A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6823C68A4900327FE5 /* Location.swift */; };
+		A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
+		A4AB9E6E23C68CCA00327FE5 /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */; };
+		A4AB9E7023C68D0000327FE5 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */; };
+		A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
+		A4AB9E7423C69EC300327FE5 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7323C69EC200327FE5 /* Service.swift */; };
+		A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +41,16 @@
 		A4553C6923C5D99000C49AC2 /* BluetoothThingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingTests.swift; sourceTree = "<group>"; };
 		A4553C6B23C5D99100C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManager.swift; sourceTree = "<group>"; };
+		A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothWorker.swift; sourceTree = "<group>"; };
+		A4AB9E6223C682F800327FE5 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
+		A4AB9E6823C68A4900327FE5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
+		A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
+		A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
+		A4AB9E7123C68F8200327FE5 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		A4AB9E7323C69EC200327FE5 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,9 +93,12 @@
 		A4553C5D23C5D99000C49AC2 /* BluetoothThing */ = {
 			isa = PBXGroup;
 			children = (
-				A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */,
-				A4553C5F23C5D99000C49AC2 /* Info.plist */,
+				A4AB9E6A23C68BD300327FE5 /* Models */,
+				A4AB9E6423C6830400327FE5 /* Helpers */,
+				A4AB9E5C23C6807100327FE5 /* Workers */,
 				A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */,
+				A4553C5F23C5D99000C49AC2 /* Info.plist */,
+				A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */,
 			);
 			path = BluetoothThing;
 			sourceTree = "<group>";
@@ -87,6 +110,37 @@
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 			);
 			path = BluetoothThingTests;
+			sourceTree = "<group>";
+		};
+		A4AB9E5C23C6807100327FE5 /* Workers */ = {
+			isa = PBXGroup;
+			children = (
+				A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */,
+				A4AB9E7123C68F8200327FE5 /* DataStore.swift */,
+				A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */,
+			);
+			path = Workers;
+			sourceTree = "<group>";
+		};
+		A4AB9E6423C6830400327FE5 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				A4AB9E6223C682F800327FE5 /* Helpers.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		A4AB9E6A23C68BD300327FE5 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
+				A4AB9E6823C68A4900327FE5 /* Location.swift */,
+				A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */,
+				A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */,
+				A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */,
+				A4AB9E7323C69EC200327FE5 /* Service.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -200,7 +254,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4AB9E7023C68D0000327FE5 /* Characteristic.swift in Sources */,
+				A4AB9E5E23C680B600327FE5 /* BluetoothWorker.swift in Sources */,
+				A4AB9E6E23C68CCA00327FE5 /* Peripheral.swift in Sources */,
+				A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */,
+				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
+				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
+				A4AB9E7423C69EC300327FE5 /* Service.swift in Sources */,
+				A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */,
+				A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,7 +336,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -326,7 +390,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
