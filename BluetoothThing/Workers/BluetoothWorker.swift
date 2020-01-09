@@ -19,7 +19,7 @@ protocol BluetoothWorkerInterface {
 }
 
 class BluetoothWorker: BluetoothWorkerInterface {
-    var dataStore: DataStore!
+    var dataStore: DataStore = DataStore(storeKey: Bundle.main.bundleIdentifier!)
     
     func didUpdatePeripheral(_ peripheral: Peripheral) {
         let thing = dataStore.getThing(id: peripheral.identifier)

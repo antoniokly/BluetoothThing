@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-protocol Characteristic {
+public protocol Characteristic {
     var uuid: CBUUID { get }
     var value: Data? { get }
     var serviceID: CBUUID { get }
@@ -22,7 +22,7 @@ protocol Characteristic {
 }
 
 extension CBCharacteristic: Characteristic {
-    var serviceID: CBUUID {
+    public var serviceID: CBUUID {
         return service.uuid
     }
 }

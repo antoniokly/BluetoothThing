@@ -9,8 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-let batteryServiceUUID = CBUUID(string: "180F")
-let batteryLevel = CBUUID(string: "2A19")
+
 
 //public protocol BluetoothThingProtocol {
 //    var id: UUID { get }
