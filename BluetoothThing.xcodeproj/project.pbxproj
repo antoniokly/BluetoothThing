@@ -8,10 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		A4553C6523C5D99000C49AC2 /* BluetoothThing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */; };
-		A4553C6A23C5D99000C49AC2 /* BluetoothThingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C6923C5D99000C49AC2 /* BluetoothThingTests.swift */; };
+		A4553C6A23C5D99000C49AC2 /* BluetoothWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
-		A496E3FB23C70D6F00159FF9 /* BluetoothThingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */; };
 		A4AB9E5E23C680B600327FE5 /* BluetoothWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */; };
 		A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6223C682F800327FE5 /* Helpers.swift */; };
 		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
@@ -39,9 +38,10 @@
 		A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThing.h; sourceTree = "<group>"; };
 		A4553C5F23C5D99000C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothThingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4553C6923C5D99000C49AC2 /* BluetoothThingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingTests.swift; sourceTree = "<group>"; };
+		A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothWorkerTests.swift; sourceTree = "<group>"; };
 		A4553C6B23C5D99100C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManager.swift; sourceTree = "<group>"; };
+		A494864423C7DAA300EF9625 /* Bean.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bean.swift; sourceTree = "<group>"; };
 		A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingProtocol.swift; sourceTree = "<group>"; };
 		A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothWorker.swift; sourceTree = "<group>"; };
 		A4AB9E6223C682F800327FE5 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
@@ -95,10 +95,12 @@
 		A4553C5D23C5D99000C49AC2 /* BluetoothThing */ = {
 			isa = PBXGroup;
 			children = (
+				A494864323C7DA9200EF9625 /* Examples */,
 				A4AB9E6A23C68BD300327FE5 /* Models */,
 				A4AB9E6423C6830400327FE5 /* Helpers */,
 				A4AB9E5C23C6807100327FE5 /* Workers */,
 				A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */,
+				A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */,
 				A4553C5F23C5D99000C49AC2 /* Info.plist */,
 				A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */,
 			);
@@ -108,10 +110,19 @@
 		A4553C6823C5D99000C49AC2 /* BluetoothThingTests */ = {
 			isa = PBXGroup;
 			children = (
-				A4553C6923C5D99000C49AC2 /* BluetoothThingTests.swift */,
+				A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */,
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 			);
 			path = BluetoothThingTests;
+			sourceTree = "<group>";
+		};
+		A494864323C7DA9200EF9625 /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */,
+				A494864423C7DAA300EF9625 /* Bean.swift */,
+			);
+			path = Examples;
 			sourceTree = "<group>";
 		};
 		A4AB9E5C23C6807100327FE5 /* Workers */ = {
@@ -119,7 +130,6 @@
 			children = (
 				A4AB9E5D23C680B600327FE5 /* BluetoothWorker.swift */,
 				A4AB9E7123C68F8200327FE5 /* DataStore.swift */,
-				A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */,
 			);
 			path = Workers;
 			sourceTree = "<group>";
@@ -136,7 +146,6 @@
 			isa = PBXGroup;
 			children = (
 				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
-				A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */,
 				A4AB9E6823C68A4900327FE5 /* Location.swift */,
 				A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */,
 				A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */,
@@ -266,7 +275,6 @@
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
 				A4AB9E7423C69EC300327FE5 /* Service.swift in Sources */,
-				A496E3FB23C70D6F00159FF9 /* BluetoothThingProtocol.swift in Sources */,
 				A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */,
 				A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */,
 			);
@@ -276,7 +284,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4553C6A23C5D99000C49AC2 /* BluetoothThingTests.swift in Sources */,
+				A4553C6A23C5D99000C49AC2 /* BluetoothWorkerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,15 +416,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -431,15 +440,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -454,6 +464,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				INFOPLIST_FILE = BluetoothThingTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;
@@ -468,6 +479,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				INFOPLIST_FILE = BluetoothThingTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;

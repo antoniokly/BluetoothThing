@@ -1,62 +1,17 @@
 //
-//  BluetoothThingProtocol.swift
+//  Bean.swift
 //  BluetoothThing
 //
-//  Created by Antonio Yip on 9/01/20.
+//  Created by Antonio Yip on 10/01/20.
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
 import Foundation
 import CoreBluetooth
-import CoreLocation
-
-let batteryServiceUUID = CBUUID(string: "180F")
-let batteryLevel = CBUUID(string: "2A19")
-
-public protocol BluetoothThingProtocol {
-    var events: [AnyHashable: (Characteristic) -> Bool] { get }
-    var actions: [AnyHashable: Characteristic] { get }
-//    associatedtype Event
-//    associatedtype Action
-    
-//    func didUpdateCharacteristic(_ characteristic: Characteristic) -> Event
-//    func perform(action: Action) -> Characteristic?
-}
-
-extension BluetoothThingProtocol {
-    func didUpdateCharacteristic(_ characteristic: Characteristic) {
-        for (event, validate) in events {
-            if validate(characteristic) {
-                // emit event
-            }
-        }
-    }
-    
-    func perform(action: AnyHashable) -> Bool {
-        if let action = actions[action] {
-            // write to peripharel
-        }
-        
-        return true
-    }
-}
-
-//enum BeanLockEvent {
-//    case unknown(Characteristic)
-//    case locked
-//    case unlocked
-//    case motion
-//    case temperature(Int)
-//    case battery(Int)
-//}
-//
-//enum BeanLockAction {
-//    case lock
-//    case unlock
-//    case saveGPS(CLLocationCoordinate2D, Date)
-//}
 
 class Bean: BluetoothThingProtocol {
+    var id: UUID
+    
     static let serialServiceUUID = CBUUID(string: "A495FF10-C5B1-4B44-B512-1370F02D74DE")
     static let scratchServiceUUID = CBUUID(string: "A495FF20-C5B1-4B44-B512-1370F02D74DE")
     
@@ -78,6 +33,10 @@ class Bean: BluetoothThingProtocol {
     ]
     
     static let actions: [AnyHashable: Characteristic] = [:]
+    
+    init(id: UUID) {
+        self.id = id
+    }
     
     var events: [AnyHashable: (Characteristic) -> Bool] {
         return Bean.events
@@ -131,3 +90,4 @@ class BeanLock: Bean {
 //        return nil
 //    }
 }
+

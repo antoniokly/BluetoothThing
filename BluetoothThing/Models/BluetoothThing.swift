@@ -1,5 +1,5 @@
 //
-//  BluetoothThing.swift
+//  BluetoothThingPeripheral.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 9/01/20.
@@ -9,45 +9,26 @@
 import Foundation
 import CoreBluetooth
 
-
-
-//public protocol BluetoothThingProtocol {
-//    var id: UUID { get }
-//    var isDefault: Bool { get set }
-//    var name: String? { get set }
-//    var state: CBPeripheralState { get set }
-//    var location: Location? { get set }
-//    var rssi: Int? { get set }
-//    var data: [String: [String: Data]] { get set }
-//    init(id: UUID)
-//}
-
-class BluetoothThing {
-    var id: UUID
-    var isDefault: Bool = false
-    var name: String? = nil
-    var state: CBPeripheralState = .disconnected
-    var location: Location? = nil
-    var data: [String: [String: Data]] = [:]
-    var rssi: Int? = nil
-
-//    var actions: [String: (Any) -> Bool] = [:]
-
+public class BluetoothThing: Codable {
+    public var id: UUID
+    public var name: String? = nil
+    public var state: CBPeripheralState = .disconnected
+    public var location: Location? = nil
+    public var data: [String: [String: Data]] = [:]
+    
     private enum CodingKeys: String, CodingKey {
         case id
-        case isDefault
         case name
-        case state
+//        case state
         case location
         case data
-        case rssi
     }
     
-    required init(id: UUID) {
+    init(id: UUID) {
         self.id = id
     }
+    
+    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
+        return lhs.id == rhs.id
+    }
 }
-
-
-
-

@@ -11,58 +11,56 @@ import CoreBluetooth
 import CoreLocation
 import os.log
 
-let serviceUUIDs: [CBUUID] = []
-let characteristicUUIDs: [CBUUID: [CBUUID]] = [:]
-
 public class BluetoothThingManager: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
-    let bluetoothWorker: BluetoothWorkerInterface = BluetoothWorker()
-
+    var bluetoothWorker: BluetoothWorkerInterface
     var centralManager: CBCentralManager!
-    
-    private var isPendingForScan = false
+    var subscriptions: [CharacteristicProtocol]
+    var serviceUUIDs: [CBUUID] {
+        return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
+    }
+        
+    private var isPendingToStart = false
     private var knownPeripherals: Set<CBPeripheral> = []
     
-    public init(delegate: BluetoothThingManagerDelegate) {
+    public init(delegate: BluetoothThingManagerDelegate, subscriptions: [CharacteristicProtocol]) {
+        self.subscriptions = subscriptions
+        self.bluetoothWorker = BluetoothWorker(delegate: delegate, subscriptions: subscriptions)
         super.init()
-        centralManager = CBCentralManager(delegate: self,
-                                          queue: nil,
-                                          options: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!])
+        self.centralManager =
+            CBCentralManager(delegate: self,
+                             queue: nil,
+                             options: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!])
     }
     
-    func start() {
+    public func start() {
         guard centralManager.state == .poweredOn else {
-            isPendingForScan = true
+            isPendingToStart = true
             return
         }
         
         centralManager.scanForPeripherals(withServices: serviceUUIDs)
         
-        if let peripheral = getCurrentPeripheral() {
+        for peripheral in knownPeripherals {
             bluetoothWorker.subscribePeripheral(peripheral)
         }
     }
     
-    func stop() {
+    public func stop() {
         guard centralManager.state == .poweredOn else {
-            isPendingForScan = false
+            isPendingToStart = false
             return
         }
         
         centralManager.stopScan()
         
-        if let peripheral = getCurrentPeripheral() {
+        for peripheral in knownPeripherals {
             bluetoothWorker.unsubscribePeripheral(peripheral)
         }
     }
     
-    func getCurrentPeripheral() -> CBPeripheral? {
-//        guard let thing = userData.selectedThing else {
-//            return nil
-//        }
-        
-//        return knownPeripherals.first(where: {$0.identifier == thing.id})
-        return knownPeripherals.first
-    }
+//    public func performAction(_ action: String, with data: Data?, on thing: BluetoothThingProtocol) {
+//
+//    }
 
     //MARK: - CBCentralManagerDelegate
     public func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -88,7 +86,7 @@ public class BluetoothThingManager: NSObject, CBCentralManagerDelegate, CBPeriph
                 }
             }
             
-            if isPendingForScan {
+            if isPendingToStart {
                 start()
             }
         } else {
@@ -146,9 +144,9 @@ public class BluetoothThingManager: NSObject, CBCentralManagerDelegate, CBPeriph
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
             
-            for service in services.filter({characteristicUUIDs.keys.contains($0.uuid)}) {
-                peripheral.discoverCharacteristics(characteristicUUIDs[service.uuid],
-                                                   for: service)
+            for service in services {
+                let uuids = bluetoothWorker.subscribedCharateristics(for: service).map{$0.uuid}
+                peripheral.discoverCharacteristics(uuids, for: service)
             }
         }
     }

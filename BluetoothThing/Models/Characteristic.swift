@@ -9,20 +9,27 @@
 import Foundation
 import CoreBluetooth
 
-public protocol Characteristic {
+public protocol CharacteristicProtocol {
     var uuid: CBUUID { get }
     var value: Data? { get }
-    var serviceID: CBUUID { get }
-//    var identifier: UUID { get }
-//    var name: String? { get }
-//    var state: CBPeripheralState { get }
-//    var services: [CBService]? { get }
-//
-//    func setNotifyValue(_: Bool, for: CBCharacteristic)
+    var serviceUUID: CBUUID { get }
 }
 
-extension CBCharacteristic: Characteristic {
-    public var serviceID: CBUUID {
+extension CBCharacteristic: CharacteristicProtocol {
+    public var serviceUUID: CBUUID {
         return service.uuid
+    }
+}
+
+public class Characteristic: CharacteristicProtocol {
+    public internal(set) var uuid: CBUUID
+    
+    public var value: Data?
+    
+    public internal(set) var serviceUUID: CBUUID
+    
+    public init(uuid: String, serviceUUID: String) {
+        self.uuid = CBUUID(string: uuid)
+        self.serviceUUID = CBUUID(string: serviceUUID)
     }
 }

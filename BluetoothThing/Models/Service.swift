@@ -9,16 +9,11 @@
 import Foundation
 import CoreBluetooth
 
-protocol Service {
+protocol ServiceProtocol {
     var uuid: CBUUID { get }
-//    var identifier: UUID { get }
-//    var name: String? { get }
-//    var state: CBPeripheralState { get }
-//    var services: [CBService]? { get }
-//
-//    func setNotifyValue(_: Bool, for: CBCharacteristic)
+    var characteristics: [CBCharacteristic]? { get }
 }
 
-extension CBService: Service {
+extension CBService: ServiceProtocol {
     
 }

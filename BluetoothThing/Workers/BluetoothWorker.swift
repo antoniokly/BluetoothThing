@@ -10,68 +10,110 @@ import Foundation
 import CoreBluetooth
 
 protocol BluetoothWorkerInterface {
-    func didUpdatePeripheral(_ peripheral: Peripheral)
-    func didUpdateCharacteristic(_ characteristic: Characteristic, for peripheral: Peripheral)
-    func didUpdateRSSI(_ rssi: NSNumber?, for peripheral: Peripheral)
+    var subscriptions: [CharacteristicProtocol] { get }
+
+//    func subscribedServiceUUIDs(for peripheral: PeripheralProtocol) -> [CBUUID]
+//    func subscribedCharateristics(for service: ServiceProtocol) -> [CharacteristicProtocol]
     
-    func subscribePeripheral(_ peripheral: Peripheral)
-    func unsubscribePeripheral(_ peripheral: Peripheral)
+    func didUpdatePeripheral(_ peripheral: PeripheralProtocol)
+    func didUpdateCharacteristic(_ characteristic: CharacteristicProtocol, for peripheral: PeripheralProtocol)
+    func didUpdateRSSI(_ rssi: NSNumber?, for peripheral: PeripheralProtocol)
+    
+    func subscribePeripheral(_ peripheral: PeripheralProtocol)
+    func unsubscribePeripheral(_ peripheral: PeripheralProtocol)
 }
 
-class BluetoothWorker: BluetoothWorkerInterface {
-    var dataStore: DataStore = DataStore(storeKey: Bundle.main.bundleIdentifier!)
-    
-    func didUpdatePeripheral(_ peripheral: Peripheral) {
-        let thing = dataStore.getThing(id: peripheral.identifier)
-        thing.state = peripheral.state
-        thing.name = peripheral.name
-        dataStore.save()
-    }
-    
-    func didUpdateCharacteristic(_ characteristic: Characteristic, for peripheral: Peripheral) {
-        let thing = dataStore.getThing(id: peripheral.identifier)
-        updateCharacteristic(characteristic, for: thing)
-        dataStore.save()
-    }
-    
-    func didUpdateRSSI(_ rssi: NSNumber?, for peripheral: Peripheral) {
-        let thing = dataStore.getThing(id: peripheral.identifier)
-        thing.rssi = rssi as? Int
-        dataStore.save()
-    }
-    
-    func subscribePeripheral(_ peripheral: Peripheral) {
-        for characteristic in getSubscribedCharacteristic(of: peripheral) {
+extension BluetoothWorkerInterface {
+    func subscribePeripheral(_ peripheral: PeripheralProtocol) {
+        for characteristic in subscribedCharateristics(for: peripheral) {
             peripheral.setNotifyValue(true, for: characteristic)
         }
     }
-    
-    func unsubscribePeripheral(_ peripheral: Peripheral) {
-        for characteristic in getSubscribedCharacteristic(of: peripheral) {
+   
+    func unsubscribePeripheral(_ peripheral: PeripheralProtocol) {
+        for characteristic in subscribedCharateristics(for: peripheral) {
             peripheral.setNotifyValue(false, for: characteristic)
         }
     }
     
-    func getSubscribedCharacteristic(of peripheral: Peripheral) -> [CBCharacteristic] {
-        guard let services = peripheral.services?.filter({serviceUUIDs.contains($0.uuid)}) else {
-            return []
-        }
-        
-        return services.flatMap { (service) -> [CBCharacteristic] in
-            let serviceUUID = service.uuid
-            guard let uuids = characteristicUUIDs[serviceUUID], let characteristics = service.characteristics?.filter({uuids.contains($0.uuid)}) else {
-                return []
-            }
-            
-            return characteristics
+    func subscribedServiceUUIDs(for peripheral: PeripheralProtocol) -> [CBUUID] {
+        return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
+    }
+    
+    func subscribedCharateristics(for service: ServiceProtocol) -> [CharacteristicProtocol] {
+        return subscriptions.filter {
+            self.shouldSubscribe(characteristic: $0)
         }
     }
     
-    func updateCharacteristic(_ characteristic: Characteristic, for thing: BluetoothThing) {
-        let serviceID = characteristic.serviceID.uuidString
+    func shouldSubscribe(characteristic: CharacteristicProtocol) -> Bool {
+        if subscriptions.contains(where: {
+            $0.serviceUUID == characteristic.serviceUUID &&
+                $0.uuid == characteristic.uuid}) {
+            return true
+        }
+        
+        return false
+    }
+    
+    private func subscribedCharateristics(for peripheral: PeripheralProtocol) -> [CBCharacteristic] {
+        guard let services = peripheral.services else {
+            return []
+        }
+        
+        return services.flatMap {
+            $0.characteristics ?? []
+        }.filter {
+            self.shouldSubscribe(characteristic: $0)
+        }
+    }
+}
+
+class BluetoothWorker: BluetoothWorkerInterface {
+    var delegate: BluetoothThingManagerDelegate
+    var dataStore: DataStoreInterface = DataStore(storeKey: Bundle.main.bundleIdentifier!)
+    var subscriptions: [CharacteristicProtocol]
+    
+    init(delegate: BluetoothThingManagerDelegate, subscriptions: [CharacteristicProtocol]) {
+        self.delegate = delegate
+        self.subscriptions = subscriptions
+    }
+    
+    func didUpdatePeripheral(_ peripheral: PeripheralProtocol) {
+        let thing = dataStore.getThing(id: peripheral.identifier)
+        if thing.name == nil {
+            thing.name = peripheral.name
+            dataStore.save()
+        }
+        if thing.state != peripheral.state {
+            thing.state = peripheral.state
+            delegate.bluetoothThing(thing, didChangeState: thing.state)
+        }
+    }
+    
+    func didUpdateCharacteristic(_ characteristic: CharacteristicProtocol, for peripheral: PeripheralProtocol) {
+        let thing = dataStore.getThing(id: peripheral.identifier)
+        if updateCharacteristic(characteristic, for: thing) {
+            delegate.bluetoothThing(thing, didChangeCharacteristic: characteristic)
+            dataStore.save()
+        }
+    }
+    
+    func didUpdateRSSI(_ rssi: NSNumber?, for peripheral: PeripheralProtocol) {
+        let thing = dataStore.getThing(id: peripheral.identifier)
+        delegate.bluetoothThing(thing, didChangeRSSI: rssi)
+    }
+    
+    private func updateCharacteristic(_ characteristic: CharacteristicProtocol, for thing: BluetoothThing) -> Bool {
+        let serviceID = characteristic.serviceUUID.uuidString
         let key = characteristic.uuid.uuidString
+        var didChange = false
         
         var storage = thing.data[serviceID] ?? [:]
+        
+        if storage[key] != characteristic.value {
+            didChange = true
+        }
         
         if let data = characteristic.value {
             storage[key] = data
@@ -80,5 +122,7 @@ class BluetoothWorker: BluetoothWorkerInterface {
         }
         
         thing.data[serviceID] = storage
+        
+        return didChange
     }
 }

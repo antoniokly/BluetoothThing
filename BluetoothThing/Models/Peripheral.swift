@@ -1,5 +1,5 @@
 //
-//  Peripheral.swift
+//  PeripheralProtocol.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 9/01/20.
@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-protocol Peripheral {
+protocol PeripheralProtocol {
     var identifier: UUID { get }
     var name: String? { get }
     var state: CBPeripheralState { get }
@@ -18,6 +18,6 @@ protocol Peripheral {
     func setNotifyValue(_: Bool, for: CBCharacteristic)
 }
 
-extension CBPeripheral: Peripheral {
+extension CBPeripheral: PeripheralProtocol {
     
 }

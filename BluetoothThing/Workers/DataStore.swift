@@ -16,8 +16,6 @@ protocol DataStoreInterface {
 }
 
 class DataStore: DataStoreInterface {
-//    static let shared = DataStore(storeKey: Bundle.main.bundleIdentifier!)
-    
     var storeKey: String
     var things: [BluetoothThing] = []
     
