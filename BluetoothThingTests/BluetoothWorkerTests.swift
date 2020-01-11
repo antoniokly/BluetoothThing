@@ -11,6 +11,8 @@ import CoreBluetooth
 @testable import BluetoothThing
 
 class BluetoothWorkerTests: XCTestCase {
+    
+
 
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
         var bluetoothThing: BluetoothThing?

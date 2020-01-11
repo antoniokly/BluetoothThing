@@ -10,6 +10,11 @@ import Foundation
 import CoreBluetooth
 
 public class BluetoothThing: Codable {
+    
+    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     public var id: UUID
     public var name: String? = nil
     public var state: CBPeripheralState = .disconnected
@@ -28,7 +33,25 @@ public class BluetoothThing: Codable {
         self.id = id
     }
     
-    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
-        return lhs.id == rhs.id
+    func updateData(with characteristic: CBCharacteristic) -> Bool {
+        let serviceID = characteristic.serviceUUID.uuidString
+        let key = characteristic.uuid.uuidString
+        var didChange = false
+        
+        var storage = self.data[serviceID] ?? [:]
+        
+        if storage[key] != characteristic.value {
+            didChange = true
+        }
+        
+        if let data = characteristic.value {
+            storage[key] = data
+        } else {
+            storage.removeValue(forKey: key)
+        }
+        
+        self.data[serviceID] = storage
+        
+        return didChange
     }
 }

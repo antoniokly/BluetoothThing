@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */; };
+		A435044623C9330300C6AD1C /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* Subscription.swift */; };
+		A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044723C935B800C6AD1C /* BluetoothHelper.swift */; };
+		A435044B23C9439800C6AD1C /* CoreBluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044A23C9439800C6AD1C /* CoreBluetooth.swift */; };
+		A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */; };
 		A4553C6523C5D99000C49AC2 /* BluetoothThing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */; };
 		A4553C6A23C5D99000C49AC2 /* BluetoothWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -34,6 +39,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerTests.swift; sourceTree = "<group>"; };
+		A435044323C9209200C6AD1C /* CentralManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CentralManagerProtocol.swift; sourceTree = "<group>"; };
+		A435044523C9330300C6AD1C /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		A435044723C935B800C6AD1C /* BluetoothHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothHelper.swift; sourceTree = "<group>"; };
+		A435044A23C9439800C6AD1C /* CoreBluetooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBluetooth.swift; sourceTree = "<group>"; };
+		A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCentralManagerMock.swift; sourceTree = "<group>"; };
 		A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothThing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThing.h; sourceTree = "<group>"; };
 		A4553C5F23C5D99000C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -74,6 +85,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A435044223C9207300C6AD1C /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				A435044323C9209200C6AD1C /* CentralManagerProtocol.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		A435044923C9437900C6AD1C /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				A435044A23C9439800C6AD1C /* CoreBluetooth.swift */,
+				A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */,
+			);
+			path = Mocks;
+			sourceTree = "<group>";
+		};
 		A4553C5123C5D99000C49AC2 = {
 			isa = PBXGroup;
 			children = (
@@ -95,6 +123,7 @@
 		A4553C5D23C5D99000C49AC2 /* BluetoothThing */ = {
 			isa = PBXGroup;
 			children = (
+				A435044223C9207300C6AD1C /* Protocols */,
 				A494864323C7DA9200EF9625 /* Examples */,
 				A4AB9E6A23C68BD300327FE5 /* Models */,
 				A4AB9E6423C6830400327FE5 /* Helpers */,
@@ -110,7 +139,9 @@
 		A4553C6823C5D99000C49AC2 /* BluetoothThingTests */ = {
 			isa = PBXGroup;
 			children = (
+				A435044923C9437900C6AD1C /* Mocks */,
 				A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */,
+				A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */,
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 			);
 			path = BluetoothThingTests;
@@ -138,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				A4AB9E6223C682F800327FE5 /* Helpers.swift */,
+				A435044723C935B800C6AD1C /* BluetoothHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -151,6 +183,7 @@
 				A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */,
 				A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */,
 				A4AB9E7323C69EC200327FE5 /* Service.swift */,
+				A435044523C9330300C6AD1C /* Subscription.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -266,12 +299,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A4AB9E7023C68D0000327FE5 /* Characteristic.swift in Sources */,
 				A4AB9E5E23C680B600327FE5 /* BluetoothWorker.swift in Sources */,
 				A4AB9E6E23C68CCA00327FE5 /* Peripheral.swift in Sources */,
 				A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */,
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
+				A435044623C9330300C6AD1C /* Subscription.swift in Sources */,
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
 				A4AB9E7423C69EC300327FE5 /* Service.swift in Sources */,
@@ -284,6 +319,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */,
+				A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */,
+				A435044B23C9439800C6AD1C /* CoreBluetooth.swift in Sources */,
 				A4553C6A23C5D99000C49AC2 /* BluetoothWorkerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -348,12 +386,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -402,10 +441,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -425,13 +465,13 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -449,12 +489,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -469,7 +509,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -484,7 +524,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

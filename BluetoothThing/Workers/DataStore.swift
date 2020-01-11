@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol DataStoreInterface {
+public protocol DataStoreInterface {
     var things: [BluetoothThing] { get }
     func save()
     func getThing(id: UUID) -> BluetoothThing
