@@ -54,10 +54,7 @@
 		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
 		A4AB9E6823C68A4900327FE5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
-		A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
-		A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Characteristic.swift; sourceTree = "<group>"; };
 		A4AB9E7123C68F8200327FE5 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
-		A4AB9E7323C69EC200327FE5 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
 		A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -166,9 +163,6 @@
 				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
 				A4AB9E6823C68A4900327FE5 /* Location.swift */,
 				A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */,
-				A4AB9E6D23C68CCA00327FE5 /* Peripheral.swift */,
-				A4AB9E6F23C68D0000327FE5 /* Characteristic.swift */,
-				A4AB9E7323C69EC200327FE5 /* Service.swift */,
 				A435044523C9330300C6AD1C /* Subscription.swift */,
 			);
 			path = Models;

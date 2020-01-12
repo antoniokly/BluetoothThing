@@ -9,17 +9,17 @@
 import Foundation
 
 public protocol DataStoreInterface {
-    var things: [BluetoothThing] { get }
     func save()
-    func getThing(id: UUID) -> BluetoothThing
     func getStoredThings() -> [BluetoothThing]
+    func getThing(id: UUID) -> BluetoothThing?
+    func saveThing(id: UUID) -> BluetoothThing
+    func removeThing(id: UUID) -> BluetoothThing?
+
 }
 
-extension DataStoreInterface {
-    
-}
 
 class DataStore: DataStoreInterface {
+    
     var storeKey: String
     var things: [BluetoothThing] = []
     
@@ -31,26 +31,35 @@ class DataStore: DataStoreInterface {
     func save() {
         let data = NSKeyedArchiver.archivedData(withRootObject: things)
         UserDefaults.standard.set(data, forKey: storeKey)
+        UserDefaults.standard.synchronize()
     }
     
-    func getThing(id: UUID) -> BluetoothThing {
-        if let thing = things.first(where: {$0.id == id}) {
-            return thing
-        }
-        
+//    func getThing(id: UUID) -> BluetoothThing? {
+//        if let thing = things.first(where: {$0.id == id}) {
+//            return thing
+//        }
+//
+//        let thing = BluetoothThing(id: id)
+//        things.append(thing)
+//
+//        return thing
+//    }
+    func getThing(id: UUID) -> BluetoothThing? {
+        return things.first(where: {$0.id == id})
+    }
+    
+    func saveThing(id: UUID) -> BluetoothThing {
         let thing = BluetoothThing(id: id)
         things.append(thing)
-        
         return thing
     }
     
-    func removeThing(id: UUID) -> Bool {
+    func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
-            things.remove(at: index)
-            return true
+            return things.remove(at: index)
         }
         
-        return false
+        return nil
     }
     
     func getStoredThings() -> [BluetoothThing] {
