@@ -17,7 +17,7 @@ class BluetoothWorkerTests: XCTestCase {
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
         var bluetoothThing: BluetoothThing?
 
-        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThings: [BluetoothThing]) {
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing: BluetoothThing) {
             
         }
         

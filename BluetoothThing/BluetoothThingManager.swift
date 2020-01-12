@@ -17,6 +17,9 @@ public class BluetoothThingManager: NSObject {
         
     var dataStore: DataStoreInterface!
     var centralManager: CBCentralManager!
+    var locationManager: CLLocationManager?
+
+    var userLocation: CLLocation?
     
     var serviceUUIDs: [CBUUID] {
         return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
@@ -32,16 +35,34 @@ public class BluetoothThingManager: NSObject {
     public init(delegate: BluetoothThingManagerDelegate,
          subscriptions: [Subscription],
          dataStore: DataStoreInterface? = nil,
-         centralManager: CBCentralManager? = nil
+         centralManager: CBCentralManager? = nil,
+         useLocation: Bool = true
          ) {
                self.delegate = delegate
         self.subscriptions = subscriptions
         super.init()
-        self.dataStore = dataStore ?? DataStore(storeKey: Bundle.main.bundleIdentifier!)
+        
+        self.dataStore = dataStore ?? DataStore()
         self.centralManager = centralManager ?? CBCentralManager(delegate: self,
                                                                  queue: nil,
                                                                  options: Self.centralManagerOptions)
+        
+        if useLocation {
+            locationManager = CLLocationManager()
+            
+            if let manager = locationManager {
+                manager.delegate = self
+                manager.requestWhenInUseAuthorization()
+                manager.desiredAccuracy = kCLLocationAccuracyBest
+                manager.pausesLocationUpdatesAutomatically = true
+                manager.startMonitoringSignificantLocationChanges()
+            }
+        }
     }
+    
+//    public func getBluetoothThings() -> [BluetoothThing] {
+//        return dataStore.things
+//    }
     
     public func start() {
         guard centralManager.state == .poweredOn else {
@@ -164,6 +185,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         didUpdateRSSI(RSSI, for: peripheral)
         knownPeripherals.insert(peripheral)
         central.connect(peripheral)
+        locationManager?.requestLocation()
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
@@ -172,13 +194,13 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         peripheral.delegate = self
         peripheral.discoverServices(serviceUUIDs)
+        locationManager?.requestLocation()
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         os_log("didDisconnectPeripheral %@", peripheral)
         didUpdatePeripheral(peripheral)
         central.connect(peripheral)
-//        locationManager.requestLocation()
     }
 }
 
@@ -187,13 +209,17 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
-            
             for service in services {
+                guard serviceUUIDs.contains(service.uuid) else {
+                    continue
+                }
+                
                 let uuids = subscriptions.filter {
                     $0.serviceUUID == service.uuid
                 }.map {
                     $0.characteristicUUID
                 }
+                //TODO: Test not to discover unsuscribed uuids
                 peripheral.discoverCharacteristics(uuids, for: service)
             }
         }
@@ -222,5 +248,49 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         os_log("didReadRSSI %d", RSSI)
         didUpdateRSSI(RSSI, for: peripheral)
+    }
+}
+
+//MARK: - CLLocationManagerDelegate
+extension BluetoothThingManager: CLLocationManagerDelegate {
+    
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        os_log("didUpdateLocations: %@", locations)
+        
+        guard let updated = locations.sorted(by: { $0.timestamp > $1.timestamp }).first else {
+            return
+        }
+        
+        if let last = userLocation, last.timestamp > updated.timestamp {
+            return
+        }
+        
+        userLocation = updated
+        fetchPlacemarks(updated)
+    }
+    
+    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        os_log("didFailWithError: %@", error.localizedDescription)
+    }
+    
+    var nearbyThings: [BluetoothThing] {
+        dataStore.things.filter {
+            $0.state != .disconnected
+        }
+    }
+    
+    func fetchPlacemarks(_ location: CLLocation) {
+        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
+            if let error = error  {
+                os_log("fetchPlacemarks error: %@", error.localizedDescription)
+            }
+                
+            for thing in self.nearbyThings {
+                var loc = Location(location: location)
+                loc.name = placemarks?.first?.locality
+                thing.location = loc
+                self.delegate.bluetoothThing(thing, didUpdateLocation: loc)
+            }
+        }
     }
 }

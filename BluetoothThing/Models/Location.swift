@@ -9,13 +9,21 @@
 import Foundation
 import CoreLocation
 
-struct Cooridinate: Hashable, Codable {
-    var latitude: Double
-    var longitude: Double
-}
 
 public struct Location: Hashable, Codable {
-    var cooridinate: Cooridinate
-    var updated: Date
-    var name: String?
+    public var latitude: Double
+    public var longitude: Double
+    public var timestamp: Date?
+    public var name: String?
+    
+    public var cooridinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude,
+                               longitude: longitude)
+    }
+    
+    init(location: CLLocation) {
+        self.latitude = location.coordinate.latitude
+        self.longitude = location.coordinate.longitude
+        self.timestamp = location.timestamp
+    }
 }

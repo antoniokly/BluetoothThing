@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 public typealias ConnectionState = CBPeripheralState
-extension CBPeripheralState: Codable, Hashable {
+public extension CBPeripheralState {
     var string: String {
         switch self {
         case .connected:

@@ -12,4 +12,9 @@ import CoreBluetooth
 public struct Subscription {
     public var serviceUUID: CBUUID
     public var characteristicUUID: CBUUID
+    
+    public init(service: CBUUID, characteristic: CBUUID) {
+        self.serviceUUID = service
+        self.characteristicUUID = characteristic
+    }
 }

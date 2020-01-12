@@ -16,6 +16,10 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
     
     class DataStoreMock: DataStoreInterface {
+        func getStoredThings() -> [BluetoothThing] {
+            return []
+        }
+        
         var things: [BluetoothThing] = []
         
         func save() {
@@ -25,18 +29,18 @@ class BluetoothThingManagerTests: XCTestCase {
         func getThing(id: UUID) -> BluetoothThing {
             return BluetoothThing(id: id)
         }
-        
-        func removeThing(id: UUID) -> Bool {
-            return true
-        }
     }
     
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
-        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThings: [BluetoothThing]) {
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location) {
             
         }
         
-        func bluetoothThing(_ thing: BluetoothThing, didChangeCharacteristic characteristic: CharacteristicProtocol) {
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing: BluetoothThing) {
+            
+        }
+        
+        func bluetoothThing(_ thing: BluetoothThing, didChangeCharacteristic characteristic: Characteristic) {
             
         }
         
@@ -68,7 +72,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let manager = BluetoothThingManager(delegate: delegate,
                                             subscriptions: subscriptions,
                                             dataStore: dataStore,
-                                            centralManager: centralManager)
+                                            centralManager: centralManager,
+                                            useLocation: false)
         
         centralManager.delegate = manager
         
@@ -104,8 +109,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)
@@ -157,8 +162,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)
@@ -196,8 +201,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)
@@ -221,8 +226,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)
@@ -246,8 +251,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)
@@ -272,8 +277,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID,
-                         characteristicUUID: characteristicUUID)
+            Subscription(service: serviceUUID,
+                         characteristic: characteristicUUID)
         ]
         
         sut = initBluetoothThingManager(subscriptions: subsriptions)

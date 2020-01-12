@@ -12,20 +12,25 @@ public protocol DataStoreInterface {
     var things: [BluetoothThing] { get }
     func save()
     func getThing(id: UUID) -> BluetoothThing
-    func removeThing(id: UUID) -> Bool
+    func getStoredThings() -> [BluetoothThing]
+}
+
+extension DataStoreInterface {
+    
 }
 
 class DataStore: DataStoreInterface {
     var storeKey: String
     var things: [BluetoothThing] = []
     
-    init(storeKey: String) {
+    init(storeKey: String = Bundle.main.bundleIdentifier!) {
         self.storeKey = storeKey
-        self.things = loadThings()
+        self.things = getStoredThings()
     }
     
     func save() {
-        saveThings(things: things)
+        let data = NSKeyedArchiver.archivedData(withRootObject: things)
+        UserDefaults.standard.set(data, forKey: storeKey)
     }
     
     func getThing(id: UUID) -> BluetoothThing {
@@ -48,12 +53,7 @@ class DataStore: DataStoreInterface {
         return false
     }
     
-    func saveThings(things: [BluetoothThing]) {
-        let data = NSKeyedArchiver.archivedData(withRootObject: things)
-        UserDefaults.standard.set(data, forKey: storeKey)
-    }
-    
-    func loadThings() -> [BluetoothThing] {
+    func getStoredThings() -> [BluetoothThing] {
         guard
             let data = UserDefaults.standard.object(forKey: storeKey) as? Data,
             let things = NSKeyedUnarchiver.unarchiveObject(with: data) as? [BluetoothThing] else {

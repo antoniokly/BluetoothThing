@@ -29,12 +29,12 @@ public class BluetoothThing: Codable {
         case data
     }
     
-    init(id: UUID) {
+    public init(id: UUID) {
         self.id = id
     }
     
     func updateData(with characteristic: CBCharacteristic) -> Bool {
-        let serviceID = characteristic.serviceUUID.uuidString
+        let serviceID = characteristic.service.uuid.uuidString
         let key = characteristic.uuid.uuidString
         var didChange = false
         
