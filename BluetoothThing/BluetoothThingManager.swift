@@ -155,6 +155,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 default:
                     break
                 }
+                locationManager?.requestLocation()
             }
             
             if isPendingToStart {
@@ -190,7 +191,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         os_log("didDiscover %@ %@ %@", peripheral, advertisementData, RSSI)
         knownPeripherals.insert(peripheral)
         peripheral.delegate = self
-        peripheral.readRSSI()
         
         guard let advertisedServiceUUIDs = advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] else {
             return
@@ -212,7 +212,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
         didUpdatePeripheral(peripheral)
-        
+
+        peripheral.readRSSI()
         peripheral.discoverServices(serviceUUIDs)
         locationManager?.requestLocation()
     }
@@ -268,7 +269,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        os_log("didReadRSSI %d", RSSI)
+        os_log("didReadRSSI %d", RSSI.stringValue)
         didUpdatePeripheral(peripheral, rssi: RSSI)
     }
 }
