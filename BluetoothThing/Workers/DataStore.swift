@@ -17,7 +17,6 @@ public protocol DataStoreInterface {
 
 }
 
-
 class DataStore: DataStoreInterface {
     
     var storeKey: String

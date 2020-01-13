@@ -17,6 +17,9 @@
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
 		A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */; };
+		A49E466023CC11610065B96C /* CLLocationManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */; };
+		A49E466223CC19DC0065B96C /* CLGeocoderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E466123CC19DC0065B96C /* CLGeocoderMock.swift */; };
+		A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E466323CC211C0065B96C /* GeocoderProtocol.swift */; };
 		A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6223C682F800327FE5 /* Helpers.swift */; };
 		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
 		A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6823C68A4900327FE5 /* Location.swift */; };
@@ -51,6 +54,9 @@
 		A494864423C7DAA300EF9625 /* Bean.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bean.swift; sourceTree = "<group>"; };
 		A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingProtocol.swift; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
+		A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationManagerMock.swift; sourceTree = "<group>"; };
+		A49E466123CC19DC0065B96C /* CLGeocoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLGeocoderMock.swift; sourceTree = "<group>"; };
+		A49E466323CC211C0065B96C /* GeocoderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeocoderProtocol.swift; sourceTree = "<group>"; };
 		A4AB9E6223C682F800327FE5 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
 		A4AB9E6823C68A4900327FE5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
@@ -84,6 +90,8 @@
 				A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */,
 				A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */,
 				A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */,
+				A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */,
+				A49E466123CC19DC0065B96C /* CLGeocoderMock.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -144,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				A4AB9E7123C68F8200327FE5 /* DataStore.swift */,
+				A49E466323CC211C0065B96C /* GeocoderProtocol.swift */,
 			);
 			path = Workers;
 			sourceTree = "<group>";
@@ -283,6 +292,7 @@
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */,
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
+				A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
 				A435045D23CAA8A100C6AD1C /* LocationHelper.swift in Sources */,
 				A435045823CA77C000C6AD1C /* Subscription.swift in Sources */,
@@ -298,6 +308,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */,
+				A49E466023CC11610065B96C /* CLLocationManagerMock.swift in Sources */,
+				A49E466223CC19DC0065B96C /* CLGeocoderMock.swift in Sources */,
 				A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */,
 				A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */,
 				A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */,

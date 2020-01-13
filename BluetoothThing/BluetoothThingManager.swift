@@ -18,6 +18,7 @@ public class BluetoothThingManager: NSObject {
     var dataStore: DataStoreInterface!
     var centralManager: CBCentralManager!
     var locationManager: CLLocationManager?
+    var geocoder: GeocoderProtocol?
 
     var userLocation: CLLocation?
     
@@ -36,7 +37,7 @@ public class BluetoothThingManager: NSObject {
          subscriptions: [Subscription],
          dataStore: DataStoreInterface? = nil,
          centralManager: CBCentralManager? = nil,
-         useLocation: Bool = true
+         useLocation: Bool = false
          ) {
                self.delegate = delegate
         self.subscriptions = subscriptions
@@ -48,15 +49,14 @@ public class BluetoothThingManager: NSObject {
                                                                  options: Self.centralManagerOptions)
         
         if useLocation {
-            locationManager = CLLocationManager()
-            
-            if let manager = locationManager {
-                manager.delegate = self
-                manager.requestWhenInUseAuthorization()
-                manager.desiredAccuracy = kCLLocationAccuracyBest
-                manager.pausesLocationUpdatesAutomatically = true
-                manager.startMonitoringSignificantLocationChanges()
-            }
+            let manager = CLLocationManager()
+            self.locationManager = manager
+
+            manager.delegate = self
+            manager.requestWhenInUseAuthorization()
+            manager.desiredAccuracy = kCLLocationAccuracyBest
+            manager.pausesLocationUpdatesAutomatically = true
+            manager.startMonitoringSignificantLocationChanges()
         }
     }
     
@@ -295,19 +295,19 @@ extension BluetoothThingManager: CLLocationManagerDelegate {
         os_log("didFailWithError: %@", error.localizedDescription)
     }
     
-    var nearbyThings: [BluetoothThing] {
-        dataStore.getStoredThings().filter {
-            $0.state != .disconnected
-        }
-    }
-    
     func fetchPlacemarks(_ location: CLLocation) {
-        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
+        (geocoder ?? CLGeocoder()).reverseGeocodeLocation(location) { placemarks, error in
             if let error = error  {
                 os_log("fetchPlacemarks error: %@", error.localizedDescription)
             }
+            
+            let nearbyThings = self.knownPeripherals.filter {
+                $0.state != .disconnected
+            }.compactMap {
+                self.dataStore.getThing(id: $0.identifier)
+            }
                 
-            for thing in self.nearbyThings {
+            for thing in nearbyThings {
                 var loc = Location(location: location)
                 loc.name = placemarks?.first?.locality
                 thing.location = loc
