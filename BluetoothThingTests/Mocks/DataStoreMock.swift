@@ -16,27 +16,4 @@ class DataStoreMock: DataStore {
         self.things = peripherals.map({BluetoothThing(id: $0.identifier)})
     }
     
-    override func save() {
-        
-    }
-
-//    var things: [BluetoothThing] = []
-//
-//    func save() {
-//
-//    }
-//
-//    func getThing(id: UUID) -> BluetoothThing? {
-//        return BluetoothThing(id: id)
-//    }
-//
-//    func removeThing(id: UUID) -> Bool {
-//        return true
-//    }
-//
-    override func getStoredThings() -> [BluetoothThing] {
-        return things
-    }
-    
-    
 }
