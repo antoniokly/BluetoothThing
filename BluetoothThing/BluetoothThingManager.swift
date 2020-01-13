@@ -101,6 +101,13 @@ public class BluetoothThingManager: NSObject {
         
         if thing.state != peripheral.state {
             thing.state = peripheral.state
+            
+            if thing.state == .connected {
+                thing.lastConnected = Date()
+            } else if thing.state == .disconnected {
+                thing.lastDisconnected = Date()
+            }
+            
             delegate.bluetoothThing(thing, didChangeState: thing.state)
         }
         
@@ -140,21 +147,21 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                     
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
-                peripheral.readRSSI()
-                
-                guard let _ = dataStore.getThing(id: peripheral.identifier) else {
-                    central.cancelPeripheralConnection(peripheral)
-                    continue
-                }
-                
-                switch peripheral.state {
+                didUpdatePeripheral(peripheral)
+
+                if didUpdatePeripheral(peripheral) != nil {
+                    switch peripheral.state {
                     case .connected:
+                        peripheral.readRSSI()
                         peripheral.discoverServices(serviceUUIDs)
-                    case .connecting:
+                    default:
                         central.connect(peripheral)
-                default:
-                    break
+                        break
+                    }
+                } else {
+                    central.cancelPeripheralConnection(peripheral)
                 }
+               
                 locationManager?.requestLocation()
             }
             
@@ -253,8 +260,8 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
             
             for characteristic in characteristics {
-                peripheral.readValue(for: characteristic)
                 peripheral.setNotifyValue(true, for: characteristic)
+                peripheral.readValue(for: characteristic)
             }
         }
     }

@@ -20,6 +20,9 @@ public class BluetoothThing: Codable {
     public var state: CBPeripheralState = .disconnected
     public var location: Location? = nil
     public var data: [String: [String: Data]] = [:]
+    public var lastConnected: Date?
+    public var lastDisconnected: Date?
+
     
     private enum CodingKeys: String, CodingKey {
         case id
@@ -27,6 +30,8 @@ public class BluetoothThing: Codable {
 //        case state
         case location
         case data
+        case lastConnected
+        case lastDisconnected
     }
     
     public init(id: UUID) {

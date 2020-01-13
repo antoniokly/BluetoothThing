@@ -32,11 +32,11 @@ class CLPlacemarkMock: CLPlacemark {
 }
 
 class CLGeocoderMock: GeocoderProtocol {
-    var placemarks: [CLLocation: CLPlacemark] = [:]
-    
-    func reverseGeocodeLocation(_ location: CLLocation, completionHandler: CLGeocodeCompletionHandler) {
+    var placemarks: [CLPlacemark] = []
+
+    func reverseGeocodeLocation(_ location: CLLocation, completionHandler: @escaping CLGeocodeCompletionHandler) {
         let placemark = CLPlacemarkMock(location: location)
-        placemarks[location] = placemark
-        completionHandler([placemark], nil)
+        placemarks.append(placemark)
+        completionHandler(placemarks, nil)
     }
 }

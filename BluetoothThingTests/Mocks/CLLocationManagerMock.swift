@@ -12,7 +12,7 @@ import CoreLocation
 class CLLocationManagerMock: CLLocationManager {
     private var fakeLocation: CLLocation?
     
-    init(fakeLocation location: CLLocation) {
+    init(fakeLocation location: CLLocation?) {
         super.init()
         self.fakeLocation = location
     }

@@ -61,29 +61,6 @@ class BluetoothThingManagerTests: XCTestCase {
         delegate = BluetoothThingManagerDelegateSpy()
     }
     
-    func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
-        let uuids = [CBUUID: [CBUUID]].init(subscriptions.map({($0.serviceUUID, [$0.characteristicUUID])}),
-                                            uniquingKeysWith: {$0 + $1})
-        
-        let services = uuids.map { sUUID, cUUID -> CBService in
-            let service = CBServiceMock(uuid: sUUID)
-            let characteristics = cUUID.map {
-                CBCharacteristicMock(uuid: $0, service: service)
-            }
-            service._characteristics = characteristics
-            return service
-        }
-        
-        var peripherals: [CBPeripheralMock] = []
-        
-        for _ in 0 ..< numberOfPeripherals {
-            peripherals.append(CBPeripheralMock(identifier: UUID(),
-                                                services: services))
-        }
-        
-        return peripherals
-    }
-    
     func initBluetoothThingManager(subscriptions: [Subscription],
                                    dataStore: DataStoreInterface,
                                    centralManager: CBCentralManager,
@@ -106,6 +83,7 @@ class BluetoothThingManagerTests: XCTestCase {
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut.dataStore.reset()
     }
 
     func testStartStop() {
@@ -471,5 +449,27 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeRSSICalled, 1)
         XCTAssertEqual(delegate.didChangeRSSIThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeRSSI, 99)
+    }
+    
+    func testOlderLocation() {
+        // Given
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        let olderLocation = CLLocation(latitude: 0, longitude: 0)
+
+        let locationManager = CLLocationManagerMock(fakeLocation: nil)
+        sut = initBluetoothThingManager(subscriptions: [],
+                                        dataStore: dataStore,
+                                        centralManager: centralManager,
+                                        locationManager: locationManager)
+        let newerLocation = CLLocation(latitude: 0, longitude: 0)
+        sut.userLocation = newerLocation
+
+        // When
+        sut.locationManager(locationManager,
+                            didUpdateLocations: [olderLocation])
+
+        // Then
+        XCTAssertEqual(sut.userLocation, newerLocation)
     }
 }
