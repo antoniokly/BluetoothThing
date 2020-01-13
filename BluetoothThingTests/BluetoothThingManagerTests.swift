@@ -446,22 +446,6 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeCharacteristic?.value, value)
     }
     
-    func testConnectionStateString() {
-        var state: ConnectionState
-        
-        state = .connected
-        XCTAssertEqual(state.string, "connected")
-        
-        state = .disconnected
-        XCTAssertEqual(state.string, "disconnected")
-        
-        state = .connecting
-        XCTAssertEqual(state.string, "connecting")
-        
-        state = .disconnecting
-        XCTAssertEqual(state.string, "disconnecting")
-    }
-    
     func testDidReadRSSI() {
         // Given
         let serviceUUID = CBUUID(string: "FFF0")
