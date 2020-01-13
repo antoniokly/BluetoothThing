@@ -36,7 +36,7 @@ extension BluetoothThingProtocol {
     
     func perform(action: AnyHashable) -> Bool {
         if let action = actions[action] {
-            // write to peripharel
+            // TODO:  write to Peripheral
         }
         
         return true

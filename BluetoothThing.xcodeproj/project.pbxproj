@@ -9,13 +9,14 @@
 /* Begin PBXBuildFile section */
 		A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */; };
 		A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044723C935B800C6AD1C /* BluetoothHelper.swift */; };
-		A435044B23C9439800C6AD1C /* CoreBluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044A23C9439800C6AD1C /* CoreBluetooth.swift */; };
+		A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */; };
 		A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */; };
 		A435045823CA77C000C6AD1C /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* Subscription.swift */; };
 		A435045D23CAA8A100C6AD1C /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435045C23CAA8A100C6AD1C /* LocationHelper.swift */; };
 		A4553C6523C5D99000C49AC2 /* BluetoothThing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */; };
 		A4AB9E6323C682F800327FE5 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6223C682F800327FE5 /* Helpers.swift */; };
 		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
 		A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6823C68A4900327FE5 /* Location.swift */; };
@@ -38,18 +39,18 @@
 		A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerTests.swift; sourceTree = "<group>"; };
 		A435044523C9330300C6AD1C /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		A435044723C935B800C6AD1C /* BluetoothHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothHelper.swift; sourceTree = "<group>"; };
-		A435044A23C9439800C6AD1C /* CoreBluetooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBluetooth.swift; sourceTree = "<group>"; };
+		A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBluetoothMock.swift; sourceTree = "<group>"; };
 		A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCentralManagerMock.swift; sourceTree = "<group>"; };
 		A435045C23CAA8A100C6AD1C /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothThing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThing.h; sourceTree = "<group>"; };
 		A4553C5F23C5D99000C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothThingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothWorkerTests.swift; sourceTree = "<group>"; };
 		A4553C6B23C5D99100C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManager.swift; sourceTree = "<group>"; };
 		A494864423C7DAA300EF9625 /* Bean.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bean.swift; sourceTree = "<group>"; };
 		A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingProtocol.swift; sourceTree = "<group>"; };
+		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
 		A4AB9E6223C682F800327FE5 /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
 		A4AB9E6823C68A4900327FE5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
@@ -80,8 +81,9 @@
 		A435044923C9437900C6AD1C /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				A435044A23C9439800C6AD1C /* CoreBluetooth.swift */,
+				A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */,
 				A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */,
+				A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -123,7 +125,6 @@
 			isa = PBXGroup;
 			children = (
 				A435044923C9437900C6AD1C /* Mocks */,
-				A4553C6923C5D99000C49AC2 /* BluetoothWorkerTests.swift */,
 				A435044023C8813600C6AD1C /* BluetoothThingManagerTests.swift */,
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 			);
@@ -298,7 +299,8 @@
 			files = (
 				A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */,
 				A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */,
-				A435044B23C9439800C6AD1C /* CoreBluetooth.swift in Sources */,
+				A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */,
+				A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

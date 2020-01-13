@@ -10,19 +10,20 @@ import Foundation
 import CoreBluetooth
 
 class CBCentralManagerMock: CBCentralManager {
-    var _state: CBManagerState = .unknown
-    var peripherals: [CBPeripheralMock] = []
-    
-    override var state: CBManagerState {
-        get { return _state }
-        set {
-            _state = newValue
+    var _state: CBManagerState = .unknown {
+        didSet {
             if _state != .poweredOn {
-                for p in peripherals {
-                    p._state = .disconnected
+                for peripheral in peripherals {
+                    peripheral._state = .disconnected
                 }
             }
         }
+    }
+    
+    private var peripherals: [CBPeripheralMock] = []
+    
+    override var state: CBManagerState {
+        return _state
     }
     
     var stopScanCalled = false
@@ -38,6 +39,8 @@ class CBCentralManagerMock: CBCentralManager {
         if let p = peripheral as? CBPeripheralMock {
             p._state = .connected
         }
+        
+        delegate?.centralManager?(self, didConnect: peripheral)
     }
     
     var scanForPeripheralsCalled = 0
@@ -54,7 +57,8 @@ class CBCentralManagerMock: CBCentralManager {
         }
     }
     
-    init() {
+    init(peripherals: [CBPeripheralMock]) {
         super.init(delegate: nil, queue: nil, options: nil)
+        self.peripherals = peripherals
     }
 }

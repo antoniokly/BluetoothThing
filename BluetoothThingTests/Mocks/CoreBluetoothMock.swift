@@ -12,6 +12,8 @@ import CoreBluetooth
 class CBCharacteristicMock: CBCharacteristic {
     var _uuid: CBUUID
     var _service: CBService
+    var _value: Data?
+    var _isNotifying = false
     
     override var uuid: CBUUID {
         return _uuid
@@ -19,6 +21,14 @@ class CBCharacteristicMock: CBCharacteristic {
     
     override var service: CBService {
         return _service
+    }
+    
+    override var value: Data? {
+        return _value
+    }
+    
+    override var isNotifying: Bool {
+        return _isNotifying
     }
     
     init(uuid: CBUUID, service: CBServiceMock) {
@@ -74,6 +84,12 @@ class CBPeripheralMock: CBPeripheral {
         setNotifyValueCalled += 1
         setNotifyValueEnabled = enabled
         setNotifyValueCharacteristic = characteristic
+        
+        if let characteristic = characteristic as? CBCharacteristicMock {
+            characteristic._isNotifying = true
+        }
+        
+        delegate?.peripheral?(self, didUpdateNotificationStateFor: characteristic, error: nil)
     }
     
     var readValueCalled = 0
@@ -88,6 +104,8 @@ class CBPeripheralMock: CBPeripheral {
     override func discoverServices(_ serviceUUIDs: [CBUUID]?) {
         discoverServicesCalled += 1
         discoverServices = serviceUUIDs
+        
+        delegate?.peripheral?(self, didDiscoverServices: nil)
     }
     
     var discoverCharacteristicsCalled = 0
@@ -97,5 +115,7 @@ class CBPeripheralMock: CBPeripheral {
         discoverCharacteristicsCalled += 1
         discoverCharacteristics = characteristicUUIDs
         discoverCharacteristicsService = service
+        
+        delegate?.peripheral?(self, didDiscoverCharacteristicsFor: service, error: nil)
     }
 }
