@@ -11,9 +11,9 @@ import CoreBluetooth
 
 public class BluetoothThing: Codable {
     
-    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
-        return lhs.id == rhs.id
-    }
+//    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
+//        return lhs.id == rhs.id
+//    }
     
     public var id: UUID
     public var name: String? = nil

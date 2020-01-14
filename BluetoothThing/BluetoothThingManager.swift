@@ -12,10 +12,10 @@ import CoreLocation
 import os.log
 
 public class BluetoothThingManager: NSObject {
-    var delegate: BluetoothThingManagerDelegate
-    var subscriptions: [Subscription]
+    public internal (set) var delegate: BluetoothThingManagerDelegate
+    public internal (set) var subscriptions: [Subscription]
         
-    var dataStore: DataStoreInterface!
+    public internal (set) var dataStore: DataStoreProtocol!
     var centralManager: CBCentralManager!
     var locationManager: CLLocationManager?
     var geocoder: GeocoderProtocol?
@@ -24,6 +24,10 @@ public class BluetoothThingManager: NSObject {
     
     var serviceUUIDs: [CBUUID] {
         return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
+    }
+    
+    var things: [BluetoothThing] {
+        return dataStore.things
     }
         
     var isPendingToStart = false
@@ -35,7 +39,7 @@ public class BluetoothThingManager: NSObject {
 
     public init(delegate: BluetoothThingManagerDelegate,
          subscriptions: [Subscription],
-         dataStore: DataStoreInterface? = nil,
+         dataStore: DataStoreProtocol? = nil,
          centralManager: CBCentralManager? = nil,
          useLocation: Bool = false
          ) {

@@ -20,7 +20,7 @@ class LocationTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testConnectionStateString() {
+    func testLocation() {
         let clLocation = CLLocation(latitude: 1, longitude: 2)
         let location = Location(location: clLocation)
         

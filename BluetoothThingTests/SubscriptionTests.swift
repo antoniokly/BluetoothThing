@@ -1,0 +1,94 @@
+//
+//  SubscriptionTests.swift
+//  BluetoothThingTests
+//
+//  Created by Antonio Yip on 14/01/20.
+//  Copyright © 2020 Antonio Yip. All rights reserved.
+//
+
+import XCTest
+import CoreBluetooth
+@testable import BluetoothThing
+
+class HelperTests: XCTestCase {
+
+    let serviceUUID1 = CBUUID(string: "FF10")
+    let serviceUUID2 = CBUUID(string: "FF20")
+    let characteristicUUID1 = CBUUID(string: "FFF1")
+    let characteristicUUID2 = CBUUID(string: "FFF2")
+    
+    var peripheral: CBPeripheralMock!
+    
+    override func setUp() {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+        
+        let services = [
+            CBServiceMock(uuid: serviceUUID1),
+            CBServiceMock(uuid: serviceUUID2)
+        ]
+        
+        for service in services {
+            service._characteristics = [
+                CBCharacteristicMock(uuid: characteristicUUID1, service: service),
+                CBCharacteristicMock(uuid: characteristicUUID2, service: service)
+            ]
+        }
+        
+        peripheral = CBPeripheralMock(identifier: UUID(), services: services)
+      
+    }
+
+    override func tearDown() {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+    
+    func testNoSubscription() {
+        
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: [])
+        
+        XCTAssertEqual(subscribed.count, 0)
+    }
+
+    func testSubscribedCharateristics() {
+        
+        let subsriptions = [
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID1),
+            Subscription(service: serviceUUID2, characteristic: characteristicUUID2),
+        ]
+        
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: subsriptions)
+        
+        XCTAssertEqual(subscribed.count, 2)
+        XCTAssertEqual(subscribed.map({$0.uuid}),
+                       [characteristicUUID1, characteristicUUID2])
+        XCTAssertEqual(subscribed.map({$0.service.uuid}),
+                       [serviceUUID1, serviceUUID2])
+    }
+    
+    func testSubscription1() {
+        let subscriptions = [
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID1)
+        ]
+        
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: subscriptions)
+        
+        XCTAssertEqual(subscribed.count, 1)
+    }
+    
+    func testEmptyService() {
+        let subscriptions = [
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID1)
+        ]
+        
+        peripheral._services = nil
+        
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: subscriptions)
+        
+        XCTAssertEqual(subscribed.count, 0)
+    }
+
+}

@@ -8,7 +8,9 @@
 
 import Foundation
 
-public protocol DataStoreInterface {
+public protocol DataStoreProtocol {
+    var things: [BluetoothThing] { get }
+    
     func save()
     func getStoredThings() -> [BluetoothThing]
     func getThing(id: UUID) -> BluetoothThing?
@@ -17,12 +19,13 @@ public protocol DataStoreInterface {
     func reset()
 }
 
-class DataStore: DataStoreInterface {
+class DataStore: DataStoreProtocol {
     
     var storeKey: String
-    var things: [BluetoothThing] = []
     
-    init(storeKey: String = Bundle.main.bundleIdentifier!) {
+    public internal (set) var things: [BluetoothThing] = []
+    
+    public init(storeKey: String = Bundle.main.bundleIdentifier!) {
         self.storeKey = storeKey
         self.things = getStoredThings()
     }
