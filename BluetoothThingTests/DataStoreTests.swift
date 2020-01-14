@@ -39,10 +39,7 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(sut.things.count, 3)
         XCTAssertEqual(sut.getStoredThings().count, 0)
         
-//        sut.save()
-//        XCTAssertEqual(sut.getStoredThings().count, 3)
+        sut.save()
+        XCTAssertEqual(sut.getStoredThings().count, 3)
     }
-
-
-
 }

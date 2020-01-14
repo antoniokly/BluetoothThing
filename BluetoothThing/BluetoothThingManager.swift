@@ -53,7 +53,7 @@ public class BluetoothThingManager: NSObject {
             self.locationManager = manager
 
             manager.delegate = self
-            manager.requestWhenInUseAuthorization()
+            manager.requestAlwaysAuthorization()
             manager.desiredAccuracy = kCLLocationAccuracyBest
             manager.pausesLocationUpdatesAutomatically = true
             manager.startMonitoringSignificantLocationChanges()

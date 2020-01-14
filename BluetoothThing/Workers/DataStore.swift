@@ -28,9 +28,10 @@ class DataStore: DataStoreInterface {
     }
     
     func save() {
-        let data = NSKeyedArchiver.archivedData(withRootObject: things)
-        UserDefaults.standard.set(data, forKey: storeKey)
-        UserDefaults.standard.synchronize()
+        if let data = try? JSONEncoder().encode(things) {
+            UserDefaults.standard.set(data, forKey: storeKey)
+            UserDefaults.standard.synchronize()
+        }
     }
     
     func reset() {
@@ -70,7 +71,7 @@ class DataStore: DataStoreInterface {
     func getStoredThings() -> [BluetoothThing] {
         guard
             let data = UserDefaults.standard.object(forKey: storeKey) as? Data,
-            let things = NSKeyedUnarchiver.unarchiveObject(with: data) as? [BluetoothThing] else {
+            let things = try? JSONDecoder().decode([BluetoothThing].self, from: data) else {
             return []
         }
         
