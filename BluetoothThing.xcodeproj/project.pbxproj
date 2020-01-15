@@ -58,8 +58,6 @@
 		A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothThingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4553C6B23C5D99100C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManager.swift; sourceTree = "<group>"; };
-		A494864423C7DAA300EF9625 /* Bean.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bean.swift; sourceTree = "<group>"; };
-		A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingProtocol.swift; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
 		A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationManagerMock.swift; sourceTree = "<group>"; };
 		A49E466123CC19DC0065B96C /* CLGeocoderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLGeocoderMock.swift; sourceTree = "<group>"; };
@@ -125,7 +123,6 @@
 		A4553C5D23C5D99000C49AC2 /* BluetoothThing */ = {
 			isa = PBXGroup;
 			children = (
-				A494864323C7DA9200EF9625 /* Examples */,
 				A4AB9E6A23C68BD300327FE5 /* Models */,
 				A4AB9E6423C6830400327FE5 /* Helpers */,
 				A4AB9E5C23C6807100327FE5 /* Workers */,
@@ -150,15 +147,6 @@
 				A402498723CC6F8D0012618E /* TestHelper.swift */,
 			);
 			path = BluetoothThingTests;
-			sourceTree = "<group>";
-		};
-		A494864323C7DA9200EF9625 /* Examples */ = {
-			isa = PBXGroup;
-			children = (
-				A496E3FA23C70D6F00159FF9 /* BluetoothThingProtocol.swift */,
-				A494864423C7DAA300EF9625 /* Bean.swift */,
-			);
-			path = Examples;
 			sourceTree = "<group>";
 		};
 		A4AB9E5C23C6807100327FE5 /* Workers */ = {

@@ -9,11 +9,14 @@
 import Foundation
 import CoreBluetooth
 
+public typealias ServiceUUID = CBUUID
+public typealias CharateristicUUID = CBUUID
+
 public struct Subscription {
-    public var serviceUUID: CBUUID
-    public var characteristicUUID: CBUUID
+    public var serviceUUID: ServiceUUID
+    public var characteristicUUID: CharateristicUUID
     
-    public init(service: CBUUID, characteristic: CBUUID) {
+    public init(service: ServiceUUID, characteristic: CharateristicUUID) {
         self.serviceUUID = service
         self.characteristicUUID = characteristic
     }

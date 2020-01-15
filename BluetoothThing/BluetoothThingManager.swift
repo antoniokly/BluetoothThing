@@ -36,6 +36,8 @@ public class BluetoothThingManager: NSObject {
     static let centralManagerOptions = [
         CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
     ]
+    
+    static let peripheralOptions: [String: Any]? = nil
 
     public init(delegate: BluetoothThingManagerDelegate,
          subscriptions: [Subscription],
@@ -159,7 +161,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                         peripheral.readRSSI()
                         peripheral.discoverServices(serviceUUIDs)
                     default:
-                        central.connect(peripheral)
+                        central.connect(peripheral, options: Self.peripheralOptions)
                         break
                     }
                 } else {
@@ -212,11 +214,16 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         }
         
         if let _ = didUpdatePeripheral(peripheral, rssi: RSSI) {
-            central.connect(peripheral)
+            central.connect(peripheral, options: Self.peripheralOptions)
         } else {
             let newThing = BluetoothThing(id: peripheral.identifier)
             newThing.name = peripheral.name
-            delegate.bluetoothThingManager(self, didFoundThing: newThing, rssi: RSSI)
+            delegate.bluetoothThingManager(self, didFoundThing: newThing, rssi: RSSI, handler: { connect in
+                if connect {
+                    self.dataStore.addThing(id: peripheral.identifier)
+                    central.connect(peripheral, options: Self.peripheralOptions)
+                }
+            })
         }
     }
     
@@ -233,7 +240,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         os_log("didDisconnectPeripheral %@", peripheral)
                 
         if didUpdatePeripheral(peripheral) != nil {
-            central.connect(peripheral)
+            central.connect(peripheral, options: Self.peripheralOptions)
         }
     }
 }

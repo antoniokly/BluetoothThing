@@ -24,7 +24,7 @@ class BluetoothThingManagerTests: XCTestCase {
         var didFoundThingCalled = 0
         var didFoundThingRSSI: NSNumber?
         var foundThing: BluetoothThing?
-        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber) {
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber, handler: @escaping (Bool) -> Void) {
             didFoundThingCalled += 1
             didFoundThingRSSI = rssi
             foundThing = thing

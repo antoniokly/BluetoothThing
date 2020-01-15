@@ -14,8 +14,8 @@ public protocol DataStoreProtocol {
     func save()
     func getStoredThings() -> [BluetoothThing]
     func getThing(id: UUID) -> BluetoothThing?
-//    func saveThing(_ thing: BluetoothThing) -> Bool
-//    func removeThing(id: UUID) -> Bool
+    @discardableResult func addThing(id: UUID) -> BluetoothThing
+    @discardableResult func removeThing(id: UUID) -> Bool
     func reset()
 }
 
@@ -56,20 +56,24 @@ class DataStore: DataStoreProtocol {
         return things.first(where: {$0.id == id})
     }
     
-//    func saveThing(id: UUID) -> BluetoothThing {
-//        let thing = BluetoothThing(id: id)
-//        things.append(thing)
-//        return thing
-//    }
+    func addThing(id: UUID) -> BluetoothThing {
+        if let thing = things.first(where: {$0.id == id}) {
+            return thing
+        }
+            
+        let newThing = BluetoothThing(id: id)
+        things.append(newThing)
+        return newThing
+    }
     
-//    func removeThing(id: UUID) -> Bool {
-//        if let index = things.firstIndex(where: {$0.id == id}) {
-//            things.remove(at: index)
-//            return true
-//        }
-//
-//        return false
-//    }
+    func removeThing(id: UUID) -> Bool {
+        if let index = things.firstIndex(where: {$0.id == id}) {
+            things.remove(at: index)
+            return true
+        }
+
+        return false
+    }
     
     func getStoredThings() -> [BluetoothThing] {
         guard

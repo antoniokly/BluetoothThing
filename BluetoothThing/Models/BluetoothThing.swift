@@ -9,25 +9,25 @@
 import Foundation
 import CoreBluetooth
 
-public class BluetoothThing: Codable {
+
+open class BluetoothThing: Codable {
     
 //    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
 //        return lhs.id == rhs.id
 //    }
     
-    public var id: UUID
-    public var name: String? = nil
-    public var state: CBPeripheralState = .disconnected
-    public var location: Location? = nil
-    public var data: [String: [String: Data]] = [:]
-    public var lastConnected: Date?
-    public var lastDisconnected: Date?
+    open var id: UUID
+    open var name: String? = nil
+    open var state: CBPeripheralState = .disconnected
+    open var location: Location? = nil
+    open var data: [String: [String: Data]] = [:]
+    open var lastConnected: Date?
+    open var lastDisconnected: Date?
 
     
     private enum CodingKeys: String, CodingKey {
         case id
         case name
-//        case state
         case location
         case data
         case lastConnected
