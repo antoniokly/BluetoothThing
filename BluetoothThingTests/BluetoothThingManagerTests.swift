@@ -16,6 +16,10 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?) {
+            
+        }
+        
         var didUpdateLocationCalled = 0
         func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location) {
             didUpdateLocationCalled += 1

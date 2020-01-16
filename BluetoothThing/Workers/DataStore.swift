@@ -15,7 +15,7 @@ public protocol DataStoreProtocol {
     func getStoredThings() -> [BluetoothThing]
     func getThing(id: UUID) -> BluetoothThing?
     @discardableResult func addThing(id: UUID) -> BluetoothThing
-    @discardableResult func removeThing(id: UUID) -> Bool
+    @discardableResult func removeThing(id: UUID) -> BluetoothThing?
     func reset()
 }
 
@@ -68,13 +68,12 @@ class DataStore: DataStoreProtocol {
     }
     
     @discardableResult
-    func removeThing(id: UUID) -> Bool {
+    func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
-            things.remove(at: index)
-            return true
+            return things.remove(at: index)
         }
 
-        return false
+        return nil
     }
     
     func getStoredThings() -> [BluetoothThing] {
