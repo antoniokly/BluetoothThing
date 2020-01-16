@@ -10,7 +10,7 @@ import XCTest
 import CoreBluetooth
 @testable import BluetoothThing
 
-class HelperTests: XCTestCase {
+class SubscriptionTests: XCTestCase {
 
     let serviceUUID1 = CBUUID(string: "FF10")
     let serviceUUID2 = CBUUID(string: "FF20")
@@ -91,4 +91,35 @@ class HelperTests: XCTestCase {
         XCTAssertEqual(subscribed.count, 0)
     }
 
+    func testSubscribePeripheral() {
+        // Given
+        let subsriptions = [
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID1),
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID2),
+            Subscription(service: serviceUUID2, characteristic: characteristicUUID1),
+            Subscription(service: serviceUUID2, characteristic: characteristicUUID2),
+        ]
+        
+        // When
+        peripheral.subscribe(subscriptions: subsriptions)
+        
+        //Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
+        for service in peripheral.services ?? [] {
+            for characteristic in service.characteristics ?? [] {
+                XCTAssertTrue(characteristic.isNotifying)
+            }
+        }
+        
+        // When
+        peripheral.unsubscribe(subscriptions: subsriptions)
+        
+        //Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
+        for service in peripheral.services ?? [] {
+            for characteristic in service.characteristics ?? [] {
+                XCTAssertFalse(characteristic.isNotifying)
+            }
+        }
+    }
 }

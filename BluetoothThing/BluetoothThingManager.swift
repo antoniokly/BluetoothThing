@@ -31,14 +31,15 @@ public class BluetoothThingManager: NSObject {
     }
         
     var isPendingToStart = false
+    var scanningOptions: [String: Any]?
     var knownPeripherals: Set<CBPeripheral> = []
     
-    static let centralManagerOptions = [
+    static let centralManagerOptions: [String: Any]? = [
         CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
     ]
     
     static let peripheralOptions: [String: Any]? = nil
-
+        
     public init(delegate: BluetoothThingManagerDelegate,
          subscriptions: [Subscription],
          dataStore: DataStoreProtocol? = nil,
@@ -66,21 +67,28 @@ public class BluetoothThingManager: NSObject {
         }
     }
     
-    public func start() {
+    public func startScanning(allowDuplicates: Bool) {
+        let options = [
+            CBCentralManagerScanOptionAllowDuplicatesKey: allowDuplicates
+        ]
+        
+        startScanning(options: options)
+    }
+    
+    func startScanning(options: [String: Any]?) {
         guard centralManager.state == .poweredOn else {
             isPendingToStart = true
+            scanningOptions = options
             return
         }
         
         isPendingToStart = false
-        centralManager.scanForPeripherals(withServices: serviceUUIDs, options: nil)
-        
-        for peripheral in knownPeripherals {
-            peripheral.subscribe(subscriptions: subscriptions)
-        }
+        scanningOptions = nil
+                
+        centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
     }
     
-    public func stop() {
+    public func stopScanning() {
         isPendingToStart = false
 
         guard centralManager.state == .poweredOn else {
@@ -88,10 +96,6 @@ public class BluetoothThingManager: NSObject {
         }
         
         centralManager.stopScan()
-        
-        for peripheral in knownPeripherals {
-            peripheral.unsubscribe(subscriptions: subscriptions)
-        }
     }
     
     //MARK: - BluetoothThing
@@ -172,7 +176,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             }
             
             if isPendingToStart {
-                start()
+                startScanning(options: scanningOptions)
             }
         } else {
             for peripheral in knownPeripherals {
@@ -195,7 +199,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         if let services = dict[CBCentralManagerRestoredStateScanServicesKey] as? [CBUUID] {
             if Set(serviceUUIDs) != Set(services) {
-                start()
+                startScanning(options: scanningOptions)
             }
         }
     }
@@ -218,19 +222,37 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         } else {
             let newThing = BluetoothThing(id: peripheral.identifier)
             newThing.name = peripheral.name
-            delegate.bluetoothThingManager(self, didFoundThing: newThing, rssi: RSSI, handler: { connect in
-                if connect {
-                    self.dataStore.addThing(id: peripheral.identifier)
-                    central.connect(peripheral, options: Self.peripheralOptions)
+            
+            newThing.connect = { [weak self, weak peripheral] in
+                guard
+                    let self = self,
+                    let peripheral = peripheral  else {
+                        return
                 }
-            })
+                
+                self.dataStore.addThing(id: peripheral.identifier)
+                self.centralManager.connect(peripheral, options: Self.peripheralOptions)
+            }
+            
+            newThing.disconnect = { [weak self, weak peripheral] in
+                guard
+                    let self = self,
+                    let peripheral = peripheral else {
+                        return
+                }
+                
+                self.centralManager.cancelPeripheralConnection(peripheral)
+                self.dataStore.removeThing(id: peripheral.identifier)
+            }
+            
+            delegate.bluetoothThingManager(self, didFoundThing: newThing, rssi: RSSI)
         }
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
         didUpdatePeripheral(peripheral)
-
+        
         peripheral.readRSSI()
         peripheral.discoverServices(serviceUUIDs)
         locationManager?.requestLocation()
@@ -260,7 +282,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
                 }.map {
                     $0.characteristicUUID
                 }
-                //TODO: Test not to discover unsuscribed uuids
+                
                 peripheral.discoverCharacteristics(uuids, for: service)
             }
         }

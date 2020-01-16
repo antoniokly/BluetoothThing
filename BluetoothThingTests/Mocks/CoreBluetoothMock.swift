@@ -86,7 +86,7 @@ class CBPeripheralMock: CBPeripheral {
         setNotifyValueCharacteristic = characteristic
         
         if let characteristic = characteristic as? CBCharacteristicMock {
-            characteristic._isNotifying = true
+            characteristic._isNotifying = enabled
         }
         
         delegate?.peripheral?(self, didUpdateNotificationStateFor: characteristic, error: nil)
@@ -117,5 +117,10 @@ class CBPeripheralMock: CBPeripheral {
         discoverCharacteristicsService = service
         
         delegate?.peripheral?(self, didDiscoverCharacteristicsFor: service, error: nil)
+    }
+    
+    var didReadRSSICalled = 0
+    override func readRSSI() {
+        didReadRSSICalled += 1
     }
 }

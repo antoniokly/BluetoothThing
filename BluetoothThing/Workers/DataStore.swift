@@ -56,6 +56,7 @@ class DataStore: DataStoreProtocol {
         return things.first(where: {$0.id == id})
     }
     
+    @discardableResult
     func addThing(id: UUID) -> BluetoothThing {
         if let thing = things.first(where: {$0.id == id}) {
             return thing
@@ -66,6 +67,7 @@ class DataStore: DataStoreProtocol {
         return newThing
     }
     
+    @discardableResult
     func removeThing(id: UUID) -> Bool {
         if let index = things.firstIndex(where: {$0.id == id}) {
             things.remove(at: index)

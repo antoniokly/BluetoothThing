@@ -24,6 +24,8 @@ open class BluetoothThing: Codable {
     open var lastConnected: Date?
     open var lastDisconnected: Date?
 
+    open var connect: () -> Void = {}
+    open var disconnect: () -> Void = {}
     
     private enum CodingKeys: String, CodingKey {
         case id

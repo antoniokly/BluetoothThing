@@ -57,6 +57,13 @@ class CBCentralManagerMock: CBCentralManager {
         }
     }
     
+    var cancelConnectionCalled = 0
+    var cancelConnectionPeripheral: CBPeripheral?
+    override func cancelPeripheralConnection(_ peripheral: CBPeripheral) {
+        cancelConnectionCalled = 1
+        cancelConnectionPeripheral = peripheral
+    }
+    
     init(peripherals: [CBPeripheralMock]) {
         super.init(delegate: nil, queue: nil, options: nil)
         self.peripherals = peripherals

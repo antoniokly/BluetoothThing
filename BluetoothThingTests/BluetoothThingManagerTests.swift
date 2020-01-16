@@ -24,7 +24,7 @@ class BluetoothThingManagerTests: XCTestCase {
         var didFoundThingCalled = 0
         var didFoundThingRSSI: NSNumber?
         var foundThing: BluetoothThing?
-        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber, handler: @escaping (Bool) -> Void) {
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber) {
             didFoundThingCalled += 1
             didFoundThingRSSI = rssi
             foundThing = thing
@@ -119,14 +119,14 @@ class BluetoothThingManagerTests: XCTestCase {
 
         // When
         centralManager._state = .poweredOff
-        sut.stop()
+        sut.stopScanning()
         
         //Then
         XCTAssertFalse(sut.isPendingToStart)
         XCTAssertFalse(centralManager.stopScanCalled)
         
         // When
-        sut.start()
+        sut.startScanning(allowDuplicates: false)
         
         //Then
         XCTAssertTrue(sut.isPendingToStart)
@@ -143,19 +143,17 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertFalse(sut.isPendingToStart)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
         XCTAssertEqual(centralManager.scanForPeripheralsServiceUUIDs, [serviceUUID])
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 1)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID)
         
         // When
-        sut.stop()
+//        let thing = dataStore.getThing(id: peripheral.identifier)
+//        thing?.connect()
+        
+        // When
+        sut.stopScanning()
         
         //Then
         XCTAssertFalse(sut.isPendingToStart)
         XCTAssertTrue(centralManager.stopScanCalled)
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID)
     }
     
     func testRestoreState() {
@@ -227,6 +225,7 @@ class BluetoothThingManagerTests: XCTestCase {
         peripheral._state = .connected
         sut.centralManager(sut.centralManager, didConnect: peripheral)
         
+        // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
         XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
         XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
@@ -319,7 +318,27 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.didFoundThingCalled, 1)
         XCTAssertEqual(delegate.didFoundThingRSSI, 100)
-        XCTAssertEqual(delegate.foundThing?.id, peripheral.identifier)
+        
+        let thing = delegate.foundThing
+        XCTAssertNotNil(thing)
+        XCTAssertEqual(thing?.id, peripheral.identifier)
+        XCTAssertEqual(dataStore.things.count, 0)
+        
+        // When
+        thing?.connect()
+        
+        // Then
+        XCTAssertEqual(dataStore.things.count, 1)
+        XCTAssertEqual(centralManager.connectCalled, 1)
+        XCTAssertEqual(centralManager.connectPeripheral, peripheral)
+        
+        // When
+        thing?.disconnect()
+        
+        // Then
+        XCTAssertEqual(dataStore.things.count, 0)
+        XCTAssertEqual(centralManager.cancelConnectionCalled, 1)
+        XCTAssertEqual(centralManager.cancelConnectionPeripheral, peripheral)
     }
     
     func testDidDiscoverUnsubscribedPeripheral() {

@@ -42,4 +42,16 @@ class DataStoreTests: XCTestCase {
         sut.save()
         XCTAssertEqual(sut.getStoredThings().count, 3)
     }
+    
+    func testAddRemoveThing() {
+        let uuid = UUID()
+        sut.addThing(id: uuid)
+        
+        XCTAssertEqual(sut.things.count, 4)
+        XCTAssertEqual(sut.things.last?.id, uuid)
+        
+        sut.removeThing(id: uuid)
+        XCTAssertEqual(sut.things.count, 3)
+        XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
+    }
 }
