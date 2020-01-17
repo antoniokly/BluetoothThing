@@ -14,7 +14,9 @@ extension CBPeripheral {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
-            self.setNotifyValue(true, for: characteristic)
+            if !characteristic.isNotifying {
+                self.setNotifyValue(true, for: characteristic)
+            }
         }
     }
     
@@ -22,7 +24,9 @@ extension CBPeripheral {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
-            self.setNotifyValue(false, for: characteristic)
+            if characteristic.isNotifying {
+                self.setNotifyValue(false, for: characteristic)
+            }
         }
     }
 }

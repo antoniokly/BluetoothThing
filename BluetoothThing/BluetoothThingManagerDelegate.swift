@@ -16,6 +16,7 @@ public protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
+    func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error)
     
     func bluetoothThing(_ thing: BluetoothThing, didChangeCharacteristic characteristic: Characteristic)
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)

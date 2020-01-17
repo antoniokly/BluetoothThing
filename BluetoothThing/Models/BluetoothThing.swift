@@ -18,8 +18,8 @@ public class BluetoothThing: Codable {
     public var location: Location? = nil
     public var data: [String: [String: Data]] = [:]
     
-    public var connect: () -> Void = {}
-    public var disconnect: () -> Void = {}
+    public var register: (() -> Void)?
+    public var deregister: (() -> Void)?
     
     var timer: Timer?
     

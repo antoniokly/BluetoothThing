@@ -92,6 +92,13 @@ public class BluetoothThingManager: NSObject {
         
         if centralManager.state == .poweredOn {
             isPendingToStart = false
+            
+            if allowDuplicates {
+                for thing in newFoundThings.filter({$0.state == .disconnected}) {
+                    delegate.bluetoothThingManager(self, didLoseThing: thing)
+                }
+            }
+            
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
         } else {
             isPendingToStart = true
@@ -159,6 +166,13 @@ public class BluetoothThingManager: NSObject {
     }
     
     func registerThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        thing.timer?.invalidate()
+        thing.timer = nil
+        
+        if let index = newFoundThings.firstIndex(where: {$0.id == thing.id}) {
+            newFoundThings.remove(at: index)
+        }
+        
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
@@ -196,7 +210,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                         peripheral.discoverServices(serviceUUIDs)
                     default:
                         central.connect(peripheral, options: Self.peripheralOptions)
-                        break
                     }
                 } else {
                     central.cancelPeripheralConnection(peripheral)
@@ -210,10 +223,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             }
         } else {
             for peripheral in knownPeripherals {
-                if let thing = didUpdatePeripheral(peripheral) {
-                    delegate.bluetoothThingManager(self, didLoseThing: thing)
-                }
+                didUpdatePeripheral(peripheral)
             }
+            
+            for thing in newFoundThings {
+                delegate.bluetoothThingManager(self, didLoseThing: thing)
+            }
+            
+            startScanning(options: scanningOptions)
         }
     }
     
@@ -261,15 +278,15 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 newThing.name = peripheral.name
 
                 // MARK: Connect request
-                newThing.connect = { [weak self, weak peripheral, weak newThing] in
+                newThing.register = { [weak self, weak peripheral, weak newThing] in
                     guard let peripheral = peripheral, let thing = newThing else {
-                            return
+                        return
                     }
                     self?.registerThing(thing, peripheral: peripheral)
                 }
                 
                 // MARK: Disconnect request
-                newThing.disconnect = { [weak self, weak peripheral, weak newThing] in
+                newThing.deregister = { [weak self, weak peripheral, weak newThing] in
                     guard let peripheral = peripheral, let thing = newThing else {
                         return
                     }
@@ -317,20 +334,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             // reconnect if lost connection unintentionally
             central.connect(peripheral, options: Self.peripheralOptions)
         } else {
-            // if it is deregistered by user, tell delegate to forget it after delay
             if let thing = deregisteringThings.removeValue(forKey: peripheral.identifier) {
                 thing.state = peripheral.state
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-                
-                thing.timer?.invalidate()
-                thing.timer = Timer.scheduledTimer(
-                    withTimeInterval: loseThingAfterTimeInterval,
-                    repeats: false,
-                    block: { [weak self, weak thing] timer in
-                        guard let thing = thing else { return }
-                        self?.loseThing(thing)
-                    }
-                )
             }
         }
     }
@@ -370,7 +376,9 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
             
             for characteristic in characteristics {
-                peripheral.setNotifyValue(true, for: characteristic)
+                if !characteristic.isNotifying {
+                    peripheral.setNotifyValue(true, for: characteristic)
+                }
                 peripheral.readValue(for: characteristic)
             }
         }
@@ -409,6 +417,7 @@ extension BluetoothThingManager: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         os_log("didFailWithError: %@", error.localizedDescription)
+        delegate.bluetoothThingManager(self, locationDidFailWithError: error)
     }
     
     func fetchPlacemarks(_ location: CLLocation) {
