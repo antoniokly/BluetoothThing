@@ -50,8 +50,21 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(sut.things.count, 4)
         XCTAssertEqual(sut.things.last?.id, uuid)
         
-        sut.removeThing(id: uuid)
+        sut.addThing(id: uuid)
+        XCTAssertEqual(sut.things.count, 4, "should not add duplicate")
+        
+        XCTAssertNotNil(sut.removeThing(id: uuid))
         XCTAssertEqual(sut.things.count, 3)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
+        
+        XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
+        XCTAssertEqual(sut.things.count, 3)
+
+        let thing = BluetoothThing(id: UUID())
+        sut.addThing(thing)
+        XCTAssertEqual(sut.things.count, 4)
+        
+        sut.addThing(thing)
+        XCTAssertEqual(sut.things.count, 4, "should not add duplicate")
     }
 }

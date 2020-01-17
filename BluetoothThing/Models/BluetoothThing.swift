@@ -10,30 +10,24 @@ import Foundation
 import CoreBluetooth
 
 
-open class BluetoothThing: Codable {
+public class BluetoothThing: Codable {
     
-//    static func == (lhs: BluetoothThing, rhs: BluetoothThing) -> Bool {
-//        return lhs.id == rhs.id
-//    }
+    public private (set) var id: UUID
+    public var name: String? = nil
+    public var state: CBPeripheralState = .disconnected
+    public var location: Location? = nil
+    public var data: [String: [String: Data]] = [:]
     
-    open var id: UUID
-    open var name: String? = nil
-    open var state: CBPeripheralState = .disconnected
-    open var location: Location? = nil
-    open var data: [String: [String: Data]] = [:]
-    open var lastConnected: Date?
-    open var lastDisconnected: Date?
-
-    open var connect: () -> Void = {}
-    open var disconnect: () -> Void = {}
+    public var connect: () -> Void = {}
+    public var disconnect: () -> Void = {}
+    
+    var timer: Timer?
     
     private enum CodingKeys: String, CodingKey {
         case id
         case name
         case location
         case data
-        case lastConnected
-        case lastDisconnected
     }
     
     public init(id: UUID) {

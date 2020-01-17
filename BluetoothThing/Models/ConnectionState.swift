@@ -11,7 +11,7 @@ import CoreBluetooth
 
 public typealias ConnectionState = CBPeripheralState
 public extension CBPeripheralState {
-    var string: String {
+    var stringValue: String {
         switch self {
         case .connected:
             return "connected"

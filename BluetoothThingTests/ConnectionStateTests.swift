@@ -23,16 +23,16 @@ class ConnectionStateTests: XCTestCase {
            var state: ConnectionState
            
            state = .connected
-           XCTAssertEqual(state.string, "connected")
+           XCTAssertEqual(state.stringValue, "connected")
            
            state = .disconnected
-           XCTAssertEqual(state.string, "disconnected")
+           XCTAssertEqual(state.stringValue, "disconnected")
            
            state = .connecting
-           XCTAssertEqual(state.string, "connecting")
+           XCTAssertEqual(state.stringValue, "connecting")
            
            state = .disconnecting
-           XCTAssertEqual(state.string, "disconnecting")
+           XCTAssertEqual(state.stringValue, "disconnecting")
        }
 
 }

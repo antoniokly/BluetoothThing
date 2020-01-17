@@ -14,7 +14,6 @@
 		A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */; };
 		A435044D23C9971300C6AD1C /* CBCentralManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */; };
 		A435045823CA77C000C6AD1C /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* Subscription.swift */; };
-		A435045D23CAA8A100C6AD1C /* LocationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435045C23CAA8A100C6AD1C /* LocationHelper.swift */; };
 		A4411AF123CD5682000C7E11 /* SubscriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4411AF023CD5682000C7E11 /* SubscriptionTests.swift */; };
 		A4553C6523C5D99000C49AC2 /* BluetoothThing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -50,7 +49,6 @@
 		A435044723C935B800C6AD1C /* BluetoothHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothHelper.swift; sourceTree = "<group>"; };
 		A435044A23C9439800C6AD1C /* CoreBluetoothMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreBluetoothMock.swift; sourceTree = "<group>"; };
 		A435044C23C9971300C6AD1C /* CBCentralManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CBCentralManagerMock.swift; sourceTree = "<group>"; };
-		A435045C23CAA8A100C6AD1C /* LocationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationHelper.swift; sourceTree = "<group>"; };
 		A4411AF023CD5682000C7E11 /* SubscriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionTests.swift; sourceTree = "<group>"; };
 		A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothThing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThing.h; sourceTree = "<group>"; };
@@ -162,7 +160,6 @@
 			isa = PBXGroup;
 			children = (
 				A435044723C935B800C6AD1C /* BluetoothHelper.swift */,
-				A435045C23CAA8A100C6AD1C /* LocationHelper.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -235,7 +232,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Antonio Yip";
 				TargetAttributes = {
 					A4553C5A23C5D99000C49AC2 = {
@@ -293,7 +290,6 @@
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
-				A435045D23CAA8A100C6AD1C /* LocationHelper.swift in Sources */,
 				A435045823CA77C000C6AD1C /* Subscription.swift in Sources */,
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
@@ -345,6 +341,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -352,6 +349,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -406,6 +404,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -413,6 +412,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -450,7 +450,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 3CWSQGN6ET;
@@ -474,7 +474,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 3CWSQGN6ET;

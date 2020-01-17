@@ -14,6 +14,7 @@ public protocol DataStoreProtocol {
     func save()
     func getStoredThings() -> [BluetoothThing]
     func getThing(id: UUID) -> BluetoothThing?
+    func addThing(_ thing: BluetoothThing)
     @discardableResult func addThing(id: UUID) -> BluetoothThing
     @discardableResult func removeThing(id: UUID) -> BluetoothThing?
     func reset()
@@ -41,17 +42,15 @@ class DataStore: DataStoreProtocol {
         UserDefaults.standard.removeObject(forKey: storeKey)
         UserDefaults.standard.synchronize()
     }
+
+    func addThing(_ thing: BluetoothThing) {
+        if let index = things.firstIndex(where: {$0.id == thing.id}) {
+            things.remove(at: index)
+        }
+        
+        things.append(thing)
+    }
     
-//    func getThing(id: UUID) -> BluetoothThing? {
-//        if let thing = things.first(where: {$0.id == id}) {
-//            return thing
-//        }
-//
-//        let thing = BluetoothThing(id: id)
-//        things.append(thing)
-//
-//        return thing
-//    }
     func getThing(id: UUID) -> BluetoothThing? {
         return things.first(where: {$0.id == id})
     }

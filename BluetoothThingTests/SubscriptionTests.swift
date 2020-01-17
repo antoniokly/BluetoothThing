@@ -90,6 +90,19 @@ class SubscriptionTests: XCTestCase {
         
         XCTAssertEqual(subscribed.count, 0)
     }
+    
+    func testEmptyCharateristic() {
+        let subscriptions = [
+            Subscription(service: serviceUUID1, characteristic: characteristicUUID1)
+        ]
+                
+        peripheral._services = [CBServiceMock(uuid: serviceUUID1)]
+        
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: subscriptions)
+        
+        XCTAssertEqual(subscribed.count, 0)
+    }
 
     func testSubscribePeripheral() {
         // Given

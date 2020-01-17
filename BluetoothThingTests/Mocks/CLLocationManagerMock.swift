@@ -12,6 +12,16 @@ import CoreLocation
 class CLLocationManagerMock: CLLocationManager {
     private var fakeLocation: CLLocation?
     
+    override var desiredAccuracy: CLLocationAccuracy {
+        get { kCLLocationAccuracyBest }
+        set { }
+    }
+    
+    override var pausesLocationUpdatesAutomatically: Bool {
+        get { true }
+        set { }
+    }
+    
     init(fakeLocation location: CLLocation? = nil) {
         super.init()
         self.fakeLocation = location
@@ -23,6 +33,14 @@ class CLLocationManagerMock: CLLocationManager {
         } else {
             delegate?.locationManager?(self, didFailWithError: NSError())
         }
+    }
+    
+    override func requestAlwaysAuthorization() {
+        
+    }
+    
+    override func startMonitoringSignificantLocationChanges() {
+        
     }
     
 }

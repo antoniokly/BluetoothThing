@@ -37,8 +37,8 @@ func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) ->
 func initBluetoothThingManager(delegate: BluetoothThingManagerDelegate,
                                subscriptions: [Subscription],
                                dataStore: DataStoreProtocol,
-                               centralManager: CBCentralManager,
-                               locationManager: CLLocationManager? = nil) -> BluetoothThingManager {
+                               centralManager: CBCentralManagerMock,
+                               locationManager: CLLocationManagerMock? = nil) -> BluetoothThingManager {
     let manager = BluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
@@ -47,8 +47,7 @@ func initBluetoothThingManager(delegate: BluetoothThingManagerDelegate,
     centralManager.delegate = manager
     
     if let locationManager = locationManager {
-        locationManager.delegate = manager
-        manager.locationManager = locationManager
+        manager.setupLocationManager(locationManager)
         manager.geocoder = CLGeocoderMock()
     }
     

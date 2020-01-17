@@ -52,7 +52,7 @@ class CBCentralManagerMock: CBCentralManager {
         for peripheral in peripherals {
             delegate?.centralManager?(self,
                                       didDiscover: peripheral,
-                                      advertisementData: [:],
+                                      advertisementData: [CBAdvertisementDataServiceUUIDsKey: serviceUUIDs ?? []],
                                       rssi: 100)
         }
     }
@@ -62,6 +62,8 @@ class CBCentralManagerMock: CBCentralManager {
     override func cancelPeripheralConnection(_ peripheral: CBPeripheral) {
         cancelConnectionCalled = 1
         cancelConnectionPeripheral = peripheral
+        
+        delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
     }
     
     init(peripherals: [CBPeripheralMock]) {
