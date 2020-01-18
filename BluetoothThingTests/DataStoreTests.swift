@@ -13,6 +13,7 @@ import CoreBluetooth
 class DataStoreTests: XCTestCase {
 
     var sut: DataStore!
+    var userDefaults = UserDefaultsMock()
     var peripherals: [CBPeripheralMock]!
     
     override func setUp() {
@@ -27,7 +28,7 @@ class DataStoreTests: XCTestCase {
         
         peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 3)
         
-        sut = DataStoreMock(peripherals: peripherals)
+        sut = DataStore(persistentStore: userDefaults)
     }
 
     override func tearDown() {
@@ -36,35 +37,51 @@ class DataStoreTests: XCTestCase {
     }
 
     func testSave() {
-        XCTAssertEqual(sut.things.count, 3)
-        XCTAssertEqual(sut.getStoredThings().count, 0)
+        for peripheral in peripherals {
+            sut.addThing(id: peripheral.identifier)
+        }
         
-        sut.save()
-        XCTAssertEqual(sut.getStoredThings().count, 3)
+        XCTAssertEqual(sut.things.count, 3)
     }
     
     func testAddRemoveThing() {
         let uuid = UUID()
         sut.addThing(id: uuid)
         
-        XCTAssertEqual(sut.things.count, 4)
+        XCTAssertEqual(sut.things.count, 1)
         XCTAssertEqual(sut.things.last?.id, uuid)
         
         sut.addThing(id: uuid)
-        XCTAssertEqual(sut.things.count, 4, "should not add duplicate")
+        XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
         
         XCTAssertNotNil(sut.removeThing(id: uuid))
-        XCTAssertEqual(sut.things.count, 3)
+        XCTAssertEqual(sut.things.count, 0)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
         
         XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
-        XCTAssertEqual(sut.things.count, 3)
+        XCTAssertEqual(sut.things.count, 0)
 
         let thing = BluetoothThing(id: UUID())
         sut.addThing(thing)
-        XCTAssertEqual(sut.things.count, 4)
+        XCTAssertEqual(sut.things.count, 1)
         
         sut.addThing(thing)
-        XCTAssertEqual(sut.things.count, 4, "should not add duplicate")
+        XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
+    }
+    
+    func testWillResignActiveNotification() {
+        // When
+        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+        
+        // Then
+        XCTAssertTrue(userDefaults.synchronizeCalled)
+    }
+    
+    func testWillTerminateNotification() {
+        // When
+        NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
+        
+        // Then
+        XCTAssertTrue(userDefaults.synchronizeCalled)
     }
 }

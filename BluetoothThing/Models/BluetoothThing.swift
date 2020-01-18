@@ -10,13 +10,14 @@ import Foundation
 import CoreBluetooth
 
 
-public class BluetoothThing: Codable {
+public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public var name: String? = nil
     public var state: CBPeripheralState = .disconnected
     public var location: Location? = nil
     public var data: [String: [String: Data]] = [:]
+    public var isRegistered: Bool = false
     
     public var register: (() -> Void)?
     public var deregister: (() -> Void)?
@@ -55,4 +56,5 @@ public class BluetoothThing: Codable {
         
         return didChange
     }
+    
 }

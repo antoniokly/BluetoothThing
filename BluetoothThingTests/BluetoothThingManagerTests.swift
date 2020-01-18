@@ -145,7 +145,7 @@ class BluetoothThingManagerTests: XCTestCase {
                                         dataStore: dataStore,
                                         centralManager: centralManager)
         
-        sut.newFoundThings = dataStore.things.suffix(1)
+        sut.knownThings = Set(dataStore.things.suffix(1))
         
         // When
         centralManager._state = .poweredOff
@@ -170,7 +170,7 @@ class BluetoothThingManagerTests: XCTestCase {
         
         //Then
         XCTAssertEqual(delegate.didLoseThingCalled, 1)
-        XCTAssertEqual(delegate.didLoseThing?.id, sut.newFoundThings.first?.id)
+        XCTAssertEqual(delegate.didLoseThing?.id, sut.knownThings.first?.id)
         XCTAssertFalse(sut.isPendingToStart)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
         XCTAssertEqual(centralManager.scanForPeripheralsServiceUUIDs, [serviceUUID])
@@ -242,7 +242,7 @@ class BluetoothThingManagerTests: XCTestCase {
                                         centralManager: centralManager)
 
         dataStore.things.first?.state = .connected
-        sut.newFoundThings = dataStore.things
+        sut.knownThings = Set(dataStore.things)
         sut.knownPeripherals = Set(peripherals)
         
         // When
@@ -718,5 +718,39 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.locationDidFailCalled, 1)
         XCTAssertNotNil(delegate.locationDidFailWithError)
+    }
+    
+    func testWillEnterForegroundNotification() {
+        // Given
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: [],
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        centralManager._state = .poweredOn
+        
+        // When
+        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
+        
+        // Then
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+    }
+    
+    func testDidEnterBackgroundNotification() {
+        // Given
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: [],
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        centralManager._state = .poweredOn
+        
+        // When
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        // Then
+        XCTAssertTrue(centralManager.stopScanCalled)
     }
 }

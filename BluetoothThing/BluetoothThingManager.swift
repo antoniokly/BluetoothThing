@@ -44,7 +44,9 @@ public class BluetoothThingManager: NSObject {
     }
     
     var knownPeripherals: Set<CBPeripheral> = []
-    var newFoundThings: [BluetoothThing] = []
+    var knownThings: Set<BluetoothThing> = []
+    
+//    var newFoundThings: [BluetoothThing] = []
     
     var deregisteringThings: [UUID: BluetoothThing] = [:]
         
@@ -61,6 +63,14 @@ public class BluetoothThingManager: NSObject {
         
         if useLocation {
             setupLocationManager(CLLocationManager())
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { _ in
+            self.startScanning(allowDuplicates: true)
+        }
+        
+        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
+            self.stopScanning()
         }
     }
     
@@ -94,11 +104,12 @@ public class BluetoothThingManager: NSObject {
             isPendingToStart = false
             
             if allowDuplicates {
-                for thing in newFoundThings.filter({$0.state == .disconnected}) {
+                for thing in knownThings.filter({$0.state == .disconnected && !$0.isRegistered}) {
                     delegate.bluetoothThingManager(self, didLoseThing: thing)
                 }
             }
             
+            os_log("start scanning", serviceUUIDs)
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
         } else {
             isPendingToStart = true
@@ -112,6 +123,7 @@ public class BluetoothThingManager: NSObject {
             return
         }
         
+        os_log("stop scanning")
         centralManager.stopScan()
     }
     
@@ -158,20 +170,21 @@ public class BluetoothThingManager: NSObject {
         thing.timer?.invalidate()
         thing.timer = nil
 
-        if let index = self.newFoundThings.firstIndex(where: {$0.id == thing.id}) {
-            self.newFoundThings.remove(at: index)
-        }
+//        if let index = self.newFoundThings.firstIndex(where: {$0.id == thing.id}) {
+//            self.newFoundThings.remove(at: index)
+//        }
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
     
     func registerThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        thing.isRegistered = true
         thing.timer?.invalidate()
         thing.timer = nil
         
-        if let index = newFoundThings.firstIndex(where: {$0.id == thing.id}) {
-            newFoundThings.remove(at: index)
-        }
+//        if let index = newFoundThings.firstIndex(where: {$0.id == thing.id}) {
+//            newFoundThings.remove(at: index)
+//        }
         
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
@@ -179,6 +192,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     func deregisterThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        thing.isRegistered = false
         deregisteringThings[peripheral.identifier] = thing
         dataStore.removeThing(id: peripheral.identifier)
         centralManager.cancelPeripheralConnection(peripheral)
@@ -201,9 +215,15 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                     
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
-                didUpdatePeripheral(peripheral)
-
-                if didUpdatePeripheral(peripheral) != nil {
+                if let thing = didUpdatePeripheral(peripheral) {
+                    // MARK: Disconnect request
+                    thing.deregister = { [weak self, weak peripheral, weak thing] in
+                        guard let peripheral = peripheral, let thing = thing else {
+                            return
+                        }
+                        self?.deregisterThing(thing, peripheral: peripheral)
+                    }
+                    
                     switch peripheral.state {
                     case .connected:
                         peripheral.readRSSI()
@@ -226,7 +246,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 didUpdatePeripheral(peripheral)
             }
             
-            for thing in newFoundThings {
+            for thing in knownThings.filter({$0.state == .disconnected && !$0.isRegistered}) {
                 delegate.bluetoothThingManager(self, didLoseThing: thing)
             }
             
@@ -271,7 +291,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         } else {
             var foundThing: BluetoothThing
             
-            if let thing = newFoundThings.first(where: {$0.id == peripheral.identifier}) {
+            if let thing = knownThings.first(where: {$0.id == peripheral.identifier}) {
                 foundThing = thing
             } else {
                 let newThing = BluetoothThing(id: peripheral.identifier)
@@ -285,15 +305,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                     self?.registerThing(thing, peripheral: peripheral)
                 }
                 
-                // MARK: Disconnect request
-                newThing.deregister = { [weak self, weak peripheral, weak newThing] in
-                    guard let peripheral = peripheral, let thing = newThing else {
-                        return
-                    }
-                    self?.deregisterThing(thing, peripheral: peripheral)
-                }
-                
-                newFoundThings.append(newThing)
+                knownThings.insert(newThing)
                 foundThing = newThing
             }
             
@@ -320,6 +332,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral){
             thing.timer?.invalidate()
             thing.timer = nil
+            
+            // MARK: Disconnect request
+            thing.deregister = { [weak self, weak peripheral, weak thing] in
+                guard let peripheral = peripheral, let thing = thing else {
+                    return
+                }
+                self?.deregisterThing(thing, peripheral: peripheral)
+            }
         }
         
         peripheral.readRSSI()
