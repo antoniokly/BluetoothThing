@@ -16,7 +16,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var name: String? = nil
     public var state: CBPeripheralState = .disconnected
     public var location: Location? = nil
-    public var data: [String: [String: Data]] = [:]
+    public var data: [Subscription: Data] = [:]
     public var isRegistered: Bool = false
     
     public var register: (() -> Void)?
@@ -33,28 +33,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public init(id: UUID) {
         self.id = id
-    }
-    
-    func updateData(with characteristic: CBCharacteristic) -> Bool {
-        let serviceID = characteristic.service.uuid.uuidString
-        let key = characteristic.uuid.uuidString
-        var didChange = false
-        
-        var storage = self.data[serviceID] ?? [:]
-        
-        if storage[key] != characteristic.value {
-            didChange = true
-        }
-        
-        if let data = characteristic.value {
-            storage[key] = data
-        } else {
-            storage.removeValue(forKey: key)
-        }
-        
-        self.data[serviceID] = storage
-        
-        return didChange
     }
     
 }

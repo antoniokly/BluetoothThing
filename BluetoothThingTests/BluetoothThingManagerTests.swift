@@ -55,13 +55,15 @@ class BluetoothThingManagerTests: XCTestCase {
             didUpdateLocationCalled += 1
         }
         
-        var didChangeCharacteristicCalled = 0
-        var didChangeCharacteristicThing: BluetoothThing?
-        var didChangeCharacteristic: CBCharacteristic?
-        func bluetoothThing(_ thing: BluetoothThing, didChangeCharacteristic characteristic: Characteristic) {
-            didChangeCharacteristicCalled += 1
-            didChangeCharacteristicThing = thing
-            didChangeCharacteristic = characteristic
+        var didUpdateValueCalled = 0
+        var didUpdateValueThing: BluetoothThing?
+        var didUpdateValueSubscription: Subscription?
+        var didUpdateValue: Data?
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for subscription: Subscription) {
+            didUpdateValueCalled += 1
+            didUpdateValueThing = thing
+            didUpdateValueSubscription = subscription
+            didUpdateValue = value
         }
         
         var didChangeStateCalled = 0
@@ -100,8 +102,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 3)
@@ -133,8 +134,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 2)
@@ -189,8 +189,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -239,8 +238,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -272,8 +270,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -306,8 +303,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -334,8 +330,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -365,8 +360,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -417,8 +411,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let unsubscribedPeripheral = CBPeripheralMock(identifier: UUID())
@@ -447,8 +440,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -480,8 +472,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -511,8 +502,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -534,19 +524,19 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.peripheral(peripheral, didUpdateValueFor: characteristic, error: nil)
         
         // Then
-        XCTAssertEqual(delegate.didChangeCharacteristicCalled, 1)
-        XCTAssertEqual(delegate.didChangeCharacteristic, characteristic)
-        XCTAssertEqual(delegate.didChangeCharacteristic?.value, value)
+        XCTAssertEqual(delegate.didUpdateValueCalled, 1)
+        XCTAssertEqual(delegate.didUpdateValueThing?.id, peripheral.identifier)
+        XCTAssertEqual(delegate.didUpdateValueSubscription, subsriptions.first)
+        XCTAssertEqual(delegate.didUpdateValue, value)
         
         // When
         characteristic._value = nil
         sut.peripheral(peripheral, didUpdateValueFor: characteristic, error: nil)
-        XCTAssertEqual(delegate.didChangeCharacteristicCalled, 2)
+        XCTAssertEqual(delegate.didUpdateValueCalled, 2)
         
-        let thing = delegate.didChangeCharacteristicThing
+        let thing = delegate.didUpdateValueThing
         XCTAssertNotNil(thing)
-        XCTAssertNotNil(thing?.data[serviceUUID.uuidString])
-        XCTAssertNil(thing?.data[serviceUUID.uuidString]?[characteristicUUID.uuidString])
+        XCTAssertNil(thing?.data[subsriptions.first!])
     }
     
     func testDidReadRSSI() {
@@ -555,8 +545,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -606,8 +595,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -638,8 +626,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
@@ -672,8 +659,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(service: serviceUUID,
-                         characteristic: characteristicUUID)
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)

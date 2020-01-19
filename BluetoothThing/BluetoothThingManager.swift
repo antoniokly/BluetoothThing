@@ -155,12 +155,14 @@ public class BluetoothThingManager: NSObject {
             return nil
         }
         
-        if thing.updateData(with: characteristic) {
+        let subscription = Subscription(characteristic: characteristic)
+        delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: subscription)
+        
+        if thing.data[subscription] != characteristic.value {
+            thing.data[subscription] = characteristic.value
             dataStore.saveThing(thing)
         }
-        
-        delegate.bluetoothThing(thing, didChangeCharacteristic: characteristic)
-        
+                
         return thing
     }
     

@@ -7,10 +7,6 @@
 //
 
 import Foundation
-import CoreBluetooth
-import CoreLocation
-
-public typealias Characteristic = CBCharacteristic
 
 public protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
@@ -18,8 +14,8 @@ public protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
     func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error)
     
-    func bluetoothThing(_ thing: BluetoothThing, didChangeCharacteristic characteristic: Characteristic)
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)
     func bluetoothThing(_ thing: BluetoothThing, didChangeRSSI rssi: NSNumber)
+    func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for subscription: Subscription)
     func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location)
 }
