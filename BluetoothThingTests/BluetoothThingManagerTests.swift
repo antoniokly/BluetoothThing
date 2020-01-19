@@ -196,6 +196,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
+        let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subsriptions,
@@ -217,10 +218,19 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.centralManagerDidUpdateState(centralManager)
         
         // Then
-        XCTAssertEqual(delegate.didChangeStateThing?.id, restorePeripherals.first?.identifier)
+        XCTAssertNotNil(thing.deregister)
+        XCTAssertEqual(delegate.didChangeStateThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
         XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
+        
+        // When
+        thing.deregister?()
+        
+        // Then
+        XCTAssertEqual(dataStore.things.count, 0)
+        XCTAssertEqual(delegate.didChangeStateThing?.id, thing.id)
+        XCTAssertEqual(delegate.didChangeStateThing?.state, .disconnected)
     }
     
     func testPowerOff() {

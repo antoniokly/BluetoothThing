@@ -62,7 +62,10 @@ class CBCentralManagerMock: CBCentralManager {
     override func cancelPeripheralConnection(_ peripheral: CBPeripheral) {
         cancelConnectionCalled = 1
         cancelConnectionPeripheral = peripheral
-        
+
+        if let peripheral = peripheral as? CBPeripheralMock {
+            peripheral._state = .disconnected
+        }
         delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
     }
     

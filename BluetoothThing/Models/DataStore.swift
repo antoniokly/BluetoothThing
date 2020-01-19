@@ -7,15 +7,17 @@
 //
 
 import Foundation
+import os.log
 
 public protocol DataStoreProtocol {
     var things: [BluetoothThing] { get }
     
+    func reset()
     func getThing(id: UUID) -> BluetoothThing?
     func addThing(_ thing: BluetoothThing)
+    func saveThing(_ Thing: BluetoothThing)
     @discardableResult func addThing(id: UUID) -> BluetoothThing
     @discardableResult func removeThing(id: UUID) -> BluetoothThing?
-    func reset()
 }
 
 public protocol PersistentStoreProtocol {
@@ -31,7 +33,12 @@ extension UserDefaults: PersistentStoreProtocol {
 
 class DataStore: DataStoreProtocol {
     
-    var things: [BluetoothThing] = []
+    var things: [BluetoothThing] = [] {
+        didSet {
+            os_log("things did change %@", things.debugDescription)
+            save()
+        }
+    }
     
     private var persistentStore: PersistentStoreProtocol
     private var storeKey: String
@@ -54,17 +61,17 @@ class DataStore: DataStoreProtocol {
     }
     
     func reset() {
+        things.removeAll()
         persistentStore.removeObject(forKey: storeKey)
         persistentStore.synchronize()
     }
 
     func addThing(_ thing: BluetoothThing) {
         if let index = things.firstIndex(where: {$0.id == thing.id}) {
-            things.remove(at: index)
+            things[index] = thing
+        } else {
+            things.append(thing)
         }
-        
-        things.append(thing)
-        save()
     }
     
     func getThing(id: UUID) -> BluetoothThing? {
@@ -75,23 +82,21 @@ class DataStore: DataStoreProtocol {
     func addThing(id: UUID) -> BluetoothThing {
         if let thing = things.first(where: {$0.id == id}) {
             return thing
+        } else {
+            let newThing = BluetoothThing(id: id)
+            things.append(newThing)
+            return newThing
         }
-            
-        let newThing = BluetoothThing(id: id)
-        things.append(newThing)
-        save()
-        return newThing
     }
     
     @discardableResult
     func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
             let thing = things.remove(at: index)
-            save()
             return thing
+        } else {
+            return nil
         }
-
-        return nil
     }
     
     func getStoredThings() -> [BluetoothThing] {
@@ -104,6 +109,14 @@ class DataStore: DataStoreProtocol {
         return things
     }
     
+    func saveThing(_ thing: BluetoothThing) {
+        if let index = things.firstIndex(where: {$0.id == thing.id}) {
+            things[index] = thing
+        } else {
+            things.append(thing)
+        }
+    }
+
     func save() {
         if let data = try? JSONEncoder().encode(things) {
             persistentStore.set(data, forKey: storeKey)

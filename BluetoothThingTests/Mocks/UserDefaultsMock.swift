@@ -14,8 +14,9 @@ class UserDefaultsMock: PersistentStoreProtocol {
         return nil
     }
     
+    var setValueCalled = 0
     func set(_ value: Any?, forKey defaultName: String) {
-        
+        setValueCalled += 1
     }
     
     func removeObject(forKey defaultName: String) {

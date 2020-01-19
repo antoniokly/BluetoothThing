@@ -53,10 +53,12 @@ class DataStoreTests: XCTestCase {
         
         sut.addThing(id: uuid)
         XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
-        
+        XCTAssertEqual(userDefaults.setValueCalled, 1)
+
         XCTAssertNotNil(sut.removeThing(id: uuid))
         XCTAssertEqual(sut.things.count, 0)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
+        XCTAssertEqual(userDefaults.setValueCalled, 2)
         
         XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
         XCTAssertEqual(sut.things.count, 0)
@@ -64,9 +66,11 @@ class DataStoreTests: XCTestCase {
         let thing = BluetoothThing(id: UUID())
         sut.addThing(thing)
         XCTAssertEqual(sut.things.count, 1)
+        XCTAssertEqual(userDefaults.setValueCalled, 3)
         
-        sut.addThing(thing)
-        XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
+        sut.addThing(BluetoothThing(id: thing.id))
+        XCTAssertEqual(sut.things.count, 1, "should replace duplicate")
+        XCTAssertEqual(userDefaults.setValueCalled, 4)
     }
     
     func testWillResignActiveNotification() {

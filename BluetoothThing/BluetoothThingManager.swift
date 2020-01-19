@@ -45,9 +45,7 @@ public class BluetoothThingManager: NSObject {
     
     var knownPeripherals: Set<CBPeripheral> = []
     var knownThings: Set<BluetoothThing> = []
-    
-//    var newFoundThings: [BluetoothThing] = []
-    
+        
     var deregisteringThings: [UUID: BluetoothThing] = [:]
         
     public convenience init(delegate: BluetoothThingManagerDelegate,
@@ -158,8 +156,10 @@ public class BluetoothThingManager: NSObject {
         }
         
         if thing.updateData(with: characteristic) {
-            delegate.bluetoothThing(thing, didChangeCharacteristic: characteristic)
+            dataStore.saveThing(thing)
         }
+        
+        delegate.bluetoothThing(thing, didChangeCharacteristic: characteristic)
         
         return thing
     }
@@ -169,10 +169,6 @@ public class BluetoothThingManager: NSObject {
         
         thing.timer?.invalidate()
         thing.timer = nil
-
-//        if let index = self.newFoundThings.firstIndex(where: {$0.id == thing.id}) {
-//            self.newFoundThings.remove(at: index)
-//        }
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
@@ -181,10 +177,6 @@ public class BluetoothThingManager: NSObject {
         thing.isRegistered = true
         thing.timer?.invalidate()
         thing.timer = nil
-        
-//        if let index = newFoundThings.firstIndex(where: {$0.id == thing.id}) {
-//            newFoundThings.remove(at: index)
-//        }
         
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
@@ -197,6 +189,19 @@ public class BluetoothThingManager: NSObject {
         dataStore.removeThing(id: peripheral.identifier)
         centralManager.cancelPeripheralConnection(peripheral)
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+    }
+    
+    func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        peripheral.readRSSI()
+        peripheral.discoverServices(serviceUUIDs)
+        
+        // MARK: Disconnect request
+        thing.deregister = { [weak self, weak peripheral, weak thing] in
+            guard let peripheral = peripheral, let thing = thing else {
+                return
+            }
+            self?.deregisterThing(thing, peripheral: peripheral)
+        }
     }
 }
 
@@ -216,18 +221,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
                 if let thing = didUpdatePeripheral(peripheral) {
-                    // MARK: Disconnect request
-                    thing.deregister = { [weak self, weak peripheral, weak thing] in
-                        guard let peripheral = peripheral, let thing = thing else {
-                            return
-                        }
-                        self?.deregisterThing(thing, peripheral: peripheral)
-                    }
-                    
                     switch peripheral.state {
                     case .connected:
-                        peripheral.readRSSI()
-                        peripheral.discoverServices(serviceUUIDs)
+                        didConnectThing(thing, peripheral: peripheral)
                     default:
                         central.connect(peripheral, options: Self.peripheralOptions)
                     }
@@ -261,8 +257,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             knownPeripherals = Set(peripherals)
             
             for peripheral in peripherals {
-                didUpdatePeripheral(peripheral)
                 peripheral.delegate = self
+                didUpdatePeripheral(peripheral)
             }
         }
         
@@ -333,17 +329,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             thing.timer?.invalidate()
             thing.timer = nil
             
-            // MARK: Disconnect request
-            thing.deregister = { [weak self, weak peripheral, weak thing] in
-                guard let peripheral = peripheral, let thing = thing else {
-                    return
-                }
-                self?.deregisterThing(thing, peripheral: peripheral)
-            }
+            didConnectThing(thing, peripheral: peripheral)
         }
         
-        peripheral.readRSSI()
-        peripheral.discoverServices(serviceUUIDs)
         locationManager?.requestLocation()
     }
     
