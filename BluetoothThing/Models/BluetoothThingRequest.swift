@@ -7,14 +7,33 @@
 //
 
 import Foundation
+import CoreBluetooth
 
-public struct BluetoothThingRequest {
-    enum Method {
+public typealias BTUUID = CBUUID
+
+public struct BTCharacteristic {
+    public var serviceUUID: BTUUID
+    public var uuid: BTUUID
+    
+    public init(serviceUUID: BTUUID, characteristicUUID: BTUUID) {
+        self.serviceUUID = serviceUUID
+        self.uuid = characteristicUUID
+    }
+}
+
+public struct BTRequest {
+    public enum Method: String {
         case read
         case write
     }
     
-    var method: Method
-    var subscription: Subscription
-    var value: Data? = nil
+    public var method: Method
+    public var characteristic: BTCharacteristic
+    public var value: Data?
+    
+    public init(method: Method, characteristic: BTCharacteristic, value: Data? = nil) {
+        self.method = method
+        self.characteristic = characteristic
+        self.value = value
+    }
 }

@@ -51,7 +51,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public internal (set) var register: (() -> Bool)?
     public internal (set) var deregister: (() -> Bool)?
-    public internal (set) var request: ((BluetoothThingRequest) -> Bool)?
+    public internal (set) var request: ((BTRequest) -> Bool)?
     
     var timer: Timer?
     

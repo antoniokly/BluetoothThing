@@ -213,26 +213,23 @@ public class BluetoothThingManager: NSObject {
         
         // MARK: Data Request
         thing.request = { [weak peripheral] (request) in
-            guard let peripheral = peripheral, peripheral.state == .connected else {
-                return false
-            }
-            
-            let charateristics = getSubscribedCharateristics(for: peripheral, subscriptions: [request.subscription])
-            
-            if charateristics.isEmpty {
+            os_log("request %@", request.method.rawValue)
+            guard
+                let peripheral = peripheral,
+                peripheral.state == .connected,
+                let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID}),
+                let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid})
+                else {
                 return false
             }
             
             switch request.method {
             case .read:
-                for charateristic in charateristics {
-                    peripheral.readValue(for: charateristic)
-                }
+                peripheral.readValue(for: charateristic)
             case .write:
                 guard let data = request.value else { return false }
-                for charateristic in charateristics {
-                    peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
-                }
+                peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
+                peripheral.readValue(for: charateristic)
             }
             
             return true

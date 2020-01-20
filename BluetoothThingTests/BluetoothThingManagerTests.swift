@@ -782,8 +782,8 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertNotNil(thing.request)
         
         // When
-        let subscription = Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
-        let readRequest = BluetoothThingRequest(method: .read, subscription: subscription, value: nil)
+        let characteristic = BTCharacteristic(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+        let readRequest = BTRequest(method: .read, characteristic: characteristic, value: nil)
         let readRespond = thing.request?(readRequest)
         
         // Then
@@ -793,7 +793,7 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // When
         let data = Data()
-        let writeRequest = BluetoothThingRequest(method: .write, subscription: subscription, value: data)
+        let writeRequest = BTRequest(method: .write, characteristic: characteristic, value: data)
         let writeRespond = thing.request?(writeRequest)
         
         // Then
