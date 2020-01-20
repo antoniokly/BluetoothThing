@@ -10,8 +10,8 @@ import Foundation
 
 public struct BluetoothThingRequest {
     enum Method {
-        case get
-        case set
+        case read
+        case write
     }
     
     var method: Method

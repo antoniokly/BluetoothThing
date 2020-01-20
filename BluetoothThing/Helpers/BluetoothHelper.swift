@@ -46,8 +46,16 @@ func getSubscribedCharateristics(for peripheral: CBPeripheral,
 
 func shouldSubscribe(characteristic: CBCharacteristic,
                      subscriptions: [Subscription]) -> Bool {
-    return subscriptions.contains {
-        $0.serviceUUID == characteristic.service.uuid &&
-        $0.characteristicUUID == characteristic.uuid
+    return subscriptions.contains { subscription in
+        if subscription.serviceUUID != characteristic.service.uuid {
+            return false
+        }
+        
+        if subscription.characteristicUUID != nil &&
+            subscription.characteristicUUID != characteristic.uuid {
+            return false
+        }
+            
+        return true
     }
 }

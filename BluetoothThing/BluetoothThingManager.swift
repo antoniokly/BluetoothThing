@@ -224,11 +224,11 @@ public class BluetoothThingManager: NSObject {
             }
             
             switch request.method {
-            case .get:
+            case .read:
                 for charateristic in charateristics {
                     peripheral.readValue(for: charateristic)
                 }
-            case .set:
+            case .write:
                 guard let data = request.value else { return false }
                 for charateristic in charateristics {
                     peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
@@ -424,7 +424,11 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         if let characteristics = service.characteristics {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
             
-            for characteristic in characteristics {
+            let subscribedCharacteristics = characteristics.filter {
+                shouldSubscribe(characteristic: $0, subscriptions: self.subscriptions)
+            }
+            
+            for characteristic in subscribedCharacteristics {
                 if !characteristic.isNotifying {
                     peripheral.setNotifyValue(true, for: characteristic)
                 }

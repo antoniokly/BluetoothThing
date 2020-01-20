@@ -99,6 +99,17 @@ class CBPeripheralMock: CBPeripheral {
         readValueCharacteristic = characteristic
     }
     
+    var writeValueCalled = 0
+    var writeValueData: Data?
+    var writeValueCharacteristic: CBCharacteristic?
+    var writeValueType: CBCharacteristicWriteType?
+    override func writeValue(_ data: Data, for characteristic: CBCharacteristic, type: CBCharacteristicWriteType) {
+        writeValueCalled += 1
+        writeValueData = data
+        writeValueCharacteristic = characteristic
+        writeValueType = type
+    }
+    
     var discoverServicesCalled = 0
     var discoverServices: [CBUUID]?
     override func discoverServices(_ serviceUUIDs: [CBUUID]?) {

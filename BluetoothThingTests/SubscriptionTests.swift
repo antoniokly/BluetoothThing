@@ -50,6 +50,14 @@ class SubscriptionTests: XCTestCase {
         XCTAssertEqual(subscription.description, "FFF1")
     }
     
+    func testInitBatteryService() {
+        let subscription = Subscription(service: "180F")
+        
+        XCTAssertEqual(subscription.serviceUUID, CBUUID(string: "180F"))
+        XCTAssertNil(subscription.characteristicUUID)
+        XCTAssertEqual(subscription.description, "Battery")
+    }
+    
     func testNoSubscription() {
         
         let subscribed = getSubscribedCharateristics(for: peripheral,
@@ -59,20 +67,36 @@ class SubscriptionTests: XCTestCase {
     }
 
     func testSubscribedCharateristics() {
-        
+        // Given
         let subsriptions = [
             Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
             Subscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
         
+        // When
         let subscribed = getSubscribedCharateristics(for: peripheral,
                                                      subscriptions: subsriptions)
-        
+        // Then
         XCTAssertEqual(subscribed.count, 2)
         XCTAssertEqual(subscribed.map({$0.uuid}),
                        [characteristicUUID1, characteristicUUID2])
         XCTAssertEqual(subscribed.map({$0.service.uuid}),
                        [serviceUUID1, serviceUUID2])
+    }
+    
+    func testSubscribedAllCharateristics() {
+        // Given
+        let subsriptions = [
+            Subscription(serviceUUID: serviceUUID1),
+        ]
+        
+        // When
+        let subscribed = getSubscribedCharateristics(for: peripheral,
+                                                     subscriptions: subsriptions)
+        
+        // Then
+        XCTAssertEqual(subscribed.count, 2)
+        
     }
     
     func testSubscription1() {
