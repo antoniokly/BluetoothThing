@@ -12,15 +12,46 @@ import CoreBluetooth
 
 public class BluetoothThing: NSObject, Codable, Identifiable {
     
-    public private (set) var id: UUID
-    public var name: String? = nil
-    public var state: CBPeripheralState = .disconnected
-    public var location: Location? = nil
-    public var data: [Subscription: Data] = [:]
-    public var isRegistered: Bool = false
+    static let didChange = Notification.Name("\(String(describing: self)).didChange")
     
-    public var register: (() -> Void)?
-    public var deregister: (() -> Void)?
+    public private (set) var id: UUID
+    public internal (set) var state: CBPeripheralState = .disconnected
+    
+    public var name: String? = nil {
+        didSet {
+            if name != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self)
+            }
+        }
+    }
+    
+    public internal (set) var location: Location? = nil {
+        didSet {
+            if location != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self)
+            }
+        }
+    }
+    
+    public internal (set) var data: [Subscription: Data] = [:] {
+        didSet {
+            if data != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self)
+            }
+        }
+    }
+    
+    public internal (set) var isRegistered: Bool = false {
+        didSet {
+            if isRegistered != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self)
+            }
+        }
+    }
+    
+    public internal (set) var register: (() -> Bool)?
+    public internal (set) var deregister: (() -> Bool)?
+    public internal (set) var request: ((BluetoothThingRequest) -> Bool)?
     
     var timer: Timer?
     
@@ -29,6 +60,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case name
         case location
         case data
+        case isRegistered
     }
     
     public init(id: UUID) {

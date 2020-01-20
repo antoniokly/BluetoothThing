@@ -39,8 +39,13 @@ class DataStoreTests: XCTestCase {
         for peripheral in peripherals {
             sut.addThing(id: peripheral.identifier)
         }
+        let thing = sut.things.first!
         
         XCTAssertEqual(sut.things.count, 3)
+        XCTAssertEqual(userDefaults.setValueCalled, 3)
+
+        thing.name = "new name"
+        XCTAssertEqual(userDefaults.setValueCalled, 4)
     }
     
     func testAddRemoveThing() {

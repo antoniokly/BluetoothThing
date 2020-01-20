@@ -156,12 +156,8 @@ public class BluetoothThingManager: NSObject {
         }
         
         let subscription = Subscription(characteristic: characteristic)
+        thing.data[subscription] = characteristic.value
         delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: subscription)
-        
-        if thing.data[subscription] != characteristic.value {
-            thing.data[subscription] = characteristic.value
-            dataStore.saveThing(thing)
-        }
                 
         return thing
     }
@@ -199,10 +195,38 @@ public class BluetoothThingManager: NSObject {
         
         // MARK: Disconnect request
         thing.deregister = { [weak self, weak peripheral, weak thing] in
-            guard let peripheral = peripheral, let thing = thing else {
-                return
+            guard let strongSelf = self, let peripheral = peripheral, let thing = thing else {
+                return false
             }
-            self?.deregisterThing(thing, peripheral: peripheral)
+            
+            strongSelf.deregisterThing(thing, peripheral: peripheral)
+            return true
+        }
+        
+        thing.request = { [weak peripheral] (request) in
+            guard let peripheral = peripheral else {
+                return false
+            }
+            
+            let charateristics = getSubscribedCharateristics(for: peripheral, subscriptions: [request.subscription])
+            
+            if charateristics.isEmpty {
+                return false
+            }
+            
+            switch request.method {
+            case .get:
+                for charateristic in charateristics {
+                    peripheral.readValue(for: charateristic)
+                }
+            case .set:
+                guard let data = request.value else { return false }
+                for charateristic in charateristics {
+                    peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
+                }
+            }
+            
+            return true
         }
     }
 }
@@ -297,10 +321,12 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 
                 // MARK: Connect request
                 newThing.register = { [weak self, weak peripheral, weak newThing] in
-                    guard let peripheral = peripheral, let thing = newThing else {
-                        return
+                    guard let strongSelf = self, let peripheral = peripheral, let thing = newThing else {
+                        return false
                     }
-                    self?.registerThing(thing, peripheral: peripheral)
+
+                    strongSelf.registerThing(thing, peripheral: peripheral)
+                    return true
                 }
                 
                 knownThings.insert(newThing)

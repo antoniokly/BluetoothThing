@@ -276,6 +276,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
+        let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         let fakeLocation = CLLocation(latitude: 0, longitude: 0)
         let locationManager = CLLocationManagerMock(fakeLocation: fakeLocation)
@@ -295,6 +296,8 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
         XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
         XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
+        XCTAssertNotNil(thing.deregister)
+        XCTAssertNotNil(thing.request)
     }
     
     func testDidDisconnect() {
