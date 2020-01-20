@@ -47,6 +47,7 @@ class SubscriptionTests: XCTestCase {
         
         XCTAssertEqual(subscription.serviceUUID, serviceUUID1)
         XCTAssertEqual(subscription.characteristicUUID, characteristicUUID1)
+        XCTAssertEqual(subscription.description, "FFF1")
     }
     
     func testNoSubscription() {

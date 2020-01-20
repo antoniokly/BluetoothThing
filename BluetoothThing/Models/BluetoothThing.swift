@@ -63,8 +63,9 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case isRegistered
     }
     
-    public init(id: UUID) {
+    public init(id: UUID, name: String? = nil) {
         self.id = id
+        self.name = name
     }
     
 }

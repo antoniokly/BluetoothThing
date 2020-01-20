@@ -14,23 +14,26 @@ import CoreBluetooth
 
 public struct Subscription: Hashable, Codable {
     public private (set) var service: String
-    public private (set) var characteristic: String
+    public private (set) var characteristic: String?
     
     public var serviceUUID: CBUUID { CBUUID(string: service) }
-    public var characteristicUUID: CBUUID { CBUUID(string: characteristic) }
+    public var characteristicUUID: CBUUID? {
+        guard let characteristic = characteristic else { return nil }
+        return CBUUID(string: characteristic)
+    }
+    public var description: String { characteristicUUID?.description ?? serviceUUID.description}
     
-    public init(service: String, characteristic: String) {
+    public init(service: String, characteristic: String? = nil, name: String? = nil) {
         self.service = service
         self.characteristic = characteristic
     }
     
-    public init(serviceUUID: CBUUID, characteristicUUID: CBUUID) {
+    public init(serviceUUID: CBUUID, characteristicUUID: CBUUID? = nil, name: String? = nil) {
         self.service = serviceUUID.uuidString
-        self.characteristic = characteristicUUID.uuidString
+        self.characteristic = characteristicUUID?.uuidString
     }
     
     init(characteristic: CBCharacteristic) {
-        self.init(serviceUUID: characteristic.service.uuid,
-                  characteristicUUID: characteristic.uuid)
+        self.init(serviceUUID: characteristic.service.uuid, characteristicUUID: characteristic.uuid)
     }
 }

@@ -229,7 +229,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(dataStore.things.count, 0)
         XCTAssertEqual(delegate.didChangeStateThing?.id, thing.id)
-        XCTAssertEqual(delegate.didChangeStateThing?.state, .disconnected)
+        XCTAssertEqual(delegate.didChangeStateThing?.isRegistered, false)
     }
     
     func testPowerOff() {

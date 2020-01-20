@@ -12,12 +12,18 @@ import CoreLocation
 @testable import BluetoothThing
 
 func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
-    let uuids = [CBUUID: [CBUUID]].init(subscriptions.map({($0.serviceUUID, [$0.characteristicUUID])}),
-                                        uniquingKeysWith: {$0 + $1})
     
-    let services = uuids.map { sUUID, cUUID -> CBService in
-        let service = CBServiceMock(uuid: sUUID)
-        let characteristics = cUUID.map {
+    let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
+        if let characteristicUUID = subscription.characteristicUUID {
+            return (subscription.serviceUUID, [characteristicUUID])
+        } else {
+            return (subscription.serviceUUID, nil)
+        }
+    }
+    
+    let services = uuids.map { serviceUUID, characteristicsUUIDs -> CBService in
+        let service = CBServiceMock(uuid: serviceUUID)
+        let characteristics = characteristicsUUIDs?.map {
             CBCharacteristicMock(uuid: $0, service: service)
         }
         service._characteristics = characteristics
