@@ -782,7 +782,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertNotNil(thing.request)
         
         // When
-        let characteristic = BTCharacteristic(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+        let characteristic = BTCharacteristic(service: "FFF0", characteristic: "FFF1")
         let readRequest = BTRequest(method: .read, characteristic: characteristic, value: nil)
         let readRespond = thing.request?(readRequest)
         
