@@ -9,20 +9,6 @@
 import Foundation
 import CoreBluetooth
 
-public struct BTCharacteristic {
-    public var serviceUUID: CBUUID
-    public var uuid: CBUUID
-    
-    public init(service: String, characteristic: String) {
-        self.init(serviceUUID: CBUUID(string: service), characteristicUUID: CBUUID(string: characteristic))
-    }
-    
-    public init(serviceUUID: CBUUID, characteristicUUID: CBUUID) {
-        self.serviceUUID = serviceUUID
-        self.uuid = characteristicUUID
-    }
-}
-
 public struct BTRequest {
     public enum Method: String {
         case read

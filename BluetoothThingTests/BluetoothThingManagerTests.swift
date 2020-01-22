@@ -57,11 +57,13 @@ class BluetoothThingManagerTests: XCTestCase {
         
         var didUpdateValueCalled = 0
         var didUpdateValueThing: BluetoothThing?
+        var didUpdateValueCharacteristic: BTCharacteristic?
         var didUpdateValueSubscription: Subscription?
         var didUpdateValue: Data?
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for subscription: Subscription) {
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription) {
             didUpdateValueCalled += 1
             didUpdateValueThing = thing
+            didUpdateValueCharacteristic = characteristic
             didUpdateValueSubscription = subscription
             didUpdateValue = value
         }
@@ -525,21 +527,26 @@ class BluetoothThingManagerTests: XCTestCase {
         centralManager._state = .poweredOn
         centralManager.connect(peripheral, options: nil)
         sut.peripheral(peripheral, didUpdateValueFor: characteristic, error: nil)
+        let thing = delegate.didUpdateValueThing
         
         // Then
         XCTAssertEqual(delegate.didUpdateValueCalled, 1)
-        XCTAssertEqual(delegate.didUpdateValueThing?.id, peripheral.identifier)
-        XCTAssertEqual(delegate.didUpdateValueSubscription, subscriptions.first)
+        XCTAssertEqual(thing?.id, peripheral.identifier)
+        XCTAssertEqual(delegate.didUpdateValueCharacteristic?.serviceUUID, serviceUUID)
+        XCTAssertEqual(delegate.didUpdateValueCharacteristic?.uuid, characteristicUUID)
+        XCTAssertEqual(delegate.didUpdateValueSubscription?.serviceUUID, subscriptions.first?.serviceUUID)
+        XCTAssertEqual(delegate.didUpdateValueSubscription?.characteristicUUID, subscriptions.first?.characteristicUUID)
         XCTAssertEqual(delegate.didUpdateValue, value)
-        
+        XCTAssertEqual(thing?.data[BTCharacteristic(characteristic: characteristic)], value)
+
         // When
         characteristic._value = nil
         sut.peripheral(peripheral, didUpdateValueFor: characteristic, error: nil)
-        XCTAssertEqual(delegate.didUpdateValueCalled, 2)
         
-        let thing = delegate.didUpdateValueThing
+        // Then
+        XCTAssertEqual(delegate.didUpdateValueCalled, 2)
         XCTAssertNotNil(thing)
-        XCTAssertNil(thing?.data[subscriptions.first!])
+        XCTAssertNil(thing?.data[BTCharacteristic(characteristic: characteristic)])
     }
     
     func testDidReadRSSI() {
@@ -801,6 +808,6 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueCalled, 1)
         XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, characteristicUUID)
         XCTAssertEqual(peripheral.writeValueData, data)
-        XCTAssertEqual(peripheral.writeValueType, .withoutResponse)
+        XCTAssertEqual(peripheral.writeValueType, .withResponse)
     }
 }

@@ -47,7 +47,7 @@ class SubscriptionTests: XCTestCase {
         
         XCTAssertEqual(subscription.serviceUUID, serviceUUID1)
         XCTAssertEqual(subscription.characteristicUUID, characteristicUUID1)
-        XCTAssertEqual(subscription.description, "FFF1")
+        XCTAssertEqual(subscription.name, "FFF1")
     }
     
     func testInitBatteryService() {
@@ -55,7 +55,7 @@ class SubscriptionTests: XCTestCase {
         
         XCTAssertEqual(subscription.serviceUUID, CBUUID(string: "180F"))
         XCTAssertNil(subscription.characteristicUUID)
-        XCTAssertEqual(subscription.description, "Battery")
+        XCTAssertEqual(subscription.name, "Battery")
     }
     
     func testNoSubscription() {

@@ -170,11 +170,14 @@ public class BluetoothThingManager: NSObject {
         guard let thing = dataStore.getThing(id: peripheral.identifier) else {
             return nil
         }
-        
-        let subscription = Subscription(characteristic: characteristic)
-        thing.data[subscription] = characteristic.value
-        delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: subscription)
                 
+        if let subscription = self.subscriptions.first(where: {
+            shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) }) {
+            let btCharacteristic = BTCharacteristic(characteristic: characteristic)
+            thing.data[btCharacteristic] = characteristic.value
+            delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
+        }
+
         return thing
     }
     

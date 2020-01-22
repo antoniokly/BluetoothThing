@@ -9,31 +9,23 @@
 import Foundation
 import CoreBluetooth
 
-//public typealias ServiceUUID = CBUUID
-//public typealias CharateristicUUID = CBUUID
-
-public struct Subscription: Hashable, Codable {
-    public private (set) var service: String
-    public private (set) var characteristic: String?
+public struct Subscription {
+    public private (set) var serviceUUID: CBUUID
+    public private (set) var characteristicUUID: CBUUID?
     
-    public var serviceUUID: CBUUID { CBUUID(string: service) }
-    public var characteristicUUID: CBUUID? {
-        guard let characteristic = characteristic else { return nil }
-        return CBUUID(string: characteristic)
+    public var name: String {
+        characteristicUUID?.description ?? serviceUUID.description
     }
-    public var description: String { characteristicUUID?.description ?? serviceUUID.description}
     
     public init(service: String, characteristic: String? = nil, name: String? = nil) {
-        self.service = service
-        self.characteristic = characteristic
+        self.serviceUUID = CBUUID(string: service)
+        if let characteristic = characteristic {
+            self.characteristicUUID = CBUUID(string: characteristic)
+        }
     }
     
-    public init(serviceUUID: CBUUID, characteristicUUID: CBUUID? = nil, name: String? = nil) {
-        self.service = serviceUUID.uuidString
-        self.characteristic = characteristicUUID?.uuidString
-    }
-    
-    init(characteristic: CBCharacteristic) {
-        self.init(serviceUUID: characteristic.service.uuid, characteristicUUID: characteristic.uuid)
+    public init(serviceUUID: CBUUID, characteristicUUID: CBUUID? = nil) {
+        self.serviceUUID = serviceUUID
+        self.characteristicUUID = characteristicUUID
     }
 }
