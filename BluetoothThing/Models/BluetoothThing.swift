@@ -16,7 +16,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
-    
+    public internal (set) var peripheral: CBPeripheral?
+
     public var name: String? = nil {
         didSet {
             if name != oldValue {
@@ -68,4 +69,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         self.name = name
     }
     
+    convenience init(peripheral: CBPeripheral) {
+        self.init(id: peripheral.identifier, name: peripheral.name)
+    }
 }

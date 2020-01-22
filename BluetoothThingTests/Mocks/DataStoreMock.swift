@@ -13,7 +13,7 @@ class DataStoreMock: DataStore {
     
     init(peripherals: [CBPeripheralMock]) {
         super.init()
-        self.things = peripherals.map({BluetoothThing(id: $0.identifier)})
+        self.things = peripherals.map({BluetoothThing(peripheral: $0)})
     }
     
 }

@@ -111,6 +111,7 @@ public class BluetoothThingManager: NSObject {
             
             os_log("start scanning", serviceUUIDs)
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
+            
         } else {
             isPendingToStart = true
         }
@@ -214,6 +215,8 @@ public class BluetoothThingManager: NSObject {
         peripheral.readRSSI()
         peripheral.discoverServices(serviceUUIDs)
         
+        thing.peripheral = peripheral
+        
         // MARK: Data Request
         thing.request = { [weak peripheral] (request) in
             os_log("request %@", request.method.rawValue)
@@ -271,6 +274,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             
             if isPendingToStart {
                 startScanning(options: scanningOptions)
+                
+
             }
         } else {
             for peripheral in knownPeripherals {
@@ -325,7 +330,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             if let thing = knownThings.first(where: {$0.id == peripheral.identifier}) {
                 foundThing = thing
             } else {
-                let newThing = BluetoothThing(id: peripheral.identifier, name: peripheral.name)
+                let newThing = BluetoothThing(peripheral: peripheral)
                 setupThing(newThing)
 
                 // MARK: Connect request
