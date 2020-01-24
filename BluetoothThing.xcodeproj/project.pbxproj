@@ -19,6 +19,20 @@
 		A4553C6523C5D99000C49AC2 /* BluetoothThing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */; };
 		A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */ = {isa = PBXBuildFile; fileRef = A4553C5E23C5D99000C49AC2 /* BluetoothThing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A45F184923DA8487004C5A52 /* BluetoothThingWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = A45F184723DA8487004C5A52 /* BluetoothThingWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A45F184E23DA84B5004C5A52 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
+		A45F184F23DA84B5004C5A52 /* GeocoderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E466323CC211C0065B96C /* GeocoderProtocol.swift */; };
+		A45F185023DA84B5004C5A52 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6823C68A4900327FE5 /* Location.swift */; };
+		A45F185123DA84B5004C5A52 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
+		A45F185223DA84B5004C5A52 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* Subscription.swift */; };
+		A45F185323DA84B5004C5A52 /* Characteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A413F19223D7AD83007BDE30 /* Characteristic.swift */; };
+		A45F185423DA84B5004C5A52 /* BluetoothThingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BluetoothThingRequest.swift */; };
+		A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044723C935B800C6AD1C /* BluetoothHelper.swift */; };
+		A45F185723DA84C6004C5A52 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
+		A45F185923DA8987004C5A52 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
+		A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
+		A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
 		A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BluetoothThingRequest.swift */; };
 		A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */; };
 		A49E466023CC11610065B96C /* CLLocationManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */; };
@@ -60,6 +74,10 @@
 		A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BluetoothThingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4553C6B23C5D99100C49AC2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManager.swift; sourceTree = "<group>"; };
+		A45F184523DA8487004C5A52 /* BluetoothThing.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothThing.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A45F184723DA8487004C5A52 /* BluetoothThingWatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThingWatch.h; sourceTree = "<group>"; };
+		A45F184823DA8487004C5A52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreProtocol.swift; sourceTree = "<group>"; };
 		A492983C23D5216000889E2B /* BluetoothThingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingRequest.swift; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
 		A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationManagerMock.swift; sourceTree = "<group>"; };
@@ -91,6 +109,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A45F184223DA8487004C5A52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -112,6 +137,7 @@
 			children = (
 				A4553C5D23C5D99000C49AC2 /* BluetoothThing */,
 				A4553C6823C5D99000C49AC2 /* BluetoothThingTests */,
+				A45F184623DA8487004C5A52 /* BluetoothThingWatch */,
 				A4553C5C23C5D99000C49AC2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -121,6 +147,7 @@
 			children = (
 				A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */,
 				A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */,
+				A45F184523DA8487004C5A52 /* BluetoothThing.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -153,6 +180,15 @@
 			path = BluetoothThingTests;
 			sourceTree = "<group>";
 		};
+		A45F184623DA8487004C5A52 /* BluetoothThingWatch */ = {
+			isa = PBXGroup;
+			children = (
+				A45F184723DA8487004C5A52 /* BluetoothThingWatch.h */,
+				A45F184823DA8487004C5A52 /* Info.plist */,
+			);
+			path = BluetoothThingWatch;
+			sourceTree = "<group>";
+		};
 		A4AB9E6423C6830400327FE5 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,6 +200,7 @@
 		A4AB9E6A23C68BD300327FE5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */,
 				A4AB9E7123C68F8200327FE5 /* DataStore.swift */,
 				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
 				A49E466323CC211C0065B96C /* GeocoderProtocol.swift */,
@@ -184,6 +221,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4553C6C23C5D99100C49AC2 /* BluetoothThing.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45F184023DA8487004C5A52 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45F184923DA8487004C5A52 /* BluetoothThingWatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +271,24 @@
 			productReference = A4553C6423C5D99000C49AC2 /* BluetoothThingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A45F184423DA8487004C5A52 /* BluetoothThingWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A45F184A23DA8487004C5A52 /* Build configuration list for PBXNativeTarget "BluetoothThingWatch" */;
+			buildPhases = (
+				A45F184023DA8487004C5A52 /* Headers */,
+				A45F184123DA8487004C5A52 /* Sources */,
+				A45F184223DA8487004C5A52 /* Frameworks */,
+				A45F184323DA8487004C5A52 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BluetoothThingWatch;
+			productName = BluetoothThingWatch;
+			productReference = A45F184523DA8487004C5A52 /* BluetoothThing.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -245,6 +308,10 @@
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
+					A45F184423DA8487004C5A52 = {
+						CreatedOnToolsVersion = 11.3.1;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = A4553C5523C5D99000C49AC2 /* Build configuration list for PBXProject "BluetoothThing" */;
@@ -261,6 +328,7 @@
 			targets = (
 				A4553C5A23C5D99000C49AC2 /* BluetoothThing */,
 				A4553C6323C5D99000C49AC2 /* BluetoothThingTests */,
+				A45F184423DA8487004C5A52 /* BluetoothThingWatch */,
 			);
 		};
 /* End PBXProject section */
@@ -280,6 +348,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A45F184323DA8487004C5A52 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -290,6 +365,7 @@
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A413F19323D7AD83007BDE30 /* Characteristic.swift in Sources */,
 				A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */,
+				A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
@@ -317,6 +393,25 @@
 				A49E466623CC41A90065B96C /* LocationTests.swift in Sources */,
 				A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */,
 				A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A45F184123DA8487004C5A52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A45F185223DA84B5004C5A52 /* Subscription.swift in Sources */,
+				A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */,
+				A45F184F23DA84B5004C5A52 /* GeocoderProtocol.swift in Sources */,
+				A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */,
+				A45F185123DA84B5004C5A52 /* ConnectionState.swift in Sources */,
+				A45F185923DA8987004C5A52 /* BluetoothThingManager.swift in Sources */,
+				A45F185723DA84C6004C5A52 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A45F185023DA84B5004C5A52 /* Location.swift in Sources */,
+				A45F185323DA84B5004C5A52 /* Characteristic.swift in Sources */,
+				A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
+				A45F184E23DA84B5004C5A52 /* BluetoothThing.swift in Sources */,
+				A45F185423DA84B5004C5A52 /* BluetoothThingRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +477,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -439,7 +534,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -453,6 +548,7 @@
 		A4553C7023C5D99100C49AC2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -463,7 +559,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -477,6 +573,7 @@
 		A4553C7123C5D99100C49AC2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -487,7 +584,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -527,6 +624,57 @@
 			};
 			name = Release;
 		};
+		A45F184B23DA8487004C5A52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = H2J8ZAEJ56;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = BluetoothThingWatch/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingWatch;
+				PRODUCT_NAME = BluetoothThing;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Debug;
+		};
+		A45F184C23DA8487004C5A52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = H2J8ZAEJ56;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = BluetoothThingWatch/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingWatch;
+				PRODUCT_NAME = BluetoothThing;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -553,6 +701,15 @@
 			buildConfigurations = (
 				A4553C7323C5D99100C49AC2 /* Debug */,
 				A4553C7423C5D99100C49AC2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A45F184A23DA8487004C5A52 /* Build configuration list for PBXNativeTarget "BluetoothThingWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A45F184B23DA8487004C5A52 /* Debug */,
+				A45F184C23DA8487004C5A52 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

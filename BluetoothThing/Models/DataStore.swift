@@ -9,28 +9,6 @@
 import Foundation
 import os.log
 
-public protocol DataStoreProtocol {
-    var things: [BluetoothThing] { get }
-    
-    func reset()
-    func getThing(id: UUID) -> BluetoothThing?
-    func addThing(_ thing: BluetoothThing)
-//    func saveThing(_ Thing: BluetoothThing)
-    @discardableResult func addThing(id: UUID) -> BluetoothThing
-    @discardableResult func removeThing(id: UUID) -> BluetoothThing?
-}
-
-public protocol PersistentStoreProtocol {
-    func object(forKey defaultName: String) -> Any?
-    func set(_ value: Any?, forKey defaultName: String)
-    func removeObject(forKey defaultName: String)
-    @discardableResult func synchronize() -> Bool
-}
-
-extension UserDefaults: PersistentStoreProtocol {
-    
-}
-
 class DataStore: DataStoreProtocol {
     
     var things: [BluetoothThing] = [] {
@@ -48,12 +26,12 @@ class DataStore: DataStoreProtocol {
         self.persistentStore = persistentStore
         self.storeKey = storeKey
         self.things = getStoredThings()
-        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { (notification) in
-            self.persistentStore.synchronize()
-        }
-        NotificationCenter.default.addObserver(forName: UIApplication.willTerminateNotification, object: nil, queue: nil) { (notification) in
-            self.persistentStore.synchronize()
-        }
+//        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { (notification) in
+//            self.persistentStore.synchronize()
+//        }
+//        NotificationCenter.default.addObserver(forName: UIApplication.willTerminateNotification, object: nil, queue: nil) { (notification) in
+//            self.persistentStore.synchronize()
+//        }
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
             if let thing = notification.object as? BluetoothThing, self.things.contains(thing) {
                 self.save()
@@ -109,18 +87,11 @@ class DataStore: DataStoreProtocol {
         
         return things
     }
-    
-//    func saveThing(_ thing: BluetoothThing) {
-//        if let index = things.firstIndex(where: {$0.id == thing.id}) {
-//            things[index] = thing
-//        } else {
-//            things.append(thing)
-//        }
-//    }
 
     func save() {
         if let data = try? JSONEncoder().encode(things) {
             persistentStore.set(data, forKey: storeKey)
+            persistentStore.synchronize()
         }
     }
 }

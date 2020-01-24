@@ -70,14 +70,6 @@ public class BluetoothThingManager: NSObject {
         self.delegate = delegate
         self.subscriptions = subscriptions
         super.init()
-        
-        NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification, object: nil, queue: nil) { _ in
-            self.startScanning(allowDuplicates: true)
-        }
-        
-        NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification, object: nil, queue: nil) { _ in
-            self.stopScanning()
-        }
     }
     
     func setupLocationManager(_ manager: CLLocationManager) {
@@ -85,8 +77,11 @@ public class BluetoothThingManager: NSObject {
         manager.delegate = self
         manager.requestAlwaysAuthorization()
         manager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        #if os(iOS) || os(macOS)
         manager.pausesLocationUpdatesAutomatically = true
         manager.startMonitoringSignificantLocationChanges()
+        #endif
     }
     
     public func startScanning(allowDuplicates: Bool) {
