@@ -16,7 +16,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
-    public internal (set) var peripheral: CBPeripheral?
+//    public internal (set) weak var peripheral: CBPeripheral?
 
     public var name: String? = nil {
         didSet {
@@ -50,9 +50,39 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    public internal (set) var register: (() -> Bool)?
-    public internal (set) var deregister: (() -> Bool)?
-    public internal (set) var request: ((BTRequest) -> Bool)?
+    var autoReconnect = false
+    var disconnecting = false
+    
+    var _connect: ((Bool) -> Bool)?
+    var _disconnect: ((Bool) -> Bool)?
+    var _request: ((BTRequest) -> Bool)?
+    
+    public func connect() {
+        _connect?(false)
+    }
+    
+    var _register: (() -> Bool)?
+    public func register() {
+        _connect?(true)
+    }
+    
+    public func disconnect() {
+        _disconnect?(false)
+    }
+    
+    var _deregister: (() -> Bool)?
+    public func deregister() {
+        _disconnect?(true)
+    }
+//    public internal (set) var disconnect: ((Bool) -> Bool)?
+
+    @discardableResult
+    public func request(_ request: BTRequest) -> Bool {
+        return _request?(request) == true
+    }
+    
+//    public internal (set) var register: (() -> Bool)?
+//    public internal (set) var deregister: (() -> Bool)?
     
     var timer: Timer?
     

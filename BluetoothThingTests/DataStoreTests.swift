@@ -77,19 +77,19 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(userDefaults.setValueCalled, 4)
     }
     
-    func testWillResignActiveNotification() {
-        // When
-        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
-        
-        // Then
-        XCTAssertTrue(userDefaults.synchronizeCalled)
-    }
-    
-    func testWillTerminateNotification() {
-        // When
-        NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
-        
-        // Then
-        XCTAssertTrue(userDefaults.synchronizeCalled)
-    }
+//    func testWillResignActiveNotification() {
+//        // When
+//        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
+//
+//        // Then
+//        XCTAssertTrue(userDefaults.synchronizeCalled)
+//    }
+//
+//    func testWillTerminateNotification() {
+//        // When
+//        NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
+//
+//        // Then
+//        XCTAssertTrue(userDefaults.synchronizeCalled)
+//    }
 }

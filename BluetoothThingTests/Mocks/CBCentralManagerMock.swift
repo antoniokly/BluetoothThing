@@ -40,7 +40,7 @@ class CBCentralManagerMock: CBCentralManager {
             p._state = .connected
         }
         
-        delegate?.centralManager?(self, didConnect: peripheral)
+//        delegate?.centralManager?(self, didConnect: peripheral)
     }
     
     var scanForPeripheralsCalled = 0
@@ -66,7 +66,7 @@ class CBCentralManagerMock: CBCentralManager {
         if let peripheral = peripheral as? CBPeripheralMock {
             peripheral._state = .disconnected
         }
-        delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
+//        delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
     }
     
     init(peripherals: [CBPeripheralMock]) {
