@@ -26,12 +26,7 @@ class DataStore: DataStoreProtocol {
         self.persistentStore = persistentStore
         self.storeKey = storeKey
         self.things = getStoredThings()
-//        NotificationCenter.default.addObserver(forName: UIApplication.willResignActiveNotification, object: nil, queue: nil) { (notification) in
-//            self.persistentStore.synchronize()
-//        }
-//        NotificationCenter.default.addObserver(forName: UIApplication.willTerminateNotification, object: nil, queue: nil) { (notification) in
-//            self.persistentStore.synchronize()
-//        }
+        
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
             if let thing = notification.object as? BluetoothThing, self.things.contains(thing) {
                 self.save()

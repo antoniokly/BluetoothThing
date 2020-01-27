@@ -154,7 +154,7 @@ public class BluetoothThingManager: NSObject {
             return nil
         }
         
-        if thing.name == nil {
+        if thing.name == nil && peripheral.name != nil {
             thing.name = peripheral.name
         }
         

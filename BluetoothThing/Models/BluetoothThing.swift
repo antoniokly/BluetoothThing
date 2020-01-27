@@ -16,11 +16,11 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
-//    public internal (set) weak var peripheral: CBPeripheral?
 
     public var name: String? = nil {
         didSet {
             if name != oldValue {
+                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -29,6 +29,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public internal (set) var location: Location? = nil {
         didSet {
             if location != oldValue {
+                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -37,6 +38,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public internal (set) var data: [BTCharacteristic: Data] = [:] {
         didSet {
             if data != oldValue {
+                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -45,10 +47,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public internal (set) var isRegistered: Bool = false {
         didSet {
             if isRegistered != oldValue {
+                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
     }
+    
+    public internal (set) var lastChanged: Date?
     
     var autoReconnect = false
     var disconnecting = false
@@ -92,6 +97,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case location
         case data
         case isRegistered
+        case lastChanged
     }
     
     public init(id: UUID, name: String? = nil) {
