@@ -10,6 +10,9 @@ import Foundation
 import CoreBluetooth
 
 public struct BTCharacteristic: Hashable, Codable {
+    
+    public static let serialNumber = BTCharacteristic(service: "180A", characteristic: "2A25")
+    
     private var service: String
     private var characteristic: String
     

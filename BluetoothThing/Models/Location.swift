@@ -13,7 +13,7 @@ import CoreLocation
 public struct Location: Hashable, Codable {
     public var latitude: Double
     public var longitude: Double
-    public var timestamp: Date?
+    public var timestamp: Date
     public var name: String?
     
     public var cooridinate: CLLocationCoordinate2D {
@@ -27,8 +27,9 @@ public struct Location: Hashable, Codable {
         self.timestamp = location.timestamp
     }
     
-    public init(coordinate: CLLocationCoordinate2D) {
+    public init(coordinate: CLLocationCoordinate2D, date: Date = Date()) {
         self.latitude = coordinate.latitude
         self.longitude = coordinate.longitude
+        self.timestamp = date
     }
 }

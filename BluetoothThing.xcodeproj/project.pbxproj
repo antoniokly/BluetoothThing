@@ -33,6 +33,8 @@
 		A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
 		A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
 		A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
+		A482DB8423DF92EC009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
+		A482DB8523DF958B009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
 		A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BluetoothThingRequest.swift */; };
 		A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */; };
 		A49E466023CC11610065B96C /* CLLocationManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */; };
@@ -78,6 +80,7 @@
 		A45F184723DA8487004C5A52 /* BluetoothThingWatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThingWatch.h; sourceTree = "<group>"; };
 		A45F184823DA8487004C5A52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreProtocol.swift; sourceTree = "<group>"; };
+		A482DB8323DF92EC009AB51A /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		A492983C23D5216000889E2B /* BluetoothThingRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingRequest.swift; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
 		A49E465F23CC11610065B96C /* CLLocationManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLLocationManagerMock.swift; sourceTree = "<group>"; };
@@ -193,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				A435044723C935B800C6AD1C /* BluetoothHelper.swift */,
+				A482DB8323DF92EC009AB51A /* Data+.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -365,6 +369,7 @@
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A413F19323D7AD83007BDE30 /* Characteristic.swift in Sources */,
 				A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */,
+				A482DB8423DF92EC009AB51A /* Data+.swift in Sources */,
 				A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */,
@@ -403,6 +408,7 @@
 				A45F185223DA84B5004C5A52 /* Subscription.swift in Sources */,
 				A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */,
 				A45F184F23DA84B5004C5A52 /* GeocoderProtocol.swift in Sources */,
+				A482DB8523DF958B009AB51A /* Data+.swift in Sources */,
 				A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */,
 				A45F185123DA84B5004C5A52 /* ConnectionState.swift in Sources */,
 				A45F185923DA8987004C5A52 /* BluetoothThingManager.swift in Sources */,

@@ -52,7 +52,12 @@ public class BluetoothThingManager: NSObject {
                             centralManager: CBCentralManager? = nil,
                             useLocation: Bool = false) {
         self.init(delegate: delegate, subscriptions: subscriptions)        
-        self.dataStore = dataStore ?? DataStore()
+        
+        let dataStoreProtocol = dataStore ?? DataStore()
+        
+        self.dataStore = dataStoreProtocol
+        
+        self.knownThings = Set(dataStoreProtocol.things)
         
         self.centralManager = centralManager ??
             CBCentralManager(delegate: self, queue: nil, options: Self.centralManagerOptions)
@@ -154,7 +159,7 @@ public class BluetoothThingManager: NSObject {
             return nil
         }
         
-        if thing.name == nil && peripheral.name != nil {
+        if thing.name != peripheral.name && peripheral.name != nil {
             thing.name = peripheral.name
         }
         

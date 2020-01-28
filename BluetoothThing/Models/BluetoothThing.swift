@@ -20,25 +20,32 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var name: String? = nil {
         didSet {
             if name != oldValue {
-                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
     }
     
-    public internal (set) var location: Location? = nil {
+    public var location: Location? = nil {
         didSet {
             if location != oldValue {
-                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
     }
     
-    public internal (set) var data: [BTCharacteristic: Data] = [:] {
+    public var data: [BTCharacteristic: Data] = [:] {
         didSet {
             if data != oldValue {
-                self.lastChanged = Date()
+                self.dataLastChanged = Date()
+                NotificationCenter.default.post(name: Self.didChange, object: self)
+            }
+        }
+    }
+    
+    public var customData: [String: Data] = [:] {
+        didSet {
+            if customData != oldValue {
+                self.customDataLastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -47,13 +54,17 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public internal (set) var isRegistered: Bool = false {
         didSet {
             if isRegistered != oldValue {
-                self.lastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
     }
     
-    public internal (set) var lastChanged: Date?
+    public private (set) var dataLastChanged: Date = Date()
+    public private (set) var customDataLastChanged: Date = Date()
+
+    public var hardwareSerialNumber: String? {
+        return data[.serialNumber]?.hexEncodedString
+    }
     
     var autoReconnect = false
     var disconnecting = false
@@ -79,16 +90,12 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public func deregister() {
         _disconnect?(true)
     }
-//    public internal (set) var disconnect: ((Bool) -> Bool)?
 
     @discardableResult
     public func request(_ request: BTRequest) -> Bool {
         return _request?(request) == true
     }
-    
-//    public internal (set) var register: (() -> Bool)?
-//    public internal (set) var deregister: (() -> Bool)?
-    
+        
     var timer: Timer?
     
     private enum CodingKeys: String, CodingKey {
@@ -97,7 +104,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case location
         case data
         case isRegistered
-        case lastChanged
+        case customData
     }
     
     public init(id: UUID, name: String? = nil) {
