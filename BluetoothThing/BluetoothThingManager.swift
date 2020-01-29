@@ -133,23 +133,19 @@ public class BluetoothThingManager: NSObject {
         // MARK: Connect request
         thing._connect = { [weak self, weak peripheral, weak thing] register in
             guard let strongSelf = self, let peripheral = peripheral, let thing = thing else {
-                return false
+                return
             }
 
             strongSelf.connectThing(thing, peripheral: peripheral, register: register)
-            
-            return true
         }
         
         // MARK: Disconnect request
         thing._disconnect = { [weak self, weak thing] deregister in
             guard let strongSelf = self, let thing = thing else {
-                return false
+                return
             }
             
             strongSelf.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
-            
-            return true
         }
     }
     
@@ -256,18 +252,17 @@ public class BluetoothThingManager: NSObject {
                 let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID}),
                 let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid})
                 else {
-                    return false
+                    return
             }
             
             switch request.method {
             case .read:
                 peripheral.readValue(for: charateristic)
             case .write:
-                guard let data = request.value else { return false }
+                guard let data = request.value else { return }
                 peripheral.writeValue(data, for: charateristic, type: .withResponse)
                 peripheral.readValue(for: charateristic)
             }
-            return true
         }
     }
 }
