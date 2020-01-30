@@ -21,10 +21,11 @@ public struct Location: Hashable, Codable {
                                longitude: longitude)
     }
     
-    public init(location: CLLocation) {
+    public init(location: CLLocation, name: String? = nil) {
         self.latitude = location.coordinate.latitude
         self.longitude = location.coordinate.longitude
         self.timestamp = location.timestamp
+        self.name = name
     }
     
     public init(coordinate: CLLocationCoordinate2D, date: Date = Date()) {

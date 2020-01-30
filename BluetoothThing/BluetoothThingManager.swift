@@ -25,7 +25,30 @@ public class BluetoothThingManager: NSObject {
     var locationManager: CLLocationManager?
     var geocoder: GeocoderProtocol?
 
-    var userLocation: CLLocation?
+    var isRequestingLocation = false
+    var userPlacemark: CLPlacemark? {
+        didSet {
+            if let placemark = userPlacemark, let location = placemark.location {
+                updateLocationForNearbyThings(Location(location: location, name: placemark.locality))
+            }
+        }
+    }
+    
+    var userLocation: CLLocation? {
+        didSet {
+            if let location = userLocation {
+                self.fetchPlacemarks(location)
+            }
+        }
+    }
+    
+    var nearbyThings: [BluetoothThing] {
+        self.knownPeripherals.compactMap {
+            self.dataStore.getThing(id: $0.identifier)
+        }.filter {
+            $0.inRange || $0.disconnecting || $0.state == .connected
+        }
+    }
     
     var serviceUUIDs: [CBUUID] {
         return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
@@ -128,6 +151,29 @@ public class BluetoothThingManager: NSObject {
         centralManager.stopScan()
     }
     
+    public func requestLocation(_ minimumInterval: TimeInterval = 60) {
+        if isRequestingLocation {
+            return
+        }
+        
+        if let location = userLocation, location.timestamp.timeIntervalSinceNow > -minimumInterval {
+            os_log("last location is less than %ds older", Int(minimumInterval))
+            return
+        }
+        
+        isRequestingLocation = true
+        locationManager?.requestLocation()
+    }
+    
+    func updateLocationForNearbyThings(_ location: Location) {
+        for thing in nearbyThings {
+            if thing.location != location {
+                thing.location = location
+                self.delegate.bluetoothThing(thing, didUpdateLocation: location)
+            }
+        }
+    }
+    
     //MARK: - BluetoothThing
     func setupThing(_ thing: BluetoothThing, for peripheral: CBPeripheral?) {
         // MARK: Connect request
@@ -193,6 +239,7 @@ public class BluetoothThingManager: NSObject {
         
         thing.timer?.invalidate()
         thing.timer = nil
+        thing.inRange = false
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
@@ -209,12 +256,7 @@ public class BluetoothThingManager: NSObject {
         centralManager.connect(peripheral, options: Self.peripheralOptions)
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
     }
-    
-//    func registerThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
-//        thing.isRegistered = true
-//        connectThing(thing, peripheral: peripheral)
-//    }
-    
+        
     func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, deregister: Bool) {
         thing.disconnecting = true
         
@@ -233,12 +275,6 @@ public class BluetoothThingManager: NSObject {
         }
     }
     
-//    func deregisterThing(_ thing: BluetoothThing, peripheral: CBPeripheral?) {
-//        thing.isRegistered = false
-//        dataStore.removeThing(id: thing.id)
-//        disconnectThing(thing, peripheral: peripheral)
-//    }
-    
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
         peripheral.readRSSI()
         peripheral.discoverServices(serviceUUIDs)
@@ -252,17 +288,19 @@ public class BluetoothThingManager: NSObject {
                 let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID}),
                 let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid})
                 else {
-                    return
+                    return false
             }
             
             switch request.method {
             case .read:
                 peripheral.readValue(for: charateristic)
             case .write:
-                guard let data = request.value else { return }
+                guard let data = request.value else { return false }
                 peripheral.writeValue(data, for: charateristic, type: .withResponse)
                 peripheral.readValue(for: charateristic)
             }
+            
+            return true
         }
     }
 }
@@ -294,15 +332,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 } else {
                     central.cancelPeripheralConnection(peripheral)
                 }
-               
-                locationManager?.requestLocation()
             }
             
             if isPendingToStart {
                 startScanning(options: scanningOptions)
-                
-
             }
+            
+            requestLocation()
+            
         } else {
             for peripheral in knownPeripherals {
                 didUpdatePeripheral(peripheral)
@@ -378,6 +415,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
+        foundThing.inRange = true
         
         if allowDuplicates {
             foundThing.timer = Timer.scheduledTimer(
@@ -390,6 +428,12 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             )
         }
 
+        if let location = userLocation {
+            foundThing.location = Location(location: location, name: userPlacemark?.locality)
+        } else {
+            requestLocation()
+        }
+        
         setupThing(foundThing, for: peripheral)
         delegate.bluetoothThingManager(self, didFoundThing: foundThing, rssi: RSSI)
     }
@@ -399,11 +443,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral){
             thing.timer?.invalidate()
             thing.timer = nil
-            
             didConnectThing(thing, peripheral: peripheral)
-        }
         
-        locationManager?.requestLocation()
+            if let location = userLocation {
+                thing.location = Location(location: location, name: userPlacemark?.locality)
+            } else {
+                requestLocation()
+            }
+        }
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
@@ -492,6 +539,7 @@ extension BluetoothThingManager: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         os_log("didUpdateLocations: %@", locations)
+        isRequestingLocation = false
         
         for location in locations {
             if let last = userLocation, last.timestamp > location.timestamp {
@@ -499,28 +547,21 @@ extension BluetoothThingManager: CLLocationManagerDelegate {
             }
             
             userLocation = location
+            userPlacemark = nil
             fetchPlacemarks(location)
         }
     }
     
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         os_log("didFailWithError: %@", error.localizedDescription)
+        isRequestingLocation = false
         delegate.bluetoothThingManager(self, locationDidFailWithError: error)
     }
     
     func fetchPlacemarks(_ location: CLLocation) {
         (geocoder ?? CLGeocoder()).reverseGeocodeLocation(location) { placemarks, error in
-            let nearbyThings = self.knownPeripherals.filter {
-                $0.state == .connected
-            }.compactMap {
-                self.dataStore.getThing(id: $0.identifier)
-            }
-                
-            for thing in nearbyThings {
-                var loc = Location(location: location)
-                loc.name = placemarks?.first?.locality                
-                thing.location = loc
-                self.delegate.bluetoothThing(thing, didUpdateLocation: loc)
+            if error == nil, self.userLocation == location {
+                self.userPlacemark = placemarks?.first
             }
         }
     }
