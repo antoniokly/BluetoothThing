@@ -16,6 +16,10 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
+        func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
+            return true
+        }
+        
         var locationDidFailCalled = 0
         var locationDidFailWithError: Error?
         func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error) {
@@ -500,9 +504,11 @@ class BluetoothThingManagerTests: XCTestCase {
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
                                         centralManager: centralManager)
+        peripheral.delegate = sut
 
         // When
         centralManager._state = .poweredOn
+        peripheral.delegate = sut
         sut.peripheral(peripheral, didDiscoverCharacteristicsFor: peripheral.services!.first!, error: nil)
         
         // Then

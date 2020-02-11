@@ -69,12 +69,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var autoReconnect = false
     var disconnecting = false
     
-    var inRange = false
+//    var inRange = false
     var timer: Timer?
     
     var _connect: ((Bool) -> Void)?
     var _disconnect: ((Bool) -> Void)?
     var _request: ((BTRequest) -> Bool)?
+    var _notify: ((Bool) -> Void)?
     
     public func connect() {
         _connect?(false)
@@ -97,6 +98,14 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     @discardableResult
     public func request(_ request: BTRequest) -> Bool {
         return _request?(request) == true
+    }
+    
+    public func subscribe() {
+        _notify?(true)
+    }
+    
+    public func unsubscribe() {
+        _notify?(false)
     }
             
     private enum CodingKeys: String, CodingKey {

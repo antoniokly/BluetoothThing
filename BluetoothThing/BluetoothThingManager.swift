@@ -46,7 +46,7 @@ public class BluetoothThingManager: NSObject {
         self.knownPeripherals.compactMap {
             self.dataStore.getThing(id: $0.identifier)
         }.filter {
-            $0.inRange || $0.disconnecting || $0.state == .connected
+            $0.state == .connected
         }
     }
     
@@ -178,7 +178,7 @@ public class BluetoothThingManager: NSObject {
     func setupThing(_ thing: BluetoothThing, for peripheral: CBPeripheral?) {
         // MARK: Connect request
         thing._connect = { [weak self, weak peripheral, weak thing] register in
-            guard let strongSelf = self, let peripheral = peripheral, let thing = thing else {
+            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let peripheral = peripheral, let thing = thing else {
                 return
             }
 
@@ -187,11 +187,23 @@ public class BluetoothThingManager: NSObject {
         
         // MARK: Disconnect request
         thing._disconnect = { [weak self, weak thing] deregister in
-            guard let strongSelf = self, let thing = thing else {
+            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let thing = thing else {
                 return
             }
             
             strongSelf.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
+        }
+        
+        thing._notify = { [weak self] notify in
+            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let peripheral = peripheral else {
+                return
+            }
+            
+            if notify {
+                peripheral.subscribe(subscriptions: strongSelf.subscriptions)
+            } else {
+                peripheral.unsubscribe(subscriptions: strongSelf.subscriptions)
+            }
         }
     }
     
@@ -239,7 +251,7 @@ public class BluetoothThingManager: NSObject {
         
         thing.timer?.invalidate()
         thing.timer = nil
-        thing.inRange = false
+//        thing.inRange = false
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
@@ -415,7 +427,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
-        foundThing.inRange = true
+//        foundThing.inRange = true
         
         if allowDuplicates {
             foundThing.timer = Timer.scheduledTimer(
@@ -503,18 +515,22 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        if let characteristics = service.characteristics {
+        if let characteristics = service.characteristics, let thing = things.first(where: {$0.id == peripheral.identifier}) {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
-            
+                        
+            let subscribe = delegate.bluetoothThingShouldSubscribeOnConnect(thing)
             let subscribedCharacteristics = characteristics.filter {
                 shouldSubscribe(characteristic: $0, subscriptions: self.subscriptions)
             }
             
             for characteristic in subscribedCharacteristics {
-                if !characteristic.isNotifying {
-                    peripheral.setNotifyValue(true, for: characteristic)
+                if subscribe {
+                    if !characteristic.isNotifying {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    }
+                } else {
+                    peripheral.readValue(for: characteristic)
                 }
-                peripheral.readValue(for: characteristic)
             }
         }
     }
@@ -526,6 +542,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
         os_log("didUpdateNotificationStateFor %@", characteristic)
+        peripheral.readValue(for: characteristic)
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
