@@ -28,9 +28,9 @@ public extension Data {
         map { String(format: "%02hhx", $0) }.joined()
     }
     
-//    var int: Int? {
-//        Int(hexEncodedString, radix: 16)
-//    }
+    var int: Int? {
+        Int(hexEncodedString, radix: 16)
+    }
     
 //    var stringASCII: String? {
 //        get {

@@ -36,7 +36,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var data: [BTCharacteristic: Data] = [:] {
         didSet {
             if data != oldValue {
-                self.dataLastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -45,7 +44,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var customData: [String: Data] = [:] {
         didSet {
             if customData != oldValue {
-                self.customDataLastChanged = Date()
                 NotificationCenter.default.post(name: Self.didChange, object: self)
             }
         }
@@ -59,9 +57,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    public private (set) var dataLastChanged: Date = Date()
-    public private (set) var customDataLastChanged: Date = Date()
-
     public var hardwareSerialNumber: String? {
         return data[.serialNumber]?.hexEncodedString
     }
@@ -69,7 +64,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var autoReconnect = false
     var disconnecting = false
     
-//    var inRange = false
     var timer: Timer?
     
     var _connect: ((Bool) -> Void)?

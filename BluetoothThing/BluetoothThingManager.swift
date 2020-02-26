@@ -126,10 +126,8 @@ public class BluetoothThingManager: NSObject {
         if centralManager.state == .poweredOn {
             isPendingToStart = false
             
-            if allowDuplicates {
-                for thing in knownThings.filter({$0.state == .disconnected}) {
-                    loseThing(thing)
-                }
+            for thing in knownThings.filter({$0.state == .disconnected}) {
+                loseThing(thing)
             }
             
             os_log("start scanning", serviceUUIDs)
