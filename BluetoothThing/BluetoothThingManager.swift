@@ -21,9 +21,7 @@ public class BluetoothThingManager: NSObject {
     public internal (set) var delegate: BluetoothThingManagerDelegate
     public internal (set) var subscriptions: [Subscription]
     public internal (set) var dataStore: DataStoreProtocol!
-    
-    private var coreDataStore: CoreDataStore = CoreDataStore()
-    
+        
     var centralManager: CBCentralManager!
     var locationManager: CLLocationManager?
     var geocoder: GeocoderProtocol?
@@ -244,10 +242,15 @@ public class BluetoothThingManager: NSObject {
             delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
             
             if btCharacteristic == .serialNumber, let serialNumber = characteristic.value?.hexEncodedString {
-                if let hardware = coreDataStore.getBTHardware(hardwareId: serialNumber) {
-                    hardware.peripheralId = peripheral.identifier.uuidString
-                    os_log("hardware: %@", hardware )
-                }
+                
+                thing.hardware =
+                           BTHardware.fetch(id: serialNumber) ??
+                           BTHardware.create(keyValues: [
+                               "id": serialNumber
+                           ])
+//                if let hardware = coreDataStore.getBTHardware(hardwareId: serialNumber) {
+//                    os_log("hardware: %@", hardware )
+//                }
                     
             }
         }

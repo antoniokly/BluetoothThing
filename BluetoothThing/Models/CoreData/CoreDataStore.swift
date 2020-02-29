@@ -12,9 +12,10 @@ import CloudKit
 import os.log
 
 class CoreDataStore {
-    var hardwares: [BTHardware] = []
     
-    var useCloudKit = false
+    static private (set) var `default`: CoreDataStore! = CoreDataStore()
+    
+    var useCloudKit = true
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -71,56 +72,60 @@ class CoreDataStore {
             }
         }
     }
-    
-    @available(iOS 13.0, *)
-    convenience init(useCloudKit: Bool = false) {
-        self.init()
+
+    init(useCloudKit: Bool = false) {
         self.useCloudKit = useCloudKit
     }
     
-    init() {
-        let context = persistentContainer.viewContext
+//    init() {
+//        let context = persistentContainer.viewContext
 
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "BTHardware")
+//        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "BTHardware")
          
-        do {
-            hardwares = try context.fetch(fetchRequest) as! [BTHardware]
-            os_log("fetched hardwares %@", hardwares.map({$0.id}))
-         } catch {
-            os_log("fetch error: %@", error.localizedDescription)
-         }
-    }
+//        do {
+////            hardwares = try context.fetch(fetchRequest) as! [BTHardware]
+////            os_log("fetched hardwares %@", hardwares.map({$0.id}))
+//         } catch {
+//            os_log("fetch error: %@", error.localizedDescription)
+//         }
+//    }
     
-    func getBTHardware(peripheralId: UUID) -> BTHardware? {
-        return hardwares.first(where: {$0.peripheralId == peripheralId.uuidString})
-    }
+//    func getBTHardware(peripheralId: UUID) -> BTHardware? {
+//        return hardwares.first(where: {$0.peripheralId == peripheralId.uuidString})
+//    }
     
-    func getBTHardware(hardwareId: String) -> BTHardware? {
-        let context = persistentContainer.viewContext
-
-        if let hardware = hardwares.first(where: {$0.id == hardwareId}) {
-            return hardware
-        } else {
-            let entity = NSEntityDescription.entity(forEntityName: "BTHardware",
-                                                             in: context)!
-                                
-            let hardware = NSManagedObject(entity: entity,
-                                           insertInto: context) as! BTHardware
-            
-            hardware.setValue(hardwareId, forKeyPath: "id")
-            
-            do {
-                try context.save()
-                hardwares.append(hardware)
-            } catch {
-                os_log("save error: %@", error.localizedDescription)
-            }
-            
-            return hardware
-            
-        }
-                    
-    }
+//    func getBTPeripheral(peripheralId: UUID) -> BTPeripheral? {
+//        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
+//        fetchRequest.predicate = NSPredicate(format: "id == %@", peripheralId.uuidString)
+//        return try? persistentContainer.viewContext.fetch(fetchRequest).first
+//    }
+//
+//    func getBTHardware(hardwareId: String) -> BTHardware? {
+//        let context = persistentContainer.viewContext
+//
+//        if let hardware = hardwares.first(where: {$0.id == hardwareId}) {
+//            return hardware
+//        } else {
+//            let entity = NSEntityDescription.entity(forEntityName: "BTHardware",
+//                                                             in: context)!
+//
+//            let hardware = NSManagedObject(entity: entity,
+//                                           insertInto: context) as! BTHardware
+//
+//            hardware.setValue(hardwareId, forKeyPath: "id")
+//
+//            do {
+//                try context.save()
+//                hardwares.append(hardware)
+//            } catch {
+//                os_log("save error: %@", error.localizedDescription)
+//            }
+//
+//            return hardware
+//
+//        }
+//
+//    }
     
     
 }

@@ -16,6 +16,9 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
+    
+    var peripheral: BTPeripheral?
+    var hardware: BTHardware?
 
     public var name: String? = nil {
         didSet {
@@ -114,6 +117,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public init(id: UUID, name: String? = nil) {
         self.id = id
         self.name = name
+        
+        self.peripheral =
+            BTPeripheral.fetch(id: id.uuidString) ??
+            BTPeripheral.create(keyValues: [
+                "id": id.uuidString,
+                "name": name ?? "Unknown"
+            ])
     }
     
     convenience init(peripheral: CBPeripheral) {

@@ -44,10 +44,16 @@
 		A49E466823CC41D50065B96C /* ConnectionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E466723CC41D50065B96C /* ConnectionStateTests.swift */; };
 		A4A16EAB2407CA6F002358FF /* BTHardwareModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EA92407CA6F002358FF /* BTHardwareModel.xcdatamodeld */; };
 		A4A16EAC2407CA8C002358FF /* BTHardwareModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EA92407CA6F002358FF /* BTHardwareModel.xcdatamodeld */; };
-		A4A16EAF2407CBD6002358FF /* BTHardware+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EAD2407CBD6002358FF /* BTHardware+CoreDataClass.swift */; };
-		A4A16EB02407CBD6002358FF /* BTHardware+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EAD2407CBD6002358FF /* BTHardware+CoreDataClass.swift */; };
-		A4A16EB12407CBD6002358FF /* BTHardware+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EAE2407CBD6002358FF /* BTHardware+CoreDataProperties.swift */; };
-		A4A16EB22407CBD6002358FF /* BTHardware+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EAE2407CBD6002358FF /* BTHardware+CoreDataProperties.swift */; };
+		A4A16EBF2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBB2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift */; };
+		A4A16EC02408ABAB002358FF /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBB2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift */; };
+		A4A16EC12408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBC2408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift */; };
+		A4A16EC22408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBC2408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift */; };
+		A4A16EC32408ABAB002358FF /* BTHardware+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBD2408ABAB002358FF /* BTHardware+CoreDataClass.swift */; };
+		A4A16EC42408ABAB002358FF /* BTHardware+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBD2408ABAB002358FF /* BTHardware+CoreDataClass.swift */; };
+		A4A16EC52408ABAB002358FF /* BTHardware+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBE2408ABAB002358FF /* BTHardware+CoreDataProperties.swift */; };
+		A4A16EC62408ABAB002358FF /* BTHardware+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EBE2408ABAB002358FF /* BTHardware+CoreDataProperties.swift */; };
+		A4A16EC82408BB49002358FF /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EC72408BB49002358FF /* Entity.swift */; };
+		A4A16EC92408BB49002358FF /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EC72408BB49002358FF /* Entity.swift */; };
 		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
 		A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6823C68A4900327FE5 /* Location.swift */; };
 		A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
@@ -99,8 +105,11 @@
 		A49E466523CC41A90065B96C /* LocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationTests.swift; sourceTree = "<group>"; };
 		A49E466723CC41D50065B96C /* ConnectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStateTests.swift; sourceTree = "<group>"; };
 		A4A16EAA2407CA6F002358FF /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		A4A16EAD2407CBD6002358FF /* BTHardware+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTHardware+CoreDataClass.swift"; sourceTree = "<group>"; };
-		A4A16EAE2407CBD6002358FF /* BTHardware+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTHardware+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A4A16EBB2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A4A16EBC2408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A4A16EBD2408ABAB002358FF /* BTHardware+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTHardware+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A4A16EBE2408ABAB002358FF /* BTHardware+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTHardware+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A4A16EC72408BB49002358FF /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
 		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
 		A4AB9E6823C68A4900327FE5 /* Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Location.swift; sourceTree = "<group>"; };
 		A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
@@ -211,6 +220,20 @@
 			path = BluetoothThingWatch;
 			sourceTree = "<group>";
 		};
+		A4A16ECA2408BCB5002358FF /* CoreData */ = {
+			isa = PBXGroup;
+			children = (
+				A4A16EC72408BB49002358FF /* Entity.swift */,
+				A4A16EBB2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift */,
+				A4A16EBC2408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift */,
+				A4A16EBD2408ABAB002358FF /* BTHardware+CoreDataClass.swift */,
+				A4A16EBE2408ABAB002358FF /* BTHardware+CoreDataProperties.swift */,
+				A4A16EA92407CA6F002358FF /* BTHardwareModel.xcdatamodeld */,
+				A4B4D46024061A080017614E /* CoreDataStore.swift */,
+			);
+			path = CoreData;
+			sourceTree = "<group>";
+		};
 		A4AB9E6423C6830400327FE5 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,11 +246,8 @@
 		A4AB9E6A23C68BD300327FE5 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				A4A16EAD2407CBD6002358FF /* BTHardware+CoreDataClass.swift */,
-				A4A16EAE2407CBD6002358FF /* BTHardware+CoreDataProperties.swift */,
-				A4A16EA92407CA6F002358FF /* BTHardwareModel.xcdatamodeld */,
+				A4A16ECA2408BCB5002358FF /* CoreData */,
 				A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */,
-				A4B4D46024061A080017614E /* CoreDataStore.swift */,
 				A4AB9E7123C68F8200327FE5 /* DataStore.swift */,
 				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
 				A49E466323CC211C0065B96C /* GeocoderProtocol.swift */,
@@ -399,19 +419,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
-				A4A16EAF2407CBD6002358FF /* BTHardware+CoreDataClass.swift in Sources */,
 				A413F19323D7AD83007BDE30 /* Characteristic.swift in Sources */,
+				A4A16EBF2408ABAB002358FF /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */,
 				A482DB8423DF92EC009AB51A /* Data+.swift in Sources */,
+				A4A16EC52408ABAB002358FF /* BTHardware+CoreDataProperties.swift in Sources */,
 				A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
+				A4A16EC12408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A4AB9E6923C68A4900327FE5 /* Location.swift in Sources */,
 				A49E466423CC211C0065B96C /* GeocoderProtocol.swift in Sources */,
+				A4A16EC32408ABAB002358FF /* BTHardware+CoreDataClass.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
 				A4B4D46124061A080017614E /* CoreDataStore.swift in Sources */,
 				A435045823CA77C000C6AD1C /* Subscription.swift in Sources */,
-				A4A16EB12407CBD6002358FF /* BTHardware+CoreDataProperties.swift in Sources */,
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
+				A4A16EC82408BB49002358FF /* Entity.swift in Sources */,
 				A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */,
 				A4A16EAB2407CA6F002358FF /* BTHardwareModel.xcdatamodeld in Sources */,
 				A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */,
@@ -442,19 +465,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				A45F185223DA84B5004C5A52 /* Subscription.swift in Sources */,
-				A4A16EB02407CBD6002358FF /* BTHardware+CoreDataClass.swift in Sources */,
 				A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */,
+				A4A16EC02408ABAB002358FF /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A45F184F23DA84B5004C5A52 /* GeocoderProtocol.swift in Sources */,
 				A482DB8523DF958B009AB51A /* Data+.swift in Sources */,
+				A4A16EC62408ABAB002358FF /* BTHardware+CoreDataProperties.swift in Sources */,
 				A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */,
+				A4A16EC22408ABAB002358FF /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A45F185123DA84B5004C5A52 /* ConnectionState.swift in Sources */,
 				A45F185923DA8987004C5A52 /* BluetoothThingManager.swift in Sources */,
+				A4A16EC42408ABAB002358FF /* BTHardware+CoreDataClass.swift in Sources */,
 				A45F185723DA84C6004C5A52 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */,
 				A45F185023DA84B5004C5A52 /* Location.swift in Sources */,
-				A4A16EB22407CBD6002358FF /* BTHardware+CoreDataProperties.swift in Sources */,
 				A45F185323DA84B5004C5A52 /* Characteristic.swift in Sources */,
 				A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
+				A4A16EC92408BB49002358FF /* Entity.swift in Sources */,
 				A45F184E23DA84B5004C5A52 /* BluetoothThing.swift in Sources */,
 				A4A16EAC2407CA8C002358FF /* BTHardwareModel.xcdatamodeld in Sources */,
 				A45F185423DA84B5004C5A52 /* BluetoothThingRequest.swift in Sources */,
