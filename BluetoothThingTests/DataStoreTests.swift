@@ -13,7 +13,7 @@ import CoreBluetooth
 class DataStoreTests: XCTestCase {
 
     var sut: DataStore!
-    var userDefaults = UserDefaultsMock()
+    var userDefaults = PersistentStoreMock()
     var peripherals: [CBPeripheralMock]!
     
     override func setUp() {
@@ -37,44 +37,46 @@ class DataStoreTests: XCTestCase {
 
     func testSave() {
         for peripheral in peripherals {
-            sut.addThing(id: peripheral.identifier)
+            let thing = BluetoothThing(id: peripheral.identifier)
+            sut.addThing(thing)
         }
         let thing = sut.things.first!
         
         XCTAssertEqual(sut.things.count, 3)
-        XCTAssertEqual(userDefaults.setValueCalled, 3)
+        XCTAssertEqual(userDefaults.synchronizeCalled, 3)
 
         thing.name = "new name"
-        XCTAssertEqual(userDefaults.setValueCalled, 4)
+        XCTAssertEqual(userDefaults.synchronizeCalled, 4)
     }
     
     func testAddRemoveThing() {
         let uuid = UUID()
-        sut.addThing(id: uuid)
+        let thing = BluetoothThing(id: uuid)
+        sut.addThing(thing)
         
         XCTAssertEqual(sut.things.count, 1)
         XCTAssertEqual(sut.things.last?.id, uuid)
         
-        sut.addThing(id: uuid)
+        sut.addThing(thing)
         XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
-        XCTAssertEqual(userDefaults.setValueCalled, 1)
+//        XCTAssertEqual(userDefaults.setValueCalled, 1)
 
         XCTAssertNotNil(sut.removeThing(id: uuid))
         XCTAssertEqual(sut.things.count, 0)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
-        XCTAssertEqual(userDefaults.setValueCalled, 2)
+//        XCTAssertEqual(userDefaults.setValueCalled, 2)
         
         XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
         XCTAssertEqual(sut.things.count, 0)
 
-        let thing = BluetoothThing(id: UUID())
-        sut.addThing(thing)
+        let thing1 = BluetoothThing(id: UUID())
+        sut.addThing(thing1)
         XCTAssertEqual(sut.things.count, 1)
-        XCTAssertEqual(userDefaults.setValueCalled, 3)
+//        XCTAssertEqual(userDefaults.setValueCalled, 3)
         
-        sut.addThing(BluetoothThing(id: thing.id))
+        sut.addThing(BluetoothThing(id: thing1.id))
         XCTAssertEqual(sut.things.count, 1, "should replace duplicate")
-        XCTAssertEqual(userDefaults.setValueCalled, 4)
+//        XCTAssertEqual(userDefaults.setValueCalled, 4)
     }
     
 //    func testWillResignActiveNotification() {

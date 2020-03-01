@@ -238,16 +238,16 @@ public class BluetoothThingManager: NSObject {
         if let subscription = self.subscriptions.first(where: {
             shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) }) {
             let btCharacteristic = BTCharacteristic(characteristic: characteristic)
-            thing.data[btCharacteristic] = characteristic.value
+            thing.characteristics[btCharacteristic] = characteristic.value
             delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
             
             if btCharacteristic == .serialNumber, let serialNumber = characteristic.value?.hexEncodedString {
                 
-                thing.hardware =
-                           BTHardware.fetch(id: serialNumber) ??
-                           BTHardware.create(keyValues: [
-                               "id": serialNumber
-                           ])
+//                thing.hardware =
+//                           BTHardware.fetch(id: serialNumber) ??
+//                           BTHardware.create(keyValues: [
+//                               "id": serialNumber
+//                           ])
 //                if let hardware = coreDataStore.getBTHardware(hardwareId: serialNumber) {
 //                    os_log("hardware: %@", hardware )
 //                }

@@ -29,13 +29,13 @@ class CoreDataStore {
         let container: NSPersistentContainer
         
         let bundle = Bundle(identifier: "yip.antonio.BluetoothThing")!
-        let model = "BTHardwareModel"
+        let model = "BTModel"
         
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
         
         if #available(iOS 13.0, *), useCloudKit {
-            container = NSPersistentCloudKitContainer(name: "BTHardwareModel")
+            container = NSPersistentCloudKitContainer(name: model)
         } else {
             container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)
         }

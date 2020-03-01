@@ -19,12 +19,9 @@ class DataStore: DataStoreProtocol {
     }
     
     private var persistentStore: PersistentStoreProtocol
-    private var storeKey: String
     
-    public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard,
-                storeKey: String = Bundle.main.bundleIdentifier!) {
+    public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard) {
         self.persistentStore = persistentStore
-        self.storeKey = storeKey
         self.things = getStoredThings()
         
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
@@ -36,8 +33,7 @@ class DataStore: DataStoreProtocol {
     
     func reset() {
         things.removeAll()
-        persistentStore.removeObject(forKey: storeKey)
-        persistentStore.synchronize()
+        persistentStore.reset()
     }
 
     func addThing(_ thing: BluetoothThing) {
@@ -52,16 +48,16 @@ class DataStore: DataStoreProtocol {
         return things.first(where: {$0.id == id})
     }
     
-    @discardableResult
-    func addThing(id: UUID) -> BluetoothThing {
-        if let thing = things.first(where: {$0.id == id}) {
-            return thing
-        } else {
-            let newThing = BluetoothThing(id: id)
-            things.append(newThing)
-            return newThing
-        }
-    }
+//    @discardableResult
+//    func addThing(id: UUID) -> BluetoothThing {
+//        if let thing = things.first(where: {$0.id == id}) {
+//            return thing
+//        } else {
+//            let newThing = BluetoothThing(id: id)
+//            things.append(newThing)
+//            return newThing
+//        }
+//    }
     
     @discardableResult
     func removeThing(id: UUID) -> BluetoothThing? {
@@ -74,19 +70,10 @@ class DataStore: DataStoreProtocol {
     }
     
     func getStoredThings() -> [BluetoothThing] {
-        guard
-            let data = persistentStore.object(forKey: storeKey) as? Data,
-            let things = try? JSONDecoder().decode([BluetoothThing].self, from: data) else {
-            return []
-        }
-        
-        return things
+        return persistentStore.fetch() as? [BluetoothThing] ?? []
     }
 
     func save() {
-        if let data = try? JSONEncoder().encode(things) {
-            persistentStore.set(data, forKey: storeKey)
-            persistentStore.synchronize()
-        }
+        persistentStore.save(things)
     }
 }
