@@ -12,7 +12,6 @@ import CloudKit
 import os.log
 
 class CoreDataStore {
-    
     static private (set) var `default`: CoreDataStore! = CoreDataStore()
     
     var useCloudKit = true
@@ -58,8 +57,12 @@ class CoreDataStore {
         return container
     }()
     
+    init(useCloudKit: Bool = false) {
+        self.useCloudKit = useCloudKit
+    }
+    
     // MARK: - Core Data Saving support
-    func saveContext () {
+    func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
             do {
@@ -72,61 +75,118 @@ class CoreDataStore {
             }
         }
     }
-
-    init(useCloudKit: Bool = false) {
-        self.useCloudKit = useCloudKit
-    }
-    
-//    init() {
-//        let context = persistentContainer.viewContext
-
-//        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "BTHardware")
-         
-//        do {
-////            hardwares = try context.fetch(fetchRequest) as! [BTHardware]
-////            os_log("fetched hardwares %@", hardwares.map({$0.id}))
-//         } catch {
-//            os_log("fetch error: %@", error.localizedDescription)
-//         }
-//    }
-    
-//    func getBTHardware(peripheralId: UUID) -> BTHardware? {
-//        return hardwares.first(where: {$0.peripheralId == peripheralId.uuidString})
-//    }
-    
-//    func getBTPeripheral(peripheralId: UUID) -> BTPeripheral? {
-//        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
-//        fetchRequest.predicate = NSPredicate(format: "id == %@", peripheralId.uuidString)
-//        return try? persistentContainer.viewContext.fetch(fetchRequest).first
-//    }
-//
-//    func getBTHardware(hardwareId: String) -> BTHardware? {
-//        let context = persistentContainer.viewContext
-//
-//        if let hardware = hardwares.first(where: {$0.id == hardwareId}) {
-//            return hardware
-//        } else {
-//            let entity = NSEntityDescription.entity(forEntityName: "BTHardware",
-//                                                             in: context)!
-//
-//            let hardware = NSManagedObject(entity: entity,
-//                                           insertInto: context) as! BTHardware
-//
-//            hardware.setValue(hardwareId, forKeyPath: "id")
-//
-//            do {
-//                try context.save()
-//                hardwares.append(hardware)
-//            } catch {
-//                os_log("save error: %@", error.localizedDescription)
-//            }
-//
-//            return hardware
-//
-//        }
-//
-//    }
-    
-    
+        
 }
 
+extension CoreDataStore: PersistentStoreProtocol {
+    
+    func fetch() -> Any? {
+        let context = persistentContainer.viewContext
+
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "BTPeripheral")
+         
+        var entities: [BTPeripheral] = []
+        
+        do {
+            entities = try context.fetch(fetchRequest) as! [BTPeripheral]
+            os_log("fetched BTPeripherals: %@", entities)//.map({$0.id}))
+         } catch {
+            os_log("fetch error: %@", error.localizedDescription)
+         }
+
+        return entities.compactMap({ entity in
+            guard let id = entity.id, let uuid = UUID(uuidString: id) else {
+                return nil
+            }
+            
+            let thing = BluetoothThing(id: uuid, name: entity.name)
+            
+            if let data = entity.location {
+                thing.location = try? JSONDecoder().decode(Location.self, from: data)
+            }
+            
+            for data in entity.customData as! Set<CustomData> {
+                thing.customData[data.key!] = data.value
+            }
+            
+            for service in entity.services as! Set<GATTService> {
+                for characteristic in service.characteristics as! Set<GATTCharacteristic> {
+                    thing.characteristics[BTCharacteristic(service: service.id!, characteristic: characteristic.id!)] = characteristic.value
+                }
+            }
+            
+            thing.isRegistered = entity.isRegistered
+
+            return thing
+            
+        }) as [BluetoothThing]
+    }
+    
+    func reset() {
+        
+    }
+
+    func save() {
+        saveContext()
+    }
+    
+    func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {
+        guard
+            let thing = object as? BluetoothThing,
+            let keyValues = keyValues as? [String: Any] else {
+            return
+        }
+
+        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", thing.id.uuidString)
+        
+        if let btPeripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first {
+            
+            for (key, value) in keyValues {
+                switch key {
+                case .location:
+                    if let location = value as? Location {
+                        btPeripheral.setValue(try? JSONEncoder().encode(location), forKey: key)
+                    }
+                case .customData:
+                    if let dict = value as? [String: Data] {
+                        for (key, value) in dict {
+                            if let set = btPeripheral.customData as? Set<CustomData>, let customData = set.first(where: {$0.key == key}) {
+                                customData.setValuesForKeys([
+                                    .value: value,
+                                    .modifiedAt: Date()
+                                ])
+                            } else {
+                                let entity = NSEntityDescription.entity(forEntityName: "CustomData", in: persistentContainer.viewContext)!
+                                                    
+                                let customData = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! CustomData
+                                
+                                customData.peripheral = btPeripheral
+                                customData.setValuesForKeys([
+                                    .key: key,
+                                    .value: value,
+                                    .modifiedAt: Date()
+                                ])
+                                btPeripheral.addToCustomData(customData)
+                            }
+                        }
+                    }
+                    
+                default:
+                    btPeripheral.setValue(value, forKey: key)
+                }
+            }
+        } else {
+            let entity = NSEntityDescription.entity(forEntityName: "BTPeripheral", in: persistentContainer.viewContext)!
+                                
+            let btPeripheral = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! BTPeripheral
+            
+            btPeripheral.setValuesForKeys([
+                .id: thing.id.uuidString,
+                .name: thing.name as Any
+            ])
+            
+            update(context: context, object: object, keyValues: keyValues)
+        }
+    }
+}

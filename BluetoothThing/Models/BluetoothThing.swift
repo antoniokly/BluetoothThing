@@ -49,7 +49,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    public internal (set) var isRegistered: Bool = false {
+    public var isRegistered: Bool = false {
         didSet {
             if isRegistered != oldValue {
                 NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.isRegistered: isRegistered])

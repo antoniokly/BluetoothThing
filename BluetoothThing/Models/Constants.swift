@@ -9,6 +9,7 @@
 import Foundation
 
 extension String {
+    static let id = "id"
     static let image = "image"
     static let displayName = "displayName"
     static let name = "name"
@@ -16,5 +17,8 @@ extension String {
     static let data = "data"
     static let customData = "customData"
     static let isRegistered = "isRegistered"
+    static let key = "key"
+    static let value = "value"
+    static let modifiedAt = "modifiedAt"
 
 }

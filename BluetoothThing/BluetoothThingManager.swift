@@ -69,19 +69,27 @@ public class BluetoothThingManager: NSObject {
     
     var knownPeripherals: Set<CBPeripheral> = []
     var knownThings: Set<BluetoothThing> = []
-                
+    
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
-                            dataStore: DataStoreProtocol? = nil,
-                            centralManager: CBCentralManager? = nil,
+                            useCoreData: Bool = false,
                             useLocation: Bool = false) {
+        self.init(delegate: delegate,
+                  subscriptions: subscriptions,
+                  dataStore: DataStore(persistentStore: useCoreData ? CoreDataStore() : UserDefaults.standard),
+                  useLocation: useLocation)
+    }
+    
+    convenience init(delegate: BluetoothThingManagerDelegate,
+                     subscriptions: [Subscription],
+                     dataStore: DataStoreProtocol,
+                     centralManager: CBCentralManager? = nil,
+                     useLocation: Bool = false) {
         self.init(delegate: delegate, subscriptions: subscriptions)        
+                
+        self.dataStore = dataStore
         
-        let dataStoreProtocol = dataStore ?? DataStore()
-        
-        self.dataStore = dataStoreProtocol
-        
-        self.knownThings = Set(dataStoreProtocol.things)
+        self.knownThings = Set(dataStore.things)
         
         self.centralManager = centralManager ??
             CBCentralManager(delegate: self, queue: nil, options: Self.centralManagerOptions)

@@ -11,22 +11,21 @@ import os.log
 
 class DataStore: DataStoreProtocol {
     
-    var things: [BluetoothThing] = [] {
-        didSet {
-            os_log("things did change %@", things.debugDescription)
-            save()
-        }
-    }
+    var things: [BluetoothThing]
     
     private var persistentStore: PersistentStoreProtocol
     
     public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard) {
         self.persistentStore = persistentStore
-        self.things = getStoredThings()
+        self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
         
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
-            if let thing = notification.object as? BluetoothThing, self.things.contains(thing) {
-                self.save()
+            
+            if let thing = notification.object as? BluetoothThing {
+                self.persistentStore.update(context: self.things,
+                                            object: thing,
+                                            keyValues: notification.userInfo)
+                self.persistentStore.save()
             }
         }
     }
@@ -48,17 +47,6 @@ class DataStore: DataStoreProtocol {
         return things.first(where: {$0.id == id})
     }
     
-//    @discardableResult
-//    func addThing(id: UUID) -> BluetoothThing {
-//        if let thing = things.first(where: {$0.id == id}) {
-//            return thing
-//        } else {
-//            let newThing = BluetoothThing(id: id)
-//            things.append(newThing)
-//            return newThing
-//        }
-//    }
-    
     @discardableResult
     func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
@@ -67,13 +55,5 @@ class DataStore: DataStoreProtocol {
         } else {
             return nil
         }
-    }
-    
-    func getStoredThings() -> [BluetoothThing] {
-        return persistentStore.fetch() as? [BluetoothThing] ?? []
-    }
-
-    func save() {
-        persistentStore.save(things)
     }
 }

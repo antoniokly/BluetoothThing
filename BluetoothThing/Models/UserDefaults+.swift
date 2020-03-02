@@ -9,6 +9,7 @@
 import Foundation
 
 extension UserDefaults: PersistentStoreProtocol {
+    
     static let storeKey = Bundle.main.bundleIdentifier!
 
     public func reset() {
@@ -25,14 +26,24 @@ extension UserDefaults: PersistentStoreProtocol {
         return things
     }
     
-    public func save(_ object: Any?) -> Bool {
-        if let things = object as? [BluetoothThing],
+    public func save(_ context: Any?) {
+        if let things = context as? [BluetoothThing],
             let data = try? JSONEncoder().encode(things) {
             set(data, forKey: Self.storeKey)
             synchronize()
-            return true
         }
-        
-        return false
+    }
+    
+    public func save() {
+        synchronize()
+    }
+    
+    public func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {
+        if let things = context as? [BluetoothThing],
+            let thing = object as? BluetoothThing,
+            things.contains(thing),
+            let data = try? JSONEncoder().encode(things) {
+            set(data, forKey: Self.storeKey)
+        }
     }
 }

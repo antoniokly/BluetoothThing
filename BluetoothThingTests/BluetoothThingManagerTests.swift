@@ -555,7 +555,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didUpdateValueSubscription?.serviceUUID, subscriptions.first?.serviceUUID)
         XCTAssertEqual(delegate.didUpdateValueSubscription?.characteristicUUID, subscriptions.first?.characteristicUUID)
         XCTAssertEqual(delegate.didUpdateValue, value)
-        XCTAssertEqual(thing?.charateristics[BTCharacteristic(characteristic: characteristic)], value)
+        XCTAssertEqual(thing?.characteristics[BTCharacteristic(characteristic: characteristic)], value)
 
         // When
         characteristic._value = nil
@@ -564,7 +564,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.didUpdateValueCalled, 2)
         XCTAssertNotNil(thing)
-        XCTAssertNil(thing?.charateristics[BTCharacteristic(characteristic: characteristic)])
+        XCTAssertNil(thing?.characteristics[BTCharacteristic(characteristic: characteristic)])
     }
     
     func testDidReadRSSI() {
