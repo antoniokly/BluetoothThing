@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BTPeripheral" representedClassName="BTPeripheral" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="isRegistered" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -12,19 +12,19 @@
         <relationship name="services" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GATTService" inverseName="peripheral" inverseEntity="GATTService"/>
     </entity>
     <entity name="CustomData" representedClassName="CustomData" syncable="YES" codeGenerationType="class">
-        <attribute name="key" attributeType="String"/>
+        <attribute name="key" optional="YES" attributeType="String"/>
         <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="value" optional="YES" attributeType="Binary"/>
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="customData" inverseEntity="BTPeripheral"/>
     </entity>
     <entity name="GATTCharacteristic" representedClassName="GATTCharacteristic" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="value" optional="YES" attributeType="Binary"/>
         <relationship name="service" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GATTService" inverseName="characteristics" inverseEntity="GATTService"/>
     </entity>
     <entity name="GATTService" representedClassName="GATTService" syncable="YES" codeGenerationType="class">
-        <attribute name="id" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="characteristics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GATTCharacteristic" inverseName="service" inverseEntity="GATTCharacteristic"/>
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="services" inverseEntity="BTPeripheral"/>
