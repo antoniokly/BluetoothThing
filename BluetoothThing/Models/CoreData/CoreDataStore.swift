@@ -34,7 +34,7 @@ class CoreDataStore {
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
         
         if #available(iOS 13.0, *), useCloudKit {
-            container = NSPersistentCloudKitContainer(name: model)
+            container = NSPersistentCloudKitContainer(name: model, managedObjectModel: managedObjectModel)
         } else {
             container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)
         }
@@ -151,6 +151,8 @@ extension CoreDataStore: PersistentStoreProtocol {
                 case .location:
                     if let location = value as? Location {
                         btPeripheral.setValue(try? JSONEncoder().encode(location), forKey: key)
+                        
+                        os_log("CoreData updated location")
                     }
                 case .customData:
                     if let dict = value as? [String: Data] {
@@ -160,24 +162,63 @@ extension CoreDataStore: PersistentStoreProtocol {
                                     .value: value,
                                     .modifiedAt: Date()
                                 ])
+                                os_log("CoreData updated customData %@: %@", key, String(describing: value))
                             } else {
                                 let entity = NSEntityDescription.entity(forEntityName: "CustomData", in: persistentContainer.viewContext)!
                                                     
                                 let customData = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! CustomData
                                 
                                 customData.peripheral = btPeripheral
-                                customData.setValuesForKeys([
-                                    .key: key,
-                                    .value: value,
-                                    .modifiedAt: Date()
-                                ])
+                                customData.key = key
                                 btPeripheral.addToCustomData(customData)
+                                os_log("CoreData created customData")
+
+                                update(context: context, object: object, keyValues: keyValues)
                             }
                         }
                     }
-                    
+                case .characteristics:
+                    if let characteristics = value as? [BTCharacteristic: Data] {
+                        for (characteristic, value) in characteristics {
+                            if let set = btPeripheral.services as? Set<GATTService>, let gattService = set.first(where: {$0.id == characteristic.serviceUUID.uuidString}) {
+                                
+                                if let set = gattService.characteristics as? Set<GATTCharacteristic>, let gattChar = set.first(where: {$0.id == characteristic.uuid.uuidString}) {
+                                    gattChar.value = value
+                                    
+                                    os_log("CoreData updated GATTCharacteristic %@: %@", characteristic.uuid.uuidString, String(describing: value))
+
+                                } else {
+                                    let entity = NSEntityDescription.entity(forEntityName: "GATTCharacteristic", in: persistentContainer.viewContext)!
+                                                        
+                                    let gattChar = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! GATTCharacteristic
+                                    
+                                    gattChar.service = gattService
+                                    gattChar.id = characteristic.uuid.uuidString
+                                    gattChar.name = characteristic.uuid.description
+                                    gattService.addToCharacteristics(gattChar)
+                                    os_log("CoreData created GATTCharacteristic")
+                                    
+                                    update(context: context, object: object, keyValues: keyValues)
+                                }
+                                
+                            } else {
+                                let entity = NSEntityDescription.entity(forEntityName: "GATTService", in: persistentContainer.viewContext)!
+                                                    
+                                let service = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! GATTService
+                                
+                                service.peripheral = btPeripheral
+                                service.id = characteristic.serviceUUID.uuidString
+                                service.name = characteristic.serviceUUID.description
+                                btPeripheral.addToServices(service)
+                                os_log("CoreData created GATTService")
+                                
+                                update(context: context, object: object, keyValues: keyValues)
+                            }
+                        }
+                    }
                 default:
                     btPeripheral.setValue(value, forKey: key)
+                    os_log("CoreData updated %@: %@", key, String(describing: value))
                 }
             }
         } else {
@@ -189,7 +230,8 @@ extension CoreDataStore: PersistentStoreProtocol {
                 .id: thing.id.uuidString,
                 .name: thing.name as Any
             ])
-            
+            os_log("CoreData created BTPeripheral")
+
             update(context: context, object: object, keyValues: keyValues)
         }
     }

@@ -15,6 +15,8 @@ class DataStore: DataStoreProtocol {
     
     private var persistentStore: PersistentStoreProtocol
     
+    private let persistentStoreQueue = DispatchQueue(label: "persistentStoreQueue.serial.queue")
+    
     public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard) {
         self.persistentStore = persistentStore
         self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
@@ -22,10 +24,12 @@ class DataStore: DataStoreProtocol {
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
             
             if let thing = notification.object as? BluetoothThing {
-                self.persistentStore.update(context: self.things,
-                                            object: thing,
-                                            keyValues: notification.userInfo)
-                self.persistentStore.save()
+                self.persistentStoreQueue.async {
+                    self.persistentStore.update(context: self.things,
+                                                object: thing,
+                                                keyValues: notification.userInfo)
+                    self.persistentStore.save()
+                }
             }
         }
     }

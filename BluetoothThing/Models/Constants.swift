@@ -15,6 +15,7 @@ extension String {
     static let name = "name"
     static let location = "location"
     static let data = "data"
+    static let characteristics = "characteristics"
     static let customData = "customData"
     static let isRegistered = "isRegistered"
     static let key = "key"

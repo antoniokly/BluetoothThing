@@ -36,7 +36,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var characteristics: [BTCharacteristic: Data] = [:] {
         didSet {
             if characteristics != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.data: characteristics])
+                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.characteristics: characteristics])
             }
         }
     }
