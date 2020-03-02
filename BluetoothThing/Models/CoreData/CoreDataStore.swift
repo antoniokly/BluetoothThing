@@ -14,7 +14,7 @@ import os.log
 class CoreDataStore {
     static private (set) var `default`: CoreDataStore! = CoreDataStore()
     
-    var useCloudKit = true
+    private var useCloudKit = true
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -57,6 +57,10 @@ class CoreDataStore {
         return container
     }()
     
+    init() {
+    }
+    
+    @available(iOS 13.0, *)
     init(useCloudKit: Bool = false) {
         self.useCloudKit = useCloudKit
     }

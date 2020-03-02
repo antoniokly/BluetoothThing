@@ -72,11 +72,27 @@ public class BluetoothThingManager: NSObject {
     
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
-                            useCoreData: Bool = false,
-                            useLocation: Bool = false) {
+                            useLocation: Bool = false,
+                            useCoreData: Bool = false) {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
-                  dataStore: DataStore(persistentStore: useCoreData ? CoreDataStore() : UserDefaults.standard),
+                  dataStore: DataStore(persistentStore: useCoreData ?
+                    CoreDataStore() :
+                    UserDefaults.standard),
+                  useLocation: useLocation)
+    }
+    
+    @available(iOS 13.0, *)
+    public convenience init(delegate: BluetoothThingManagerDelegate,
+                            subscriptions: [Subscription],
+                            useLocation: Bool = false,
+                            useCoreData: Bool = false,
+                            useCloudKit: Bool = false) {
+        self.init(delegate: delegate,
+                  subscriptions: subscriptions,
+                  dataStore: DataStore(persistentStore: useCoreData ?
+                    CoreDataStore(useCloudKit: useCloudKit) :
+                    UserDefaults.standard),
                   useLocation: useLocation)
     }
     
@@ -248,19 +264,6 @@ public class BluetoothThingManager: NSObject {
             let btCharacteristic = BTCharacteristic(characteristic: characteristic)
             thing.characteristics[btCharacteristic] = characteristic.value
             delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
-            
-            if btCharacteristic == .serialNumber, let serialNumber = characteristic.value?.hexEncodedString {
-                
-//                thing.hardware =
-//                           BTHardware.fetch(id: serialNumber) ??
-//                           BTHardware.create(keyValues: [
-//                               "id": serialNumber
-//                           ])
-//                if let hardware = coreDataStore.getBTHardware(hardwareId: serialNumber) {
-//                    os_log("hardware: %@", hardware )
-//                }
-                    
-            }
         }
 
         return thing
@@ -271,7 +274,6 @@ public class BluetoothThingManager: NSObject {
         
         thing.timer?.invalidate()
         thing.timer = nil
-//        thing.inRange = false
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
@@ -447,7 +449,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
-//        foundThing.inRange = true
         
         if allowDuplicates {
             foundThing.timer = Timer.scheduledTimer(
