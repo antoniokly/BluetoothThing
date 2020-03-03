@@ -188,6 +188,14 @@ public class BluetoothThingManager: NSObject {
         locationManager?.requestLocation()
     }
     
+    public func reset() {
+        for id in things.map({$0.id}) {
+            if let thing = dataStore.removeThing(id: id) {
+                loseThing(thing)
+            }
+        }
+    }
+    
     func updateLocationForNearbyThings(_ location: Location) {
         for thing in nearbyThings {
             if thing.location != location {

@@ -68,26 +68,26 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(sut.things.last?.id, uuid)
         
         sut.addThing(thing)
-        XCTAssertEqual(sut.things.count, 1, "should replace duplicate")
-        XCTAssertEqual(persistentStore.removeObjectCalled, 1)
-        XCTAssertEqual(persistentStore.addObjectCalled, 2)
-        XCTAssertEqual(persistentStore.saveCalled, 3)
+        XCTAssertEqual(sut.things.count, 1, "should not replace duplicate")
+        XCTAssertEqual(persistentStore.removeObjectCalled, 0)
+        XCTAssertEqual(persistentStore.addObjectCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
 
         XCTAssertNotNil(sut.removeThing(id: uuid))
         XCTAssertEqual(sut.things.count, 0)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
-        XCTAssertEqual(persistentStore.removeObjectCalled, 2)
-        XCTAssertEqual(persistentStore.saveCalled, 4)
+        XCTAssertEqual(persistentStore.removeObjectCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 2)
         
         XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
         XCTAssertEqual(sut.things.count, 0)
-        XCTAssertEqual(persistentStore.saveCalled, 4)
+        XCTAssertEqual(persistentStore.saveCalled, 2)
 
         let thing1 = BluetoothThing(id: UUID())
         sut.addThing(thing1)
         XCTAssertEqual(sut.things.count, 1)
-        XCTAssertEqual(persistentStore.addObjectCalled, 3)
-        XCTAssertEqual(persistentStore.saveCalled, 5)
+        XCTAssertEqual(persistentStore.addObjectCalled, 2)
+        XCTAssertEqual(persistentStore.saveCalled, 3)
     }
     
     func testReset() {

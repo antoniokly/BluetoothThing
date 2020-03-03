@@ -41,9 +41,8 @@ class DataStore: DataStoreProtocol {
     }
 
     func addThing(_ thing: BluetoothThing) {
-        if let oldThing = things.first(where: {$0.id == thing.id}) {
-            removeThing(id: oldThing.id)
-            addThing(thing)
+        if things.contains(where: {$0.id == thing.id}) {
+            return
         } else {
             things.append(thing)
             self.persistentStore.addObject(context: things, object: thing)
