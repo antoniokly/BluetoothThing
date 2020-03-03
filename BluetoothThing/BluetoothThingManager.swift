@@ -312,8 +312,8 @@ public class BluetoothThingManager: NSObject {
         
         if deregister {
             thing.isRegistered = false
-            dataStore.removeThing(id: thing.id)
             loseThing(thing)
+            dataStore.removeThing(id: thing.id)
         }
     }
     

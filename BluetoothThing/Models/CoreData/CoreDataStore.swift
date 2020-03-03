@@ -24,12 +24,13 @@ class CoreDataStore {
          */
         
         let container: NSPersistentContainer
+        let model = "BTModel"
+        
         #if os(watchOS)
         let bundle = Bundle(identifier: "yip.antonio.BluetoothThingWatch")!
         #else
         let bundle = Bundle(identifier: "yip.antonio.BluetoothThing")!
         #endif
-        let model = "BTModel"
         
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
@@ -63,7 +64,11 @@ class CoreDataStore {
     
     @available(iOS 13.0, *)
     init(useCloudKit: Bool) {
+        #if os(iOS)
         self.useCloudKit = useCloudKit
+        #else
+        // watch no sync for now
+        #endif
     }
     
     // MARK: - Core Data Saving support
