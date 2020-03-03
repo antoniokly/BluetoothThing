@@ -26,8 +26,11 @@ class CoreDataStore {
          */
         
         let container: NSPersistentContainer
-        
+        #if os(watchOS)
+        let bundle = Bundle(identifier: "yip.antonio.BluetoothThingWatch")!
+        #else
         let bundle = Bundle(identifier: "yip.antonio.BluetoothThing")!
+        #endif
         let model = "BTModel"
         
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
