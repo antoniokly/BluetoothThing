@@ -10,33 +10,33 @@ import Foundation
 @testable import BluetoothThing
 
 class PersistentStoreMock: PersistentStoreProtocol {
+    
     func fetch() -> Any? {
         return nil
     }
     
-    
-    
-    
-//    func object(forKey defaultName: String) -> Any? {
-//        return nil
-//    }
-    
-//    var setValueCalled = 0
-//    func set(_ value: Any?, forKey defaultName: String) {
-//        setValueCalled += 1
-//    }
-    
-//    func removeObject(forKey defaultName: String) {
-//        
-//    }
-    
+    var resetCalled = 0
     func reset() {
-        
+        resetCalled += 1
     }
     
-    var synchronizeCalled = 0
-    func save(_ object: Any?) -> Bool {
-        synchronizeCalled += 1
-        return true
+    var saveCalled = 0
+    func save(context: Any?)  {
+        saveCalled += 1
+    }
+    
+    var addObjectCalled = 0
+    func addObject(context: Any?, object: Any?) {
+        addObjectCalled += 1
+    }
+    
+    var removeObjectCalled = 0
+    func removeObject(context: Any?, object: Any?) {
+        removeObjectCalled += 1
+    }
+    
+    var updateCalled = 0
+    func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {
+        updateCalled += 1
     }
 }

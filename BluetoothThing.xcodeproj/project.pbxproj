@@ -58,6 +58,7 @@
 		A4B4D46124061A080017614E /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
 		A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
 		A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
+		A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -110,6 +111,7 @@
 		A4B4D456240614620017614E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS6.1.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		A4B4D46024061A080017614E /* CoreDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStore.swift; sourceTree = "<group>"; };
 		A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerDelegate.swift; sourceTree = "<group>"; };
+		A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStoreTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +198,7 @@
 				A49E466723CC41D50065B96C /* ConnectionStateTests.swift */,
 				A402498523CC6F020012618E /* DataStoreTests.swift */,
 				A4411AF023CD5682000C7E11 /* SubscriptionTests.swift */,
+				A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */,
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 				A402498723CC6F8D0012618E /* TestHelper.swift */,
 			);
@@ -434,6 +437,7 @@
 				A402498823CC6F8D0012618E /* TestHelper.swift in Sources */,
 				A49E466823CC41D50065B96C /* ConnectionStateTests.swift in Sources */,
 				A402498623CC6F020012618E /* DataStoreTests.swift in Sources */,
+				A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */,
 				A49E466023CC11610065B96C /* CLLocationManagerMock.swift in Sources */,
 				A49E466223CC19DC0065B96C /* CLGeocoderMock.swift in Sources */,
 				A4B37BED23D307C300A23E1F /* PersistentStoreMock.swift in Sources */,

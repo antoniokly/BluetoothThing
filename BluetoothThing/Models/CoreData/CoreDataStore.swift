@@ -12,9 +12,7 @@ import CloudKit
 import os.log
 
 class CoreDataStore {
-    static private (set) var `default`: CoreDataStore! = CoreDataStore()
-    
-    private var useCloudKit = true
+    private var useCloudKit = false
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -64,7 +62,7 @@ class CoreDataStore {
     }
     
     @available(iOS 13.0, *)
-    init(useCloudKit: Bool = false) {
+    init(useCloudKit: Bool) {
         self.useCloudKit = useCloudKit
     }
     
@@ -130,11 +128,48 @@ extension CoreDataStore: PersistentStoreProtocol {
     }
     
     func reset() {
-        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "BTPeripheral")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try persistentContainer.viewContext.execute(deleteRequest)
+        } catch  {
+            os_log("delete error: %@", error.localizedDescription)
+        }
     }
 
-    func save() {
+    func save(context: Any?) {
         saveContext()
+    }
+    
+    func addObject(context: Any?, object: Any?) {
+        guard let thing = object as? BluetoothThing else {
+            return
+        }
+        
+        let entity = NSEntityDescription.entity(forEntityName: "BTPeripheral", in: persistentContainer.viewContext)!
+                            
+        let btPeripheral = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! BTPeripheral
+        
+        btPeripheral.setValuesForKeys([
+            .id: thing.id.uuidString,
+            .name: thing.name as Any
+        ])
+        os_log("CoreData added an BTPeripheral")
+    }
+    
+    func removeObject(context: Any?, object: Any?) {
+        guard let thing = object as? BluetoothThing else {
+            return
+        }
+        
+        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", thing.id.uuidString)
+        
+        if let btPeripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first {
+            persistentContainer.viewContext.delete(btPeripheral)
+            os_log("CoreData removed an BTPeripheral")
+        }
     }
     
     func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {

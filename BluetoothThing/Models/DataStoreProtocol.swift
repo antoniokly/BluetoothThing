@@ -20,6 +20,8 @@ public protocol DataStoreProtocol {
 public protocol PersistentStoreProtocol {
     func fetch() -> Any?
     func reset()
-    func save()
+    func save(context: Any?)
+    func addObject(context: Any?, object: Any?)
+    func removeObject(context: Any?, object: Any?)
     func update(context: Any?, object: Any?, keyValues: [AnyHashable: Any]?)
 }

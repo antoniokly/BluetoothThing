@@ -14,11 +14,12 @@ class DataStore: DataStoreProtocol {
     var things: [BluetoothThing]
     
     private var persistentStore: PersistentStoreProtocol
+    private var persistentStoreQueue: DispatchQueue
     
-    private let persistentStoreQueue = DispatchQueue(label: "persistentStoreQueue.serial.queue")
-    
-    public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard) {
+    public init(persistentStore: PersistentStoreProtocol,
+                queue: DispatchQueue = DispatchQueue(label: "persistentStoreQueue.serial.queue")) {
         self.persistentStore = persistentStore
+        self.persistentStoreQueue = queue
         self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
         
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
@@ -28,7 +29,7 @@ class DataStore: DataStoreProtocol {
                     self.persistentStore.update(context: self.things,
                                                 object: thing,
                                                 keyValues: notification.userInfo)
-                    self.persistentStore.save()
+                    self.persistentStore.save(context: self.things)
                 }
             }
         }
@@ -40,10 +41,13 @@ class DataStore: DataStoreProtocol {
     }
 
     func addThing(_ thing: BluetoothThing) {
-        if let index = things.firstIndex(where: {$0.id == thing.id}) {
-            things[index] = thing
+        if let oldThing = things.first(where: {$0.id == thing.id}) {
+            removeThing(id: oldThing.id)
+            addThing(thing)
         } else {
             things.append(thing)
+            self.persistentStore.addObject(context: things, object: thing)
+            self.persistentStore.save(context: things)
         }
     }
     
@@ -55,6 +59,8 @@ class DataStore: DataStoreProtocol {
     func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
             let thing = things.remove(at: index)
+            self.persistentStore.removeObject(context: things, object: thing)
+            self.persistentStore.save(context: things)
             return thing
         } else {
             return nil

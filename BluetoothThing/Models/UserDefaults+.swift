@@ -26,7 +26,7 @@ extension UserDefaults: PersistentStoreProtocol {
         return things
     }
     
-    public func save(_ context: Any?) {
+    public func save(context: Any?) {
         if let things = context as? [BluetoothThing],
             let data = try? JSONEncoder().encode(things) {
             set(data, forKey: Self.storeKey)
@@ -34,8 +34,16 @@ extension UserDefaults: PersistentStoreProtocol {
         }
     }
     
-    public func save() {
-        synchronize()
+    public func addObject(context: Any?, object: Any?) {
+        if let things = context as? [BluetoothThing], let data = try? JSONEncoder().encode(things) {
+            set(data, forKey: Self.storeKey)
+        }
+    }
+    
+    public func removeObject(context: Any?, object: Any?) {
+        if let things = context as? [BluetoothThing], let data = try? JSONEncoder().encode(things) {
+            set(data, forKey: Self.storeKey)
+        }
     }
     
     public func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {
