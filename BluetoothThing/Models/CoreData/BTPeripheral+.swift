@@ -38,4 +38,18 @@ extension BTPeripheral {
             self.insertDiscovery(centralId: centralId, peripheralId: peripheralId)
         }
     }
+    
+    var hardwareId: String? {
+        let serialNumber = BTCharacteristic.serialNumber
+        
+        guard let services = self.services as? Set<GATTService>,
+            let service = services.first(where: {$0.id == serialNumber.serviceUUID.uuidString}),
+            let characteristics = service.characteristics as? Set<GATTCharacteristic>,
+            let characteristic = characteristics.first(where: {$0.id == serialNumber.uuid.uuidString}),
+            let data = characteristic.value else {
+            return nil
+        }
+        
+        return String(data: data, encoding: .utf8)
+    }
 }

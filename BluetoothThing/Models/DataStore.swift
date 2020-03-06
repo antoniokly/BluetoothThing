@@ -53,9 +53,6 @@ class DataStore: DataStoreProtocol {
         
         if thing.hardwareSerialNumber != nil  {
             self.persistentStore.addObject(context: things, object: thing)
-            self.persistentStore.update(context: self.things,
-                                        object: thing,
-                                        keyValues: [String.characteristics: thing.characteristics])
             self.persistentStore.save(context: things)
         }
     }

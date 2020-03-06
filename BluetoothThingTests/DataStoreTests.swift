@@ -43,7 +43,6 @@ class DataStoreTests: XCTestCase {
         
         XCTAssertEqual(sut.things.count, 3)
         XCTAssertEqual(persistentStore.addObjectCalled, 3)
-        XCTAssertEqual(persistentStore.updateCalled, 3)
         XCTAssertEqual(persistentStore.saveCalled, 3)
     }
     

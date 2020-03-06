@@ -28,6 +28,8 @@ class CoreDataStoreTests: XCTestCase {
         XCTAssertEqual(things?.count, 0)
         
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
+        
         sut.addObject(context: nil, object: thing)
         
         things = sut.fetch() as? [BluetoothThing]
@@ -41,18 +43,28 @@ class CoreDataStoreTests: XCTestCase {
     
     func testAdd() {
         let thing = BluetoothThing(id: UUID())
+        let hardwareId = Data()
+        thing.characteristics[.serialNumber] = hardwareId
         
         sut.addObject(context: nil, object: nil)
         var things = sut.fetch() as? [BluetoothThing]
-        XCTAssertEqual(things?.count, 0)
+        XCTAssertEqual(things?.count, 0, "adding nothing")
 
         sut.addObject(context: nil, object: thing)
         things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.count, 1)
+        
+        let thing1 = BluetoothThing(id: UUID())
+        thing1.characteristics[.serialNumber] = hardwareId
+        sut.addObject(context: nil, object: thing)
+        things = sut.fetch() as? [BluetoothThing]
+        XCTAssertEqual(things?.count, 1, "adding thing with same hardware ID has no effect")
     }
 
     func testRemove() {
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
+
         sut.removeObject(context: nil, object: thing)
         XCTAssertEqual(sut.persistentContainer.viewContext.deletedObjects.count, 0)
         
@@ -80,6 +92,7 @@ class CoreDataStoreTests: XCTestCase {
     
     func testUpdateName() {
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
         
         sut.addObject(context: nil, object: thing)
         sut.update(context: nil, object: thing, keyValues: [String.name: "test"])
@@ -89,6 +102,8 @@ class CoreDataStoreTests: XCTestCase {
     
     func testUpdateCustomData() {
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
+
         let customData = [String.displayName: Data()]
         
         sut.addObject(context: nil, object: thing)
@@ -99,6 +114,8 @@ class CoreDataStoreTests: XCTestCase {
     
     func testUpdateCharacteristics() {
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
+
         var hex = Int("fff01234", radix: 16)
         let characteristics = [
             BTCharacteristic(service: "FFF0", characteristic: "FFE0"): Data(),
@@ -114,6 +131,8 @@ class CoreDataStoreTests: XCTestCase {
     
     func testUpdateLocation() {
         let thing = BluetoothThing(id: UUID())
+        thing.characteristics[.serialNumber] = Data()
+
         let location = Location(coordinate: .init())
 
         sut.addObject(context: nil, object: thing)
