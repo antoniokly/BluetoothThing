@@ -230,14 +230,6 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
         XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
-        
-        // When
-        thing.deregister()
-        
-        // Then
-        XCTAssertEqual(dataStore.things.count, 0)
-        XCTAssertEqual(delegate.didChangeStateThing?.id, thing.id)
-        XCTAssertEqual(delegate.didChangeStateThing?.isRegistered, false)
     }
     
     func testPowerOff() {
@@ -416,6 +408,7 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(dataStore.things.count, 1)
+        XCTAssertEqual(dataStore.things.first?.isRegistered, true)
         XCTAssertEqual(centralManager.connectCalled, 1)
         XCTAssertEqual(centralManager.connectPeripheral, peripheral)
         
@@ -423,7 +416,8 @@ class BluetoothThingManagerTests: XCTestCase {
         thing?.deregister()
         
         // Then
-        XCTAssertEqual(dataStore.things.count, 0)
+        XCTAssertEqual(dataStore.things.count, 1)
+        XCTAssertEqual(dataStore.things.first?.isRegistered, false)
         XCTAssertEqual(centralManager.cancelConnectionCalled, 1)
         XCTAssertEqual(centralManager.cancelConnectionPeripheral, peripheral)
     }
