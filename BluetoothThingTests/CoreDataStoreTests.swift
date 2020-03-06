@@ -15,13 +15,11 @@ class CoreDataStoreTests: XCTestCase {
     var sut: CoreDataStore!
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         sut = CoreDataStore(centralId: UUID())
         sut.reset()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         sut.reset()
     }
 
@@ -34,8 +32,24 @@ class CoreDataStoreTests: XCTestCase {
         
         things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.count, 1)
+        
+        // When centralId changed
+        sut.centralId = UUID()
+        things = sut.fetch() as? [BluetoothThing]
+        XCTAssertEqual(things?.count, 0)
     }
     
+    func testAdd() {
+        let thing = BluetoothThing(id: UUID())
+        
+        sut.addObject(context: nil, object: nil)
+        var things = sut.fetch() as? [BluetoothThing]
+        XCTAssertEqual(things?.count, 0)
+
+        sut.addObject(context: nil, object: thing)
+        things = sut.fetch() as? [BluetoothThing]
+        XCTAssertEqual(things?.count, 1)
+    }
 
     func testRemove() {
         let thing = BluetoothThing(id: UUID())
@@ -43,6 +57,10 @@ class CoreDataStoreTests: XCTestCase {
         XCTAssertEqual(sut.persistentContainer.viewContext.deletedObjects.count, 0)
         
         sut.addObject(context: nil, object: thing)
+        
+        sut.removeObject(context: nil, object: nil)
+        XCTAssertEqual(sut.persistentContainer.viewContext.deletedObjects.count, 0)
+        
         sut.removeObject(context: nil, object: thing)
         XCTAssertEqual(sut.persistentContainer.viewContext.deletedObjects.count, 1)
         
@@ -50,9 +68,20 @@ class CoreDataStoreTests: XCTestCase {
         XCTAssertEqual(sut.persistentContainer.viewContext.deletedObjects.count, 0)
     }
     
-    func testUpdateName() {
+    func testUpdateErrors() {
         let thing = BluetoothThing(id: UUID())
 
+        sut.update(context: nil, object: thing, keyValues: nil)
+        sut.update(context: nil, object: thing, keyValues: [String.name: "test"])
+
+        let things = sut.fetch() as? [BluetoothThing]
+        XCTAssertEqual(things?.count, 0, "object need to be add explicitly")
+    }
+    
+    func testUpdateName() {
+        let thing = BluetoothThing(id: UUID())
+        
+        sut.addObject(context: nil, object: thing)
         sut.update(context: nil, object: thing, keyValues: [String.name: "test"])
         let things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.first?.name, "test")
@@ -61,7 +90,8 @@ class CoreDataStoreTests: XCTestCase {
     func testUpdateCustomData() {
         let thing = BluetoothThing(id: UUID())
         let customData = [String.displayName: Data()]
-            
+        
+        sut.addObject(context: nil, object: thing)
         sut.update(context: nil, object: thing, keyValues: [String.customData: customData])
         let things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.first?.customData, customData)
@@ -75,6 +105,7 @@ class CoreDataStoreTests: XCTestCase {
             .serialNumber: Data(bytes: &hex, count: MemoryLayout.size(ofValue: hex))
         ]
              
+        sut.addObject(context: nil, object: thing)
         sut.update(context: nil, object: thing, keyValues: [String.characteristics: characteristics])
         let things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.first?.characteristics, characteristics)
@@ -85,6 +116,7 @@ class CoreDataStoreTests: XCTestCase {
         let thing = BluetoothThing(id: UUID())
         let location = Location(coordinate: .init())
 
+        sut.addObject(context: nil, object: thing)
         sut.update(context: nil, object: thing, keyValues: [String.location: location])
         let things = sut.fetch() as? [BluetoothThing]
         XCTAssertEqual(things?.first?.location, location)

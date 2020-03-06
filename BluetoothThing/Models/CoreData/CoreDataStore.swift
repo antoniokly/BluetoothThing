@@ -12,8 +12,8 @@ import CloudKit
 import os.log
 
 class CoreDataStore {
-    private var useCloudKit = false
-    private var centralId: UUID
+    var useCloudKit = false
+    var centralId: UUID
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -36,16 +36,14 @@ class CoreDataStore {
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
         
-        if #available(iOS 13.0, *), useCloudKit {
+        if #available(iOS 13.0, watchOS 6.0, *), useCloudKit {
             container = NSPersistentCloudKitContainer(name: model, managedObjectModel: managedObjectModel)
         } else {
             container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)
         }
                 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error = error as NSError? {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            if let error = error {
                 /*
                  Typical reasons for an error here include:
                  * The parent directory does not exist, cannot be created, or disallows writing.
@@ -54,7 +52,7 @@ class CoreDataStore {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                os_log("loadPersistentStores error: %@", error.localizedDescription)
             }
         })
         return container
@@ -64,14 +62,10 @@ class CoreDataStore {
         self.centralId = centralId
     }
     
-    @available(iOS 13.0, *)
+    @available(iOS 13.0, watchOS 6.0, *)
     init(centralId: UUID, useCloudKit: Bool) {
         self.centralId = centralId
-        #if os(iOS)
         self.useCloudKit = useCloudKit
-        #else
-        // watch no sync for now
-        #endif
     }
     
     // MARK: - Core Data Saving support
@@ -85,7 +79,6 @@ class CoreDataStore {
             }
         }
     }
-        
 }
 
 extension CoreDataStore: PersistentStoreProtocol {
@@ -268,8 +261,7 @@ extension CoreDataStore: PersistentStoreProtocol {
                 }
             }
         } else {
-            addObject(context: context, object: thing)
-            update(context: context, object: object, keyValues: keyValues)
+            os_log("CoreData cannot found peripheral for %@", thing)
         }
     }
 }

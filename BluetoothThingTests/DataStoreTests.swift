@@ -17,7 +17,6 @@ class DataStoreTests: XCTestCase {
     var peripherals: [CBPeripheralMock]!
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         let serviceUUID = CBUUID(string: "FFF0")
         let characteristicUUID = CBUUID(string: "FFF1")
         
@@ -31,7 +30,6 @@ class DataStoreTests: XCTestCase {
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         sut.reset()
     }
 

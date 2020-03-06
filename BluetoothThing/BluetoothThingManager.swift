@@ -294,6 +294,7 @@ public class BluetoothThingManager: NSObject {
         thing.timer?.invalidate()
         thing.timer = nil
         
+        dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
     }
@@ -446,7 +447,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             
             if let thing = knownThings.first(where: {$0.id == peripheral.identifier}) {
                 foundThing = thing
-
             } else {
                 let newThing = BluetoothThing(peripheral: peripheral)
                 knownThings.insert(newThing)

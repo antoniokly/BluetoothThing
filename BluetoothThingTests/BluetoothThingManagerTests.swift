@@ -96,12 +96,12 @@ class BluetoothThingManagerTests: XCTestCase {
     var delegate: BluetoothThingManagerDelegateSpy!
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         delegate = BluetoothThingManagerDelegateSpy()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut.reset()
+        sut.dataStore.reset()
     }
     
     func testInitialization() {
@@ -829,5 +829,67 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, characteristicUUID)
         XCTAssertEqual(peripheral.writeValueData, data)
         XCTAssertEqual(peripheral.writeValueType, .withResponse)
+    }
+    
+    func testClosures() {
+        // Given
+        let serviceUUID = CBUUID(string: "FFF0")
+        let characteristicUUID1 = CBUUID(string: "FFF1")
+        let characteristicUUID2 = CBUUID(string: "FFF2")
+
+        let subscriptions = [
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID1),
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID2)
+        ]
+
+        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
+        let peripheral = peripherals.first!
+        let dataStore = DataStoreMock(peripherals: peripherals)
+        let thing = dataStore.things.first!
+        let centralManager = CBCentralManagerMock(peripherals: peripherals)
+        centralManager._state = .poweredOn
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: subscriptions,
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        sut.centralManager(sut.centralManager,
+                           didDiscover: peripheral,
+                           advertisementData: [CBAdvertisementDataServiceUUIDsKey: [serviceUUID]],
+                           rssi: -10)
+        
+        // When
+        thing.connect()
+        // Then
+        XCTAssertEqual(peripheral.state, ConnectionState.connected)
+        XCTAssertFalse(thing.isRegistered)
+        
+        // When
+        thing.register()
+        // Then
+        XCTAssertTrue(thing.isRegistered)
+
+        // When
+        thing.subscribe()
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
+        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID2)
+
+        // When
+        thing.unsubscribe()
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
+        
+        // When
+        thing.disconnect()
+        // Then
+        XCTAssertEqual(peripheral.state, ConnectionState.disconnected)
+        XCTAssertTrue(thing.isRegistered)
+        
+        // When
+        thing.deregister()
+        // Then
+        XCTAssertFalse(thing.isRegistered)
     }
 }
