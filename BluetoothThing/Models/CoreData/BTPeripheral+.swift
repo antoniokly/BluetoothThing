@@ -38,12 +38,4 @@ extension BTPeripheral {
             self.insertDiscovery(centralId: centralId, peripheralId: peripheralId)
         }
     }
-    
-    func isRegistered(centralId: UUID) -> Bool {
-        guard let set = self.discoveries as? Set<BTDiscovery> else {
-            return false
-        }
-        
-        return set.contains(where: {$0.centralId == centralId.uuidString})
-    }
 }
