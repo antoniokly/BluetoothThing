@@ -118,8 +118,6 @@ extension CoreDataStore: PersistentStoreProtocol {
                 }
             }
             
-            thing.isRegistered = entity.isRegistered
-
             return thing
             
         }) as [BluetoothThing]
@@ -163,13 +161,13 @@ extension CoreDataStore: PersistentStoreProtocol {
         guard let thing = object as? BluetoothThing else {
             return
         }
+                
+        let fetchRequest: NSFetchRequest<BTDiscovery> = BTDiscovery.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "\(String.centralId) == %@ AND \(String.peripheralId) == %@", centralId.uuidString, thing.id.uuidString)
         
-        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", thing.id.uuidString)
-        
-        if let btPeripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first {
-            persistentContainer.viewContext.delete(btPeripheral)
-            os_log("CoreData removed an BTPeripheral")
+        if let btDiscovery = try? persistentContainer.viewContext.fetch(fetchRequest).first {
+            persistentContainer.viewContext.delete(btDiscovery)
+            os_log("CoreData removed an BTDiscovery")
         }
     }
     

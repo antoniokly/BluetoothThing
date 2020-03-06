@@ -14,6 +14,7 @@ public protocol DataStoreProtocol {
     func reset()
     func getThing(id: UUID) -> BluetoothThing?
     func addThing(_ thing: BluetoothThing)
+    func saveThing(_ thing: BluetoothThing)
     @discardableResult func removeThing(id: UUID) -> BluetoothThing?
 }
 

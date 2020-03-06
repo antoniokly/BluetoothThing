@@ -2,15 +2,14 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="15702" systemVersion="19D76" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BTDiscovery" representedClassName="BTDiscovery" syncable="YES" codeGenerationType="class">
         <attribute name="centralId" optional="YES" attributeType="String"/>
+        <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastFound" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="peripheralId" optional="YES" attributeType="String"/>
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="discoveries" inverseEntity="BTPeripheral"/>
     </entity>
     <entity name="BTPeripheral" representedClassName="BTPeripheral" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>
-        <attribute name="isRegistered" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="lastFound" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="location" optional="YES" attributeType="Binary"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="customData" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CustomData" inverseName="peripheral" inverseEntity="CustomData"/>
@@ -36,8 +35,8 @@
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="services" inverseEntity="BTPeripheral"/>
     </entity>
     <elements>
-        <element name="BTPeripheral" positionX="15.23828125" positionY="-22.9375" width="128" height="193"/>
-        <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="88"/>
+        <element name="BTPeripheral" positionX="15.23828125" positionY="-22.9375" width="128" height="133"/>
+        <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="133"/>
         <element name="CustomData" positionX="221.8125" positionY="-22.41796875" width="128" height="103"/>
         <element name="GATTCharacteristic" positionX="414.20703125" positionY="208.8515625" width="128" height="103"/>
         <element name="GATTService" positionX="221.6484375" positionY="148.81640625" width="128" height="103"/>

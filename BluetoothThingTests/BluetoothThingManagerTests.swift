@@ -408,7 +408,6 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(dataStore.things.count, 1)
-        XCTAssertEqual(dataStore.things.first?.isRegistered, true)
         XCTAssertEqual(centralManager.connectCalled, 1)
         XCTAssertEqual(centralManager.connectPeripheral, peripheral)
         
@@ -416,8 +415,7 @@ class BluetoothThingManagerTests: XCTestCase {
         thing?.deregister()
         
         // Then
-        XCTAssertEqual(dataStore.things.count, 1)
-        XCTAssertEqual(dataStore.things.first?.isRegistered, false)
+        XCTAssertEqual(dataStore.things.count, 0)
         XCTAssertEqual(centralManager.cancelConnectionCalled, 1)
         XCTAssertEqual(centralManager.cancelConnectionPeripheral, peripheral)
     }
@@ -855,12 +853,12 @@ class BluetoothThingManagerTests: XCTestCase {
         thing.connect()
         // Then
         XCTAssertEqual(peripheral.state, ConnectionState.connected)
-        XCTAssertFalse(thing.isRegistered)
+        XCTAssertTrue(dataStore.things.contains(thing))
         
         // When
         thing.register()
         // Then
-        XCTAssertTrue(thing.isRegistered)
+        XCTAssertTrue(dataStore.things.contains(thing))
 
         // When
         thing.subscribe()
@@ -879,11 +877,11 @@ class BluetoothThingManagerTests: XCTestCase {
         thing.disconnect()
         // Then
         XCTAssertEqual(peripheral.state, ConnectionState.disconnected)
-        XCTAssertTrue(thing.isRegistered)
+//        XCTAssertTrue(thing.isRegistered)
         
         // When
         thing.deregister()
         // Then
-        XCTAssertFalse(thing.isRegistered)
+//        XCTAssertFalse(thing.isRegistered)
     }
 }

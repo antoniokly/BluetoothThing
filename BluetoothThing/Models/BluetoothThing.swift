@@ -49,14 +49,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    public var isRegistered: Bool = false {
-        didSet {
-            if isRegistered != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.isRegistered: isRegistered])
-            }
-        }
-    }
-    
     public var hardwareSerialNumber: String? {
         return characteristics[.serialNumber]?.hexEncodedString
     }
@@ -107,7 +99,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case name
         case location
         case characteristics
-        case isRegistered
         case customData
     }
     

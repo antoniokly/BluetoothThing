@@ -272,6 +272,10 @@ public class BluetoothThingManager: NSObject {
             let btCharacteristic = BTCharacteristic(characteristic: characteristic)
             thing.characteristics[btCharacteristic] = characteristic.value
             delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
+            
+            if btCharacteristic == .serialNumber {
+                dataStore.saveThing(thing)
+            }
         }
 
         return thing
@@ -287,10 +291,6 @@ public class BluetoothThingManager: NSObject {
     }
     
     func connectThing(_ thing: BluetoothThing, peripheral: CBPeripheral, register: Bool) {
-        if register {
-            thing.isRegistered = true
-        }
-        
         thing.timer?.invalidate()
         thing.timer = nil
         
@@ -311,9 +311,8 @@ public class BluetoothThingManager: NSObject {
         }
         
         if deregister {
-            thing.isRegistered = false
+            dataStore.removeThing(id: thing.id)
             loseThing(thing)
-//            dataStore.removeThing(id: thing.id)
         }
     }
     
@@ -566,8 +565,6 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
         os_log("didUpdateValueFor %@ %@", peripheral, characteristic)
         didUpdateCharacteristic(characteristic, for: peripheral)
-        
-        
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
