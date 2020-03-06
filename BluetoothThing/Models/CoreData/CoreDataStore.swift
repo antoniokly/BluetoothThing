@@ -13,6 +13,7 @@ import os.log
 
 class CoreDataStore {
     private var useCloudKit = false
+    private var centralId: UUID
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -40,7 +41,7 @@ class CoreDataStore {
         } else {
             container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)
         }
-        
+                
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
@@ -59,11 +60,13 @@ class CoreDataStore {
         return container
     }()
     
-    init() {
+    init(centralId: UUID) {
+        self.centralId = centralId
     }
     
     @available(iOS 13.0, *)
-    init(useCloudKit: Bool) {
+    init(centralId: UUID, useCloudKit: Bool) {
+        self.centralId = centralId
         #if os(iOS)
         self.useCloudKit = useCloudKit
         #else
@@ -102,11 +105,11 @@ extension CoreDataStore: PersistentStoreProtocol {
          }
 
         return entities.compactMap({ entity in
-            guard let id = entity.id, let uuid = UUID(uuidString: id) else {
+            guard let peripheralId = entity.peripheralId(for: centralId) else {
                 return nil
             }
-            
-            let thing = BluetoothThing(id: uuid, name: entity.name)
+          
+            let thing = BluetoothThing(id: peripheralId, name: entity.name)
             
             if let data = entity.location {
                 thing.location = try? JSONDecoder().decode(Location.self, from: data)
@@ -152,6 +155,9 @@ extension CoreDataStore: PersistentStoreProtocol {
         let entity = NSEntityDescription.entity(forEntityName: "BTPeripheral", in: persistentContainer.viewContext)!
                             
         let btPeripheral = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! BTPeripheral
+        
+        btPeripheral.insertDiscovery(centralId: centralId,
+                                     peripheralId: thing.id)
         
         btPeripheral.setValuesForKeys([
             .id: thing.id.uuidString,
@@ -262,16 +268,7 @@ extension CoreDataStore: PersistentStoreProtocol {
                 }
             }
         } else {
-            let entity = NSEntityDescription.entity(forEntityName: "BTPeripheral", in: persistentContainer.viewContext)!
-                                
-            let btPeripheral = NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! BTPeripheral
-            
-            btPeripheral.setValuesForKeys([
-                .id: thing.id.uuidString,
-                .name: thing.name as Any
-            ])
-            os_log("CoreData created BTPeripheral")
-
+            addObject(context: context, object: thing)
             update(context: context, object: object, keyValues: keyValues)
         }
     }

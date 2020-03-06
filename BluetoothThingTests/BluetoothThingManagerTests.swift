@@ -16,6 +16,8 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
+        var centralId: UUID = UUID()
+        
         func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
             return true
         }

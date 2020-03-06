@@ -59,6 +59,8 @@
 		A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
 		A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
 		A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */; };
+		A4F86D0A2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
+		A4F86D0B2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +114,7 @@
 		A4B4D46024061A080017614E /* CoreDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStore.swift; sourceTree = "<group>"; };
 		A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerDelegate.swift; sourceTree = "<group>"; };
 		A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStoreTests.swift; sourceTree = "<group>"; };
+		A4F86D092412266500AF9621 /* BTPeripheral+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,6 +222,7 @@
 			children = (
 				A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */,
 				A4B4D46024061A080017614E /* CoreDataStore.swift */,
+				A4F86D092412266500AF9621 /* BTPeripheral+.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -412,6 +416,7 @@
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A4175593240BB32E00F95437 /* Constants.swift in Sources */,
 				A413F19323D7AD83007BDE30 /* Characteristic.swift in Sources */,
+				A4F86D0A2412266500AF9621 /* BTPeripheral+.swift in Sources */,
 				A492983D23D5216000889E2B /* BluetoothThingRequest.swift in Sources */,
 				A482DB8423DF92EC009AB51A /* Data+.swift in Sources */,
 				A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
@@ -456,6 +461,7 @@
 				A45F185223DA84B5004C5A52 /* Subscription.swift in Sources */,
 				A4175594240BB32E00F95437 /* Constants.swift in Sources */,
 				A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */,
+				A4F86D0B2412266500AF9621 /* BTPeripheral+.swift in Sources */,
 				A45F184F23DA84B5004C5A52 /* GeocoderProtocol.swift in Sources */,
 				A482DB8523DF958B009AB51A /* Data+.swift in Sources */,
 				A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */,

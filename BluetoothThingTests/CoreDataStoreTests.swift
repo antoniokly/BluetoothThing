@@ -16,7 +16,7 @@ class CoreDataStoreTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        sut = CoreDataStore()
+        sut = CoreDataStore(centralId: UUID())
         sut.reset()
     }
 

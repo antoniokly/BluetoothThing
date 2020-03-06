@@ -77,12 +77,12 @@ public class BluetoothThingManager: NSObject {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore() :
+                    CoreDataStore(centralId: delegate.centralId) :
                     UserDefaults.standard),
                   useLocation: useLocation)
     }
     
-    @available(iOS 13.0, *)
+    @available(iOS 13.0, watchOS 6.0, *)
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
                             useLocation: Bool = false,
@@ -91,7 +91,7 @@ public class BluetoothThingManager: NSObject {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore(useCloudKit: useCloudKit) :
+                    CoreDataStore(centralId: delegate.centralId, useCloudKit: useCloudKit) :
                     UserDefaults.standard),
                   useLocation: useLocation)
     }
@@ -294,7 +294,6 @@ public class BluetoothThingManager: NSObject {
         thing.timer?.invalidate()
         thing.timer = nil
         
-        dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
     }
