@@ -151,7 +151,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         
         var btPeripheral: BTPeripheral
         
-        if let entity = peripherals.first(where: {$0.hardwareId == hardwareId}) {
+        if let entity = peripherals.first(where: {$0.id == thing.id.uuidString || $0.hardwareId == hardwareId}) {
             os_log("periperal with hardwareId: %@ exists", hardwareId)
             btPeripheral = entity
         } else {
