@@ -13,11 +13,10 @@ import CoreBluetooth
 class DataStoreTests: XCTestCase {
 
     var sut: DataStore!
-    var userDefaults = UserDefaultsMock()
+    var persistentStore = PersistentStoreMock()
     var peripherals: [CBPeripheralMock]!
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         let serviceUUID = CBUUID(string: "FFF0")
         let characteristicUUID = CBUUID(string: "FFF1")
         
@@ -27,69 +26,123 @@ class DataStoreTests: XCTestCase {
         
         peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 3)
         
-        sut = DataStore(persistentStore: userDefaults)
+        sut = DataStore(persistentStore: persistentStore, queue: DispatchQueue.main)
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
         sut.reset()
     }
 
     func testSave() {
+        // Given
+        var things: [BluetoothThing] = []
         for peripheral in peripherals {
-            sut.addThing(id: peripheral.identifier)
+            let thing = BluetoothThing(id: peripheral.identifier, serialNumber: Data())
+            things.append(thing)
+        }
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        for thing in things {
+            sut.addThing(thing)
+            sut.saveThing(thing)
+        }
+        
+        //Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(sut.things.count, 3)
+        XCTAssertEqual(persistentStore.addObjectCalled, 3)
+        XCTAssertEqual(persistentStore.saveCalled, 3)
+    }
+    
+    func testUpdate() {
+        // Given
+        for peripheral in peripherals {
+            let thing = BluetoothThing(id: peripheral.identifier, serialNumber: Data())
+            sut.addThing(thing)
         }
         let thing = sut.things.first!
         
-        XCTAssertEqual(sut.things.count, 3)
-        XCTAssertEqual(userDefaults.setValueCalled, 3)
-
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
         thing.name = "new name"
-        XCTAssertEqual(userDefaults.setValueCalled, 4)
+
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(persistentStore.updateCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
     }
     
-    func testAddRemoveThing() {
+    func testAddThing() {
+        // Given
         let uuid = UUID()
-        sut.addThing(id: uuid)
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
         
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        sut.addThing(thing)
+        sut.saveThing(thing)
+        
+        // Then
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(sut.things.count, 1)
         XCTAssertEqual(sut.things.last?.id, uuid)
-        
-        sut.addThing(id: uuid)
-        XCTAssertEqual(sut.things.count, 1, "should not add duplicate")
-        XCTAssertEqual(userDefaults.setValueCalled, 1)
-
-        XCTAssertNotNil(sut.removeThing(id: uuid))
-        XCTAssertEqual(sut.things.count, 0)
-        XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
-        XCTAssertEqual(userDefaults.setValueCalled, 2)
-        
-        XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
-        XCTAssertEqual(sut.things.count, 0)
-
-        let thing = BluetoothThing(id: UUID())
-        sut.addThing(thing)
-        XCTAssertEqual(sut.things.count, 1)
-        XCTAssertEqual(userDefaults.setValueCalled, 3)
-        
-        sut.addThing(BluetoothThing(id: thing.id))
-        XCTAssertEqual(sut.things.count, 1, "should replace duplicate")
-        XCTAssertEqual(userDefaults.setValueCalled, 4)
+        XCTAssertEqual(sut.things.count, 1, "should not replace duplicate")
+        XCTAssertEqual(persistentStore.addObjectCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
     }
     
-//    func testWillResignActiveNotification() {
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.willResignActiveNotification, object: nil)
-//
-//        // Then
-//        XCTAssertTrue(userDefaults.synchronizeCalled)
-//    }
-//
-//    func testWillTerminateNotification() {
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.willTerminateNotification, object: nil)
-//
-//        // Then
-//        XCTAssertTrue(userDefaults.synchronizeCalled)
-//    }
+    func testRemoveThing() {
+        // Given
+        let uuid = UUID()
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
+        sut.addThing(thing)
+        
+        // When
+        sut.removeThing(id: UUID())
+        // Then
+        XCTAssertEqual(sut.things.count, 1, "should remove nothing")
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        sut.removeThing(id: uuid)
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(sut.things.count, 0)
+        XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
+        XCTAssertEqual(persistentStore.removeObjectCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
+    }
+    
+    func testReset() {
+        // Given
+        let uuid = UUID()
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
+        sut.addThing(thing)
+
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        sut.reset()
+     
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(sut.things.count, 0)
+        XCTAssertEqual(persistentStore.resetCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
+    }
 }

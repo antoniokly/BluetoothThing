@@ -20,8 +20,6 @@ class SubscriptionTests: XCTestCase {
     var peripheral: CBPeripheralMock!
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        
         let services = [
             CBServiceMock(uuid: serviceUUID1),
             CBServiceMock(uuid: serviceUUID2)
@@ -35,11 +33,9 @@ class SubscriptionTests: XCTestCase {
         }
         
         peripheral = CBPeripheralMock(identifier: UUID(), services: services)
-      
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
     func testInit() {

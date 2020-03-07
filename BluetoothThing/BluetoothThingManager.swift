@@ -21,6 +21,7 @@ public class BluetoothThingManager: NSObject {
     public internal (set) var delegate: BluetoothThingManagerDelegate
     public internal (set) var subscriptions: [Subscription]
     public internal (set) var dataStore: DataStoreProtocol!
+        
     var centralManager: CBCentralManager!
     var locationManager: CLLocationManager?
     var geocoder: GeocoderProtocol?
@@ -68,19 +69,43 @@ public class BluetoothThingManager: NSObject {
     
     var knownPeripherals: Set<CBPeripheral> = []
     var knownThings: Set<BluetoothThing> = []
-                
+    
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
-                            dataStore: DataStoreProtocol? = nil,
-                            centralManager: CBCentralManager? = nil,
-                            useLocation: Bool = false) {
+                            useLocation: Bool = false,
+                            useCoreData: Bool = false) {
+        self.init(delegate: delegate,
+                  subscriptions: subscriptions,
+                  dataStore: DataStore(persistentStore: useCoreData ?
+                    CoreDataStore(centralId: delegate.centralId) :
+                    UserDefaults.standard),
+                  useLocation: useLocation)
+    }
+    
+    @available(iOS 13.0, watchOS 6.0, *)
+    public convenience init(delegate: BluetoothThingManagerDelegate,
+                            subscriptions: [Subscription],
+                            useLocation: Bool = false,
+                            useCoreData: Bool = false,
+                            useCloudKit: Bool = false) {
+        self.init(delegate: delegate,
+                  subscriptions: subscriptions,
+                  dataStore: DataStore(persistentStore: useCoreData ?
+                    CoreDataStore(centralId: delegate.centralId, useCloudKit: useCloudKit) :
+                    UserDefaults.standard),
+                  useLocation: useLocation)
+    }
+    
+    convenience init(delegate: BluetoothThingManagerDelegate,
+                     subscriptions: [Subscription],
+                     dataStore: DataStoreProtocol,
+                     centralManager: CBCentralManager? = nil,
+                     useLocation: Bool = false) {
         self.init(delegate: delegate, subscriptions: subscriptions)        
+                
+        self.dataStore = dataStore
         
-        let dataStoreProtocol = dataStore ?? DataStore()
-        
-        self.dataStore = dataStoreProtocol
-        
-        self.knownThings = Set(dataStoreProtocol.things)
+        self.knownThings = Set(dataStore.things)
         
         self.centralManager = centralManager ??
             CBCentralManager(delegate: self, queue: nil, options: Self.centralManagerOptions)
@@ -163,6 +188,14 @@ public class BluetoothThingManager: NSObject {
         locationManager?.requestLocation()
     }
     
+    public func reset() {
+        for id in things.map({$0.id}) {
+            if let thing = dataStore.removeThing(id: id) {
+                loseThing(thing)
+            }
+        }
+    }
+    
     func updateLocationForNearbyThings(_ location: Location) {
         for thing in nearbyThings {
             if thing.location != location {
@@ -237,7 +270,14 @@ public class BluetoothThingManager: NSObject {
         if let subscription = self.subscriptions.first(where: {
             shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) }) {
             let btCharacteristic = BTCharacteristic(characteristic: characteristic)
-            thing.data[btCharacteristic] = characteristic.value
+            let isNewThing = thing.hardwareSerialNumber == nil
+            
+            thing.characteristics[btCharacteristic] = characteristic.value
+            
+            if isNewThing && btCharacteristic == .serialNumber {
+                dataStore.saveThing(thing)
+            }
+            
             delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
         }
 
@@ -249,16 +289,11 @@ public class BluetoothThingManager: NSObject {
         
         thing.timer?.invalidate()
         thing.timer = nil
-//        thing.inRange = false
         
         self.delegate.bluetoothThingManager(self, didLoseThing: thing)
     }
     
     func connectThing(_ thing: BluetoothThing, peripheral: CBPeripheral, register: Bool) {
-        if register {
-            thing.isRegistered = true
-        }
-        
         thing.timer?.invalidate()
         thing.timer = nil
         
@@ -279,7 +314,6 @@ public class BluetoothThingManager: NSObject {
         }
         
         if deregister {
-            thing.isRegistered = false
             dataStore.removeThing(id: thing.id)
             loseThing(thing)
         }
@@ -415,7 +449,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             
             if let thing = knownThings.first(where: {$0.id == peripheral.identifier}) {
                 foundThing = thing
-
             } else {
                 let newThing = BluetoothThing(peripheral: peripheral)
                 knownThings.insert(newThing)
@@ -425,7 +458,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
-//        foundThing.inRange = true
         
         if allowDuplicates {
             foundThing.timer = Timer.scheduledTimer(

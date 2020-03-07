@@ -16,11 +16,11 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
-
+    
     public var name: String? = nil {
         didSet {
             if name != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self)
+                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.name: name as Any])
             }
         }
     }
@@ -28,15 +28,15 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var location: Location? = nil {
         didSet {
             if location != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self)
+                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.location: location as Any])
             }
         }
     }
     
-    public var data: [BTCharacteristic: Data] = [:] {
+    public var characteristics: [BTCharacteristic: Data] = [:] {
         didSet {
-            if data != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self)
+            if characteristics != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.characteristics: characteristics])
             }
         }
     }
@@ -44,21 +44,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var customData: [String: Data] = [:] {
         didSet {
             if customData != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self)
-            }
-        }
-    }
-    
-    public internal (set) var isRegistered: Bool = false {
-        didSet {
-            if isRegistered != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self)
+                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.customData: customData])
             }
         }
     }
     
     public var hardwareSerialNumber: String? {
-        return data[.serialNumber]?.hexEncodedString
+        return characteristics[.serialNumber]?.hexEncodedString
     }
     
     var autoReconnect = false
@@ -106,8 +98,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case id
         case name
         case location
-        case data
-        case isRegistered
+        case characteristics
         case customData
     }
     

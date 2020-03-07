@@ -11,40 +11,54 @@ import os.log
 
 class DataStore: DataStoreProtocol {
     
-    var things: [BluetoothThing] = [] {
-        didSet {
-            os_log("things did change %@", things.debugDescription)
-            save()
-        }
-    }
+    var things: [BluetoothThing]
     
     private var persistentStore: PersistentStoreProtocol
-    private var storeKey: String
+    private var persistentStoreQueue: DispatchQueue
     
-    public init(persistentStore: PersistentStoreProtocol = UserDefaults.standard,
-                storeKey: String = Bundle.main.bundleIdentifier!) {
+    public init(persistentStore: PersistentStoreProtocol,
+                queue: DispatchQueue = DispatchQueue(label: "persistentStoreQueue.serial.queue")) {
         self.persistentStore = persistentStore
-        self.storeKey = storeKey
-        self.things = getStoredThings()
+        self.persistentStoreQueue = queue
+        self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
         
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
-            if let thing = notification.object as? BluetoothThing, self.things.contains(thing) {
-                self.save()
+            
+            if let thing = notification.object as? BluetoothThing {
+                self.persistentStoreQueue.async {
+                    self.persistentStore.update(context: self.things,
+                                                object: thing,
+                                                keyValues: notification.userInfo)
+                    self.persistentStore.save(context: self.things)
+                }
             }
         }
     }
     
     func reset() {
         things.removeAll()
-        persistentStore.removeObject(forKey: storeKey)
-        persistentStore.synchronize()
+        self.persistentStoreQueue.async {
+            self.persistentStore.reset()
+            self.persistentStore.save(context: self.things)
+        }
     }
 
     func addThing(_ thing: BluetoothThing) {
-        if let index = things.firstIndex(where: {$0.id == thing.id}) {
-            things[index] = thing
+        if things.contains(where: {$0.id == thing.id}) {
+            return
         } else {
             things.append(thing)
+        }
+    }
+    
+    func saveThing(_ thing: BluetoothThing) {
+        addThing(thing)
+        
+        if thing.hardwareSerialNumber != nil  {
+            self.persistentStoreQueue.async {
+                self.persistentStore.addObject(context: self.things, object: thing)
+                self.persistentStore.save(context: self.things)
+            }
         }
     }
     
@@ -53,40 +67,16 @@ class DataStore: DataStoreProtocol {
     }
     
     @discardableResult
-    func addThing(id: UUID) -> BluetoothThing {
-        if let thing = things.first(where: {$0.id == id}) {
-            return thing
-        } else {
-            let newThing = BluetoothThing(id: id)
-            things.append(newThing)
-            return newThing
-        }
-    }
-    
-    @discardableResult
     func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
             let thing = things.remove(at: index)
+            self.persistentStoreQueue.async {
+                self.persistentStore.removeObject(context: self.things, object: thing)
+                self.persistentStore.save(context: self.things)
+            }
             return thing
         } else {
             return nil
-        }
-    }
-    
-    func getStoredThings() -> [BluetoothThing] {
-        guard
-            let data = persistentStore.object(forKey: storeKey) as? Data,
-            let things = try? JSONDecoder().decode([BluetoothThing].self, from: data) else {
-            return []
-        }
-        
-        return things
-    }
-
-    func save() {
-        if let data = try? JSONEncoder().encode(things) {
-            persistentStore.set(data, forKey: storeKey)
-            persistentStore.synchronize()
         }
     }
 }

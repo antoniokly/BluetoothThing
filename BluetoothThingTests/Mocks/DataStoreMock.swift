@@ -12,7 +12,7 @@ import Foundation
 class DataStoreMock: DataStore {
     
     init(peripherals: [CBPeripheralMock]) {
-        super.init()
+        super.init(persistentStore: UserDefaults.standard)
         self.things = peripherals.map({BluetoothThing(peripheral: $0)})
     }
     

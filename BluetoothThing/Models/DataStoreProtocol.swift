@@ -14,17 +14,15 @@ public protocol DataStoreProtocol {
     func reset()
     func getThing(id: UUID) -> BluetoothThing?
     func addThing(_ thing: BluetoothThing)
-    @discardableResult func addThing(id: UUID) -> BluetoothThing
+    func saveThing(_ thing: BluetoothThing)
     @discardableResult func removeThing(id: UUID) -> BluetoothThing?
 }
 
 public protocol PersistentStoreProtocol {
-    func object(forKey defaultName: String) -> Any?
-    func set(_ value: Any?, forKey defaultName: String)
-    func removeObject(forKey defaultName: String)
-    @discardableResult func synchronize() -> Bool
-}
-
-extension UserDefaults: PersistentStoreProtocol {
-    
+    func fetch() -> Any?
+    func reset()
+    func save(context: Any?)
+    func addObject(context: Any?, object: Any?)
+    func removeObject(context: Any?, object: Any?)
+    func update(context: Any?, object: Any?, keyValues: [AnyHashable: Any]?)
 }

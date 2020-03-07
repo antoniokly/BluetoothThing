@@ -16,6 +16,8 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
+        var centralId: UUID = UUID()
+        
         func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
             return true
         }
@@ -94,12 +96,12 @@ class BluetoothThingManagerTests: XCTestCase {
     var delegate: BluetoothThingManagerDelegateSpy!
     
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
         delegate = BluetoothThingManagerDelegateSpy()
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut.reset()
+        sut.dataStore.reset()
     }
     
     func testInitialization() {
@@ -228,14 +230,6 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
         XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
-        
-        // When
-        thing.deregister()
-        
-        // Then
-        XCTAssertEqual(dataStore.things.count, 0)
-        XCTAssertEqual(delegate.didChangeStateThing?.id, thing.id)
-        XCTAssertEqual(delegate.didChangeStateThing?.isRegistered, false)
     }
     
     func testPowerOff() {
@@ -555,7 +549,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didUpdateValueSubscription?.serviceUUID, subscriptions.first?.serviceUUID)
         XCTAssertEqual(delegate.didUpdateValueSubscription?.characteristicUUID, subscriptions.first?.characteristicUUID)
         XCTAssertEqual(delegate.didUpdateValue, value)
-        XCTAssertEqual(thing?.data[BTCharacteristic(characteristic: characteristic)], value)
+        XCTAssertEqual(thing?.characteristics[BTCharacteristic(characteristic: characteristic)], value)
 
         // When
         characteristic._value = nil
@@ -564,7 +558,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.didUpdateValueCalled, 2)
         XCTAssertNotNil(thing)
-        XCTAssertNil(thing?.data[BTCharacteristic(characteristic: characteristic)])
+        XCTAssertNil(thing?.characteristics[BTCharacteristic(characteristic: characteristic)])
     }
     
     func testDidReadRSSI() {
@@ -827,5 +821,67 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, characteristicUUID)
         XCTAssertEqual(peripheral.writeValueData, data)
         XCTAssertEqual(peripheral.writeValueType, .withResponse)
+    }
+    
+    func testClosures() {
+        // Given
+        let serviceUUID = CBUUID(string: "FFF0")
+        let characteristicUUID1 = CBUUID(string: "FFF1")
+        let characteristicUUID2 = CBUUID(string: "FFF2")
+
+        let subscriptions = [
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID1),
+            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID2)
+        ]
+
+        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
+        let peripheral = peripherals.first!
+        let dataStore = DataStoreMock(peripherals: peripherals)
+        let thing = dataStore.things.first!
+        let centralManager = CBCentralManagerMock(peripherals: peripherals)
+        centralManager._state = .poweredOn
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: subscriptions,
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        sut.centralManager(sut.centralManager,
+                           didDiscover: peripheral,
+                           advertisementData: [CBAdvertisementDataServiceUUIDsKey: [serviceUUID]],
+                           rssi: -10)
+        
+        // When
+        thing.connect()
+        // Then
+        XCTAssertEqual(peripheral.state, ConnectionState.connected)
+        XCTAssertTrue(dataStore.things.contains(thing))
+        
+        // When
+        thing.register()
+        // Then
+        XCTAssertTrue(dataStore.things.contains(thing))
+
+        // When
+        thing.subscribe()
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
+        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID2)
+
+        // When
+        thing.unsubscribe()
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
+        
+        // When
+        thing.disconnect()
+        // Then
+        XCTAssertEqual(peripheral.state, ConnectionState.disconnected)
+//        XCTAssertTrue(thing.isRegistered)
+        
+        // When
+        thing.deregister()
+        // Then
+//        XCTAssertFalse(thing.isRegistered)
     }
 }
