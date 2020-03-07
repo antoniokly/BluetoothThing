@@ -12,6 +12,7 @@ import CloudKit
 import os.log
 
 class CoreDataStore {
+    
     var useCloudKit = false
     var centralId: UUID
     

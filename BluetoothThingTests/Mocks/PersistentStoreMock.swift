@@ -11,6 +11,8 @@ import Foundation
 
 class PersistentStoreMock: PersistentStoreProtocol {
     
+    static let didSave = Notification.Name("\(String(describing: DataStore.self)).didSave")
+
     func fetch() -> Any? {
         return nil
     }
@@ -23,6 +25,7 @@ class PersistentStoreMock: PersistentStoreProtocol {
     var saveCalled = 0
     func save(context: Any?)  {
         saveCalled += 1
+        NotificationCenter.default.post(name: Self.didSave, object: self)
     }
     
     var addObjectCalled = 0

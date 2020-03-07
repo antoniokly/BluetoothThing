@@ -34,71 +34,115 @@ class DataStoreTests: XCTestCase {
     }
 
     func testSave() {
+        // Given
+        var things: [BluetoothThing] = []
         for peripheral in peripherals {
-            let thing = BluetoothThing(id: peripheral.identifier)
-            thing.characteristics[.serialNumber] = Data()
+            let thing = BluetoothThing(id: peripheral.identifier, serialNumber: Data())
+            things.append(thing)
+        }
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        for thing in things {
             sut.addThing(thing)
             sut.saveThing(thing)
         }
         
+        //Then
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(sut.things.count, 3)
         XCTAssertEqual(persistentStore.addObjectCalled, 3)
         XCTAssertEqual(persistentStore.saveCalled, 3)
     }
     
     func testUpdate() {
-          for peripheral in peripherals {
-              let thing = BluetoothThing(id: peripheral.identifier)
-              sut.addThing(thing)
-          }
-          let thing = sut.things.first!
+        // Given
+        for peripheral in peripherals {
+            let thing = BluetoothThing(id: peripheral.identifier, serialNumber: Data())
+            sut.addThing(thing)
+        }
+        let thing = sut.things.first!
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        thing.name = "new name"
 
-          let expectation = XCTestExpectation(description: "save")
-          NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
-              DispatchQueue.main.async {
-                  expectation.fulfill()
-              }
-          }
-
-          thing.name = "new name"
-          wait(for: [expectation], timeout: 3)
-          XCTAssertEqual(persistentStore.updateCalled, 1)
-      }
+        // Then
+        wait(for: [expectation], timeout: 5)
+        XCTAssertEqual(persistentStore.updateCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
+    }
     
-    func testAddRemoveThing() {
+    func testAddThing() {
+        // Given
         let uuid = UUID()
-        let thing = BluetoothThing(id: uuid)
-        thing.characteristics[.serialNumber] = Data()
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
         sut.addThing(thing)
         sut.saveThing(thing)
         
+        // Then
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(sut.things.count, 1)
         XCTAssertEqual(sut.things.last?.id, uuid)
-        
-        sut.addThing(thing)
         XCTAssertEqual(sut.things.count, 1, "should not replace duplicate")
-        XCTAssertEqual(persistentStore.removeObjectCalled, 0)
         XCTAssertEqual(persistentStore.addObjectCalled, 1)
         XCTAssertEqual(persistentStore.saveCalled, 1)
-
-        XCTAssertNotNil(sut.removeThing(id: uuid))
+    }
+    
+    func testRemoveThing() {
+        // Given
+        let uuid = UUID()
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
+        sut.addThing(thing)
+        
+        // When
+        sut.removeThing(id: UUID())
+        // Then
+        XCTAssertEqual(sut.things.count, 1, "should remove nothing")
+        
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
+        sut.removeThing(id: uuid)
+        // Then
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(sut.things.count, 0)
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
         XCTAssertEqual(persistentStore.removeObjectCalled, 1)
-        XCTAssertEqual(persistentStore.saveCalled, 2)
-        
-        XCTAssertNil(sut.removeThing(id: uuid), "remove nothing")
-        XCTAssertEqual(sut.things.count, 0)
-        XCTAssertEqual(persistentStore.saveCalled, 2)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
     }
     
     func testReset() {
+        // Given
         let uuid = UUID()
-        let thing = BluetoothThing(id: uuid)
+        let thing = BluetoothThing(id: uuid, serialNumber: Data())
         sut.addThing(thing)
+
+        // When
+        let expectation = XCTestExpectation(description: "save")
+        NotificationCenter.default.addObserver(forName: PersistentStoreMock.didSave, object: nil, queue: nil) { (notification) in
+            expectation.fulfill()
+        }
         sut.reset()
      
+        // Then
+        wait(for: [expectation], timeout: 5)
         XCTAssertEqual(sut.things.count, 0)
         XCTAssertEqual(persistentStore.resetCalled, 1)
+        XCTAssertEqual(persistentStore.saveCalled, 1)
     }
 }

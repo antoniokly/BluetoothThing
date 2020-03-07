@@ -37,7 +37,10 @@ class DataStore: DataStoreProtocol {
     
     func reset() {
         things.removeAll()
-        persistentStore.reset()
+        self.persistentStoreQueue.async {
+            self.persistentStore.reset()
+            self.persistentStore.save(context: self.things)
+        }
     }
 
     func addThing(_ thing: BluetoothThing) {
@@ -52,8 +55,10 @@ class DataStore: DataStoreProtocol {
         addThing(thing)
         
         if thing.hardwareSerialNumber != nil  {
-            self.persistentStore.addObject(context: things, object: thing)
-            self.persistentStore.save(context: things)
+            self.persistentStoreQueue.async {
+                self.persistentStore.addObject(context: self.things, object: thing)
+                self.persistentStore.save(context: self.things)
+            }
         }
     }
     
@@ -65,8 +70,10 @@ class DataStore: DataStoreProtocol {
     func removeThing(id: UUID) -> BluetoothThing? {
         if let index = things.firstIndex(where: {$0.id == id}) {
             let thing = things.remove(at: index)
-            self.persistentStore.removeObject(context: things, object: thing)
-            self.persistentStore.save(context: things)
+            self.persistentStoreQueue.async {
+                self.persistentStore.removeObject(context: self.things, object: thing)
+                self.persistentStore.save(context: self.things)
+            }
             return thing
         } else {
             return nil
