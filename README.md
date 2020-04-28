@@ -2,9 +2,9 @@
 
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 
-Find, connect and subscribe to Bluetooth peripherals without much codes, the hard works are done in this framework.
+Find, connect and subscribe to Bluetooth peripherals without much codes, the hard works are done in this framework. Compatible with iOS 10.0+ and watchOS 3.0+.
 
-CoreBluetooth integration with CoreLocation, CoreData and iCloud sync. Store last known data and locations of subscribed Bluetooth peripherals on iCloud.
+Integrates CoreBluetooth with CoreLocation, CoreData and iCloud. Stores last known data and locations of subscribed Bluetooth peripherals using CoreData with iCloud sync (iOS 13.0+ and watchOS 6.0+).
 
 ## Usage
 
