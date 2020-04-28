@@ -1,5 +1,7 @@
 # BluetoothThing
 
+[![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
+
 CoreBluetooth integrated CoreLocation with CoreData and iCloud sync
 
 ## Usage
