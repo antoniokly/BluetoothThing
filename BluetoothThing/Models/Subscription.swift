@@ -9,6 +9,11 @@
 import Foundation
 import CoreBluetooth
 
+/*
+ Find GATT UUID here:
+ https://www.bluetooth.com/specifications/gatt/services/
+ */
+
 public struct Subscription {
     public private (set) var serviceUUID: CBUUID
     public private (set) var characteristicUUID: CBUUID?
