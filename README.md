@@ -6,7 +6,12 @@ CoreBluetooth integrated CoreLocation with CoreData and iCloud sync
 
 ```
 import BluetoothThing  
+```
 
+Subscribe to GATT services
+
+Find GATT UUID here: https://www.bluetooth.com/specifications/gatt/services/
+```
 let subscriptions = [
     Subscription(service: "180F"),
     Subscription(service: "180A")
