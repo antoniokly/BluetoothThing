@@ -25,12 +25,12 @@ let subscriptions = [
 CoreData Storage with iCloud sync (requires iCloud and remote notification background mode capability)
 ```
 @available(iOS 13.0, watchOS 6.0, *)
-BluetoothThingManager(delegate: self, subscriptions: subscriptions, useLocation: true, useCoreData: true, useCloudKit: true)
+BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useLocation: Bool, useCoreData: Bool, useCloudKit: Bool)
 ```
 
 CoreData Storage only for older versions
 ```
-BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useLocation: Bool = false, useCoreData: Bool = false)
+BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useLocation: Bool, useCoreData: Bool)
 ```
 
 Implement `BluetoothThingManagerDelegate`
