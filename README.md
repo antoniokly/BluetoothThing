@@ -2,7 +2,9 @@
 
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 
-CoreBluetooth integrated CoreLocation with CoreData and iCloud sync
+Find, connect and subscribe to Bluetooth peripherals without much codes, the hard works are done in this framework.
+
+CoreBluetooth integration with CoreLocation, CoreData and iCloud sync. Store last known data and locations of subscribed Bluetooth peripherals on iCloud.
 
 ## Usage
 
