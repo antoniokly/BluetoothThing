@@ -294,7 +294,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
          case poweredOff
          case poweredOn
          */
-        os_log("centralManagerDidUpdateState: %d", central.state.rawValue)
+        os_log("centralManagerDidUpdateState: %@", central.state.description)
                     
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
