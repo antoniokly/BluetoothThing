@@ -17,18 +17,12 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public private (set) var id: UUID
     public internal (set) var state: CBPeripheralState = .disconnected
     
+    public internal (set) var services: Set<BTService> = []
+    
     public var name: String? = nil {
         didSet {
             if name != oldValue {
                 NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.name: name as Any])
-            }
-        }
-    }
-    
-    public var location: Location? = nil {
-        didSet {
-            if location != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.location: location as Any])
             }
         }
     }
@@ -80,11 +74,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public func deregister() {
         _disconnect?(true)
     }
-
-    @discardableResult
-    public func request(_ request: BTRequest) -> Bool {
-        return _request?(request) == true
-    }
     
     public func subscribe() {
         _notify?(true)
@@ -93,11 +82,30 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public func unsubscribe() {
         _notify?(false)
     }
+    
+    // Read & write
+    @discardableResult
+    public func request(_ request: BTRequest) -> Bool {
+        _request?(request) == true
+    }
+    
+    @discardableResult
+    public func read(_ characteristic: BTCharacteristic) -> Bool {
+        request(BTRequest(method: .read, characteristic: characteristic))
+    }
+    
+    @discardableResult
+    public func write(_ characteristic: BTCharacteristic, value: Data?) -> Bool {
+        request(BTRequest(method: .write, characteristic: characteristic, value: value))
+    }
+    
+    public func hasServive(_ service: BTService) -> Bool {
+        return services.contains(service)
+    }
             
     private enum CodingKeys: String, CodingKey {
         case id
         case name
-        case location
         case characteristics
         case customData
     }

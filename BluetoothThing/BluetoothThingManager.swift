@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import CoreLocation
 import os.log
 
 public class BluetoothThingManager: NSObject {
@@ -23,26 +22,7 @@ public class BluetoothThingManager: NSObject {
     public internal (set) var dataStore: DataStoreProtocol!
         
     var centralManager: CBCentralManager!
-    var locationManager: CLLocationManager?
-    var geocoder: GeocoderProtocol?
 
-    var isRequestingLocation = false
-    var userPlacemark: CLPlacemark? {
-        didSet {
-            if let placemark = userPlacemark, let location = placemark.location {
-                updateLocationForNearbyThings(Location(location: location, name: placemark.locality))
-            }
-        }
-    }
-    
-    var userLocation: CLLocation? {
-        didSet {
-            if let location = userLocation {
-                self.fetchPlacemarks(location)
-            }
-        }
-    }
-    
     var nearbyThings: [BluetoothThing] {
         self.knownPeripherals.compactMap {
             self.dataStore.getThing(id: $0.identifier)
@@ -72,35 +52,28 @@ public class BluetoothThingManager: NSObject {
     
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
-                            useLocation: Bool = false,
                             useCoreData: Bool = false) {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore(centralId: delegate.centralId) :
-                    UserDefaults.standard),
-                  useLocation: useLocation)
+                    CoreDataStore() : UserDefaults.standard))
     }
     
     @available(iOS 13.0, watchOS 6.0, *)
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
-                            useLocation: Bool = false,
                             useCoreData: Bool = false,
                             useCloudKit: Bool = false) {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore(centralId: delegate.centralId, useCloudKit: useCloudKit) :
-                    UserDefaults.standard),
-                  useLocation: useLocation)
+                    CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard))
     }
     
     convenience init(delegate: BluetoothThingManagerDelegate,
                      subscriptions: [Subscription],
                      dataStore: DataStoreProtocol,
-                     centralManager: CBCentralManager? = nil,
-                     useLocation: Bool = false) {
+                     centralManager: CBCentralManager? = nil) {
         self.init(delegate: delegate, subscriptions: subscriptions)        
                 
         self.dataStore = dataStore
@@ -109,10 +82,6 @@ public class BluetoothThingManager: NSObject {
         
         self.centralManager = centralManager ??
             CBCentralManager(delegate: self, queue: nil, options: Self.centralManagerOptions)
-        
-        if useLocation {
-            setupLocationManager(CLLocationManager())
-        }
     }
     
     init(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription]) {
@@ -120,19 +89,7 @@ public class BluetoothThingManager: NSObject {
         self.subscriptions = subscriptions
         super.init()
     }
-    
-    func setupLocationManager(_ manager: CLLocationManager) {
-        self.locationManager = manager
-        manager.delegate = self
-        manager.requestAlwaysAuthorization()
-        manager.desiredAccuracy = kCLLocationAccuracyBest
-        
-        #if os(iOS) || os(macOS)
-        manager.pausesLocationUpdatesAutomatically = true
-        manager.startMonitoringSignificantLocationChanges()
-        #endif
-    }
-    
+
     public func startScanning(allowDuplicates: Bool) {
         var options: [String: Any]? = nil
         
@@ -174,33 +131,10 @@ public class BluetoothThingManager: NSObject {
         centralManager.stopScan()
     }
     
-    public func requestLocation(_ minimumInterval: TimeInterval = 60) {
-        if isRequestingLocation {
-            return
-        }
-        
-        if let location = userLocation, location.timestamp.timeIntervalSinceNow > -minimumInterval {
-            os_log("last location is less than %ds older", Int(minimumInterval))
-            return
-        }
-        
-        isRequestingLocation = true
-        locationManager?.requestLocation()
-    }
-    
     public func reset() {
         for id in things.map({$0.id}) {
             if let thing = dataStore.removeThing(id: id) {
                 loseThing(thing)
-            }
-        }
-    }
-    
-    func updateLocationForNearbyThings(_ location: Location) {
-        for thing in nearbyThings {
-            if thing.location != location {
-                thing.location = location
-                self.delegate.bluetoothThing(thing, didUpdateLocation: location)
             }
         }
     }
@@ -321,7 +255,7 @@ public class BluetoothThingManager: NSObject {
     
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
         peripheral.readRSSI()
-        peripheral.discoverServices(serviceUUIDs)
+        peripheral.discoverServices(nil)
                 
         // MARK: Data Request
         thing._request = { [weak peripheral] (request) in
@@ -381,9 +315,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             if isPendingToStart {
                 startScanning(options: scanningOptions)
             }
-            
-            requestLocation()
-            
+                        
         } else {
             for peripheral in knownPeripherals {
                 didUpdatePeripheral(peripheral)
@@ -469,12 +401,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 }
             )
         }
-
-        if let location = userLocation {
-            foundThing.location = Location(location: location, name: userPlacemark?.locality)
-        } else {
-            requestLocation()
-        }
         
         setupThing(foundThing, for: peripheral)
         delegate.bluetoothThingManager(self, didFoundThing: foundThing, rssi: RSSI)
@@ -486,12 +412,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             thing.timer?.invalidate()
             thing.timer = nil
             didConnectThing(thing, peripheral: peripheral)
-        
-            if let location = userLocation {
-                thing.location = Location(location: location, name: userPlacemark?.locality)
-            } else {
-                requestLocation()
-            }
         }
     }
     
@@ -525,6 +445,10 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
             for service in services {
+                if let thing = things.first(where: {$0.id == peripheral.identifier}) {
+                    thing.services.insert(BTService(service: service))
+                }
+                
                 guard serviceUUIDs.contains(service.uuid) else {
                     continue
                 }
@@ -578,38 +502,5 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
         os_log("didReadRSSI %d", RSSI.stringValue)
         didUpdatePeripheral(peripheral, rssi: RSSI)
-    }
-}
-
-//MARK: - CLLocationManagerDelegate
-extension BluetoothThingManager: CLLocationManagerDelegate {
-    
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        os_log("didUpdateLocations: %@", locations)
-        isRequestingLocation = false
-        
-        for location in locations {
-            if let last = userLocation, last.timestamp > location.timestamp {
-                return
-            }
-            
-            userLocation = location
-            userPlacemark = nil
-            fetchPlacemarks(location)
-        }
-    }
-    
-    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        os_log("didFailWithError: %@", error.localizedDescription)
-        isRequestingLocation = false
-        delegate.bluetoothThingManager(self, locationDidFailWithError: error)
-    }
-    
-    func fetchPlacemarks(_ location: CLLocation) {
-        (geocoder ?? CLGeocoder()).reverseGeocodeLocation(location) { placemarks, error in
-            if error == nil, self.userLocation == location {
-                self.userPlacemark = placemarks?.first
-            }
-        }
     }
 }

@@ -15,7 +15,7 @@ class CoreDataStoreTests: XCTestCase {
     var sut: CoreDataStore!
 
     override func setUp() {
-        sut = CoreDataStore(centralId: UUID())
+        sut = CoreDataStore()
         sut.reset()
     }
 
@@ -35,8 +35,7 @@ class CoreDataStoreTests: XCTestCase {
         XCTAssertEqual(things?.count, 1)
         
         // When centralId changed
-        sut.centralId = UUID()
-        things = sut.fetch() as? [BluetoothThing]
+        things = sut.fetch(forCentralId: UUID()) as? [BluetoothThing]
         XCTAssertEqual(things?.count, 0)
     }
     
@@ -131,16 +130,4 @@ class CoreDataStoreTests: XCTestCase {
         XCTAssertEqual(things?.first?.characteristics, characteristics)
         XCTAssertEqual(things?.first?.hardwareSerialNumber, "3412f0ff0000000000")
     }
-    
-    func testUpdateLocation() {
-        let thing = BluetoothThing(id: UUID(), serialNumber: Data())
-
-        let location = Location(coordinate: .init())
-
-        sut.addObject(context: nil, object: thing)
-        sut.update(context: nil, object: thing, keyValues: [String.location: location])
-        let things = sut.fetch() as? [BluetoothThing]
-        XCTAssertEqual(things?.first?.location, location)
-    }
-    
 }

@@ -8,7 +8,6 @@
 
 import XCTest
 import CoreBluetooth
-import CoreLocation
 @testable import BluetoothThing
 
 class BluetoothThingManagerTests: XCTestCase {
@@ -20,13 +19,6 @@ class BluetoothThingManagerTests: XCTestCase {
         
         func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
             return true
-        }
-        
-        var locationDidFailCalled = 0
-        var locationDidFailWithError: Error?
-        func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error) {
-            locationDidFailCalled += 1
-            locationDidFailWithError = error
         }
         
         var didFoundThingCalled = 0
@@ -54,11 +46,6 @@ class BluetoothThingManagerTests: XCTestCase {
             didFailToConnectCalled += 1
             didFailToConnectThing = thing
             didFailToConnectError = error
-        }
-        
-        var didUpdateLocationCalled = 0
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location) {
-            didUpdateLocationCalled += 1
         }
         
         var didUpdateValueCalled = 0
@@ -117,17 +104,14 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
 
-        let locationManager = CLLocationManagerMock()
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
+                                        centralManager: centralManager)
 
         XCTAssertNotNil(sut.delegate)
         XCTAssertNotNil(sut.dataStore)
         XCTAssertNotNil(sut.centralManager.delegate)
-        XCTAssertNotNil(sut.locationManager?.delegate)
 
         XCTAssertEqual(sut.subscriptions.count, 1)
         XCTAssertEqual(sut.serviceUUIDs, [serviceUUID])
@@ -229,7 +213,8 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeStateThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
-        XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
+        XCTAssertEqual(peripheral.discoverServicesCalled, 1)
+        XCTAssertNil(peripheral.discoverServices)
     }
     
     func testPowerOff() {
@@ -278,13 +263,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        let fakeLocation = CLLocation(latitude: 0, longitude: 0)
-        let locationManager = CLLocationManagerMock(fakeLocation: fakeLocation)
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
+                                        centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -294,8 +276,8 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
-        XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
-        XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
+        XCTAssertNil(peripheral.discoverServices)
+//        XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
         XCTAssertNotNil(thing.deregister)
         XCTAssertNotNil(thing.request)
     }
@@ -587,30 +569,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeRSSIThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeRSSI, 99)
     }
-    
-    func testOlderLocation() {
-        // Given
-        let dataStore = DataStoreMock(peripherals: [])
-        let centralManager = CBCentralManagerMock(peripherals: [])
-        let olderLocation = CLLocation(latitude: 0, longitude: 0)
 
-        let locationManager = CLLocationManagerMock(fakeLocation: nil)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: [],
-                                        dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
-        let newerLocation = CLLocation(latitude: 0, longitude: 0)
-        sut.userLocation = newerLocation
-
-        // When
-        sut.locationManager(locationManager,
-                            didUpdateLocations: [olderLocation])
-
-        // Then
-        XCTAssertEqual(sut.userLocation, newerLocation)
-    }
-    
     func testDidFailToConnect() {
         // Given
         let serviceUUID = CBUUID(string: "FFF0")
@@ -718,59 +677,6 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.didChangeStateCalled, 2, "state should be changed to disconnected")
     }
-    
-    func testLocationDidFail() {
-        // Given
-        let dataStore = DataStoreMock(peripherals: [])
-        let centralManager = CBCentralManagerMock(peripherals: [])
-        let locationManager = CLLocationManagerMock()
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: [],
-                                        dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
-        
-        // When
-        sut.locationManager(locationManager, didFailWithError: NSError(domain: "locationError", code: 0, userInfo: nil))
-        
-        // Then
-        XCTAssertEqual(delegate.locationDidFailCalled, 1)
-        XCTAssertNotNil(delegate.locationDidFailWithError)
-    }
-    
-//    func testWillEnterForegroundNotification() {
-//        // Given
-//        let dataStore = DataStoreMock(peripherals: [])
-//        let centralManager = CBCentralManagerMock(peripherals: [])
-//        sut = initBluetoothThingManager(delegate: delegate,
-//                                        subscriptions: [],
-//                                        dataStore: dataStore,
-//                                        centralManager: centralManager)
-//        centralManager._state = .poweredOn
-//
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-//
-//        // Then
-//        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
-//    }
-//
-//    func testDidEnterBackgroundNotification() {
-//        // Given
-//        let dataStore = DataStoreMock(peripherals: [])
-//        let centralManager = CBCentralManagerMock(peripherals: [])
-//        sut = initBluetoothThingManager(delegate: delegate,
-//                                        subscriptions: [],
-//                                        dataStore: dataStore,
-//                                        centralManager: centralManager)
-//        centralManager._state = .poweredOn
-//
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-//
-//        // Then
-//        XCTAssertTrue(centralManager.stopScanCalled)
-//    }
     
     func testDidConnectThing() {
         // Given

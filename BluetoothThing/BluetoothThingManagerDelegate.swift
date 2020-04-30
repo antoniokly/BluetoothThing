@@ -7,19 +7,17 @@
 //
 
 import Foundation
+import os.log
 
 public protocol BluetoothThingManagerDelegate {
-    
-    var centralId: UUID { get }
-    
+        
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
-    func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error)
     
     func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)
     func bluetoothThing(_ thing: BluetoothThing, didChangeRSSI rssi: NSNumber)
-    func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location)
     func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription)
 }
+

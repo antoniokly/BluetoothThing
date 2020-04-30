@@ -8,7 +8,6 @@
 
 import Foundation
 import CoreBluetooth
-import CoreLocation
 @testable import BluetoothThing
 
 func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
@@ -43,19 +42,13 @@ func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) ->
 func initBluetoothThingManager(delegate: BluetoothThingManagerDelegate,
                                subscriptions: [Subscription],
                                dataStore: DataStoreProtocol,
-                               centralManager: CBCentralManagerMock,
-                               locationManager: CLLocationManagerMock? = nil) -> BluetoothThingManager {
+                               centralManager: CBCentralManagerMock) -> BluetoothThingManager {
     let manager = BluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
                                         centralManager: centralManager)
     
     centralManager.delegate = manager
-    
-    if let locationManager = locationManager {
-        manager.setupLocationManager(locationManager)
-        manager.geocoder = CLGeocoderMock()
-    }
     
     return manager
 }

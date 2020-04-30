@@ -33,4 +33,15 @@ public struct Subscription {
         self.serviceUUID = serviceUUID
         self.characteristicUUID = characteristicUUID
     }
+    
+    public init(_ characteristic: BTCharacteristic) {
+        self.serviceUUID = characteristic.serviceUUID
+        self.characteristicUUID = characteristic.uuid
+    }
+    
+    public init(_ service: BTService) {
+        self.serviceUUID = service.uuid
+    }
 }
+
+
