@@ -185,7 +185,11 @@ public class BluetoothThingManager: NSObject {
         if thing.state != peripheral.state {
             thing.state = peripheral.state
             
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            if thing.state == .connected {
+                didConnectThing(thing, peripheral: peripheral)
+            } else {
+                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            }
         }
         
         if let rssi = rssi {
@@ -201,19 +205,18 @@ public class BluetoothThingManager: NSObject {
             return nil
         }
                 
-        if let subscription = self.subscriptions.first(where: {
-            shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) }) {
-            let btCharacteristic = BTCharacteristic(characteristic: characteristic)
-            let isNewThing = thing.hardwareSerialNumber == nil
-            
-            thing.characteristics[btCharacteristic] = characteristic.value
-            
-            if isNewThing && btCharacteristic == .serialNumber {
-                dataStore.saveThing(thing)
-            }
-            
-            delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
+        let btCharacteristic = BTCharacteristic(characteristic: characteristic)
+        let isNewThing = thing.hardwareSerialNumber == nil
+        
+        thing.characteristics[btCharacteristic] = characteristic.value
+        
+        if isNewThing && btCharacteristic == .serialNumber {
+            dataStore.saveThing(thing)
         }
+            
+        let subscription = self.subscriptions.first(where: { shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) })
+        delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
+        
 
         return thing
     }
@@ -230,6 +233,10 @@ public class BluetoothThingManager: NSObject {
     func connectThing(_ thing: BluetoothThing, peripheral: CBPeripheral, register: Bool) {
         thing.timer?.invalidate()
         thing.timer = nil
+        
+        if register {
+            thing.autoReconnect = true
+        }
         
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
@@ -263,10 +270,14 @@ public class BluetoothThingManager: NSObject {
             guard
                 let peripheral = peripheral,
                 peripheral.state == .connected,
-                let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID}),
-                let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid})
+                let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID})
                 else {
                     return false
+            }
+            
+            guard let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid}) else {
+                peripheral.discoverCharacteristics([request.characteristic.uuid], for: service)
+                return false
             }
             
             switch request.method {
@@ -299,14 +310,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if central.state == .poweredOn {
             for peripheral in knownPeripherals {
                 if let thing = didUpdatePeripheral(peripheral) {
-                    switch peripheral.state {
-                    case .connected:
-                        didConnectThing(thing, peripheral: peripheral)
-                    default:
-                        if thing.autoReconnect {
-                            central.connect(peripheral, options: Self.peripheralOptions)
-                        }
-                    }
+                    if thing.autoReconnect {
+                        central.connect(peripheral, options: Self.peripheralOptions)
+                    }                   
                 } else {
                     central.cancelPeripheralConnection(peripheral)
                 }
@@ -367,7 +373,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             return
         }
         
-        var foundThing: BluetoothThing
+        let foundThing: BluetoothThing
 
         if let thing = didUpdatePeripheral(peripheral, rssi: RSSI) {
             setupThing(thing, for: peripheral)
@@ -378,8 +384,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             
             foundThing = thing
         } else {
-            
             if let thing = knownThings.first(where: {$0.id == peripheral.identifier}) {
+                thing.name = peripheral.name
                 foundThing = thing
             } else {
                 let newThing = BluetoothThing(peripheral: peripheral)
@@ -411,7 +417,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral){
             thing.timer?.invalidate()
             thing.timer = nil
-            didConnectThing(thing, peripheral: peripheral)
         }
     }
     
@@ -442,12 +447,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 //MARK: - CBPeripheralDelegate
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+        let thing = things.first(where: {$0.id == peripheral.identifier})
+        
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
+            
+            
             for service in services {
-                if let thing = things.first(where: {$0.id == peripheral.identifier}) {
-                    thing.services.insert(BTService(service: service))
-                }
+                thing?.services.insert(BTService(service: service))
                 
                 guard serviceUUIDs.contains(service.uuid) else {
                     continue
@@ -465,20 +472,20 @@ extension BluetoothThingManager: CBPeripheralDelegate {
                     peripheral.discoverCharacteristics(uuids.compactMap({$0}), for: service)
                 }
             }
+            
+        }
+
+        if let thing = thing {
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state) // delay connected after discovered services
         }
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
-        if let characteristics = service.characteristics, let thing = things.first(where: {$0.id == peripheral.identifier}) {
+        if let characteristics = service.characteristics {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
-                        
-            let subscribe = delegate.bluetoothThingShouldSubscribeOnConnect(thing)
-            let subscribedCharacteristics = characteristics.filter {
-                shouldSubscribe(characteristic: $0, subscriptions: self.subscriptions)
-            }
             
-            for characteristic in subscribedCharacteristics {
-                if subscribe {
+            for characteristic in characteristics {
+                if shouldSubscribe(characteristic: characteristic, subscriptions: self.subscriptions) {
                     if !characteristic.isNotifying {
                         peripheral.setNotifyValue(true, for: characteristic)
                     }

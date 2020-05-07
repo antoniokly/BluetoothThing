@@ -15,7 +15,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     static let didChange = Notification.Name("\(String(describing: self)).didChange")
     
     public private (set) var id: UUID
-    public internal (set) var state: CBPeripheralState = .disconnected
+    public internal (set) var state: ConnectionState = .disconnected
     
     public internal (set) var services: Set<BTService> = []
     

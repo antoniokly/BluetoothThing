@@ -53,7 +53,7 @@ class BluetoothThingManagerTests: XCTestCase {
         var didUpdateValueCharacteristic: BTCharacteristic?
         var didUpdateValueSubscription: Subscription?
         var didUpdateValue: Data?
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription) {
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription?) {
             didUpdateValueCalled += 1
             didUpdateValueThing = thing
             didUpdateValueCharacteristic = characteristic
