@@ -18,8 +18,8 @@ public class BluetoothThingManager: NSObject {
     static let peripheralOptions: [String: Any]? = nil
     
     public internal (set) var delegate: BluetoothThingManagerDelegate
-    public internal (set) var subscriptions: [Subscription]
     public internal (set) var dataStore: DataStoreProtocol!
+    public internal (set) var subscriptions: [Subscription]
         
     var centralManager: CBCentralManager!
 
@@ -140,41 +140,45 @@ public class BluetoothThingManager: NSObject {
     }
     
     //MARK: - BluetoothThing
+    func getThing(for peripheral: CBPeripheral) -> BluetoothThing? {
+        return dataStore.getThing(id: peripheral.identifier)
+    }
+    
     func setupThing(_ thing: BluetoothThing, for peripheral: CBPeripheral?) {
         // MARK: Connect request
         thing._connect = { [weak self, weak peripheral, weak thing] register in
-            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let peripheral = peripheral, let thing = thing else {
+            guard let self = self, self.centralManager.state == .poweredOn, let peripheral = peripheral, let thing = thing else {
                 return
             }
 
-            strongSelf.connectThing(thing, peripheral: peripheral, register: register)
+            self.connectThing(thing, peripheral: peripheral, register: register)
         }
         
         // MARK: Disconnect request
         thing._disconnect = { [weak self, weak thing] deregister in
-            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let thing = thing else {
+            guard let self = self, self.centralManager.state == .poweredOn, let thing = thing else {
                 return
             }
             
-            strongSelf.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
+            self.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
         }
         
         thing._notify = { [weak self] notify in
-            guard let strongSelf = self, strongSelf.centralManager.state == .poweredOn, let peripheral = peripheral else {
+            guard let self = self, self.centralManager.state == .poweredOn, let peripheral = peripheral else {
                 return
             }
             
             if notify {
-                peripheral.subscribe(subscriptions: strongSelf.subscriptions)
+                peripheral.subscribe(subscriptions: self.subscriptions)
             } else {
-                peripheral.unsubscribe(subscriptions: strongSelf.subscriptions)
+                peripheral.unsubscribe(subscriptions: self.subscriptions)
             }
         }
     }
     
     @discardableResult
     func didUpdatePeripheral(_ peripheral: CBPeripheral, rssi: NSNumber? = nil) -> BluetoothThing? {
-        guard let thing = dataStore.getThing(id: peripheral.identifier) else {
+        guard let thing = getThing(for: peripheral) else {
             return nil
         }
         
@@ -290,6 +294,26 @@ public class BluetoothThingManager: NSObject {
             }
             
             return true
+        }
+        
+        thing._subscribe = { subscription in
+            if let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}) {
+                peripheral.discoverCharacteristics(nil, for: service)
+            } else {
+                peripheral.discoverServices([subscription.serviceUUID])
+            }
+        }
+        
+        thing._unsubscribe = { subscription in
+            guard let service = peripheral.services?.first(where: {$0 == subscription.serviceUUID}), let characteristics = service.characteristics else {
+                return
+            }
+            
+            for characteristic in characteristics.filter({
+                subscription.characteristicUUID == nil || $0.uuid == subscription.characteristicUUID
+            }) {
+                peripheral.setNotifyValue(false, for: characteristic)
+            }
         }
     }
 }
@@ -448,6 +472,11 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         let thing = things.first(where: {$0.id == peripheral.identifier})
+        var subscriptions = self.subscriptions
+        
+        if let thing = thing {
+            subscriptions.append(contentsOf: thing.subscriptions)
+        }
         
         if let services = peripheral.services {
             os_log("didDiscoverServices %@ %@", peripheral, services)
@@ -475,8 +504,9 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             
         }
 
-        if let thing = thing {
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state) // delay connected after discovered services
+        if let thing = thing,  peripheral.state == .connected {
+            // delay connected state until discovered services
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }
     }
     
@@ -484,8 +514,14 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         if let characteristics = service.characteristics {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
             
+            var subscriptions = self.subscriptions
+            
+            if let thing = getThing(for: peripheral) {
+                subscriptions += thing.subscriptions
+            }
+            
             for characteristic in characteristics {
-                if shouldSubscribe(characteristic: characteristic, subscriptions: self.subscriptions) {
+                if shouldSubscribe(characteristic: characteristic, subscriptions: subscriptions) {
                     if !characteristic.isNotifying {
                         peripheral.setNotifyValue(true, for: characteristic)
                     }

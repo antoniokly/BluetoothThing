@@ -27,16 +27,15 @@ public struct BTCharacteristic: Hashable, Codable {
 }
 
 public extension BTCharacteristic {
-    
     static let modelNumberString = BTCharacteristic(service: "180A", characteristic: "2A24")
     static let serialNumber = BTCharacteristic(service: "180A", characteristic: "2A25")
     static let firmwareRevisionString = BTCharacteristic(service: "180A", characteristic: "2A26")
     static let manufacturerNameString = BTCharacteristic(service: "180A", characteristic: "2A29")
+    static let batteryLevel = BTCharacteristic(service: "180F", characteristic: "2A19")
     
     // Fitness
     static let heartRateMeasurement = BTCharacteristic(service: "180D", characteristic: "2A37")
     static let bodySensorLocation = BTCharacteristic(service: "180D", characteristic: "2A38")
-    
     
     // GPS
     static let longitude = Subscription(service: "1819", characteristic: "2AAE")

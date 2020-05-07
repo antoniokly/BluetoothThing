@@ -12,4 +12,8 @@ public extension Data {
     var hexEncodedString: String {
         map { String(format: "%02hhx", $0) }.joined()
     }
+    
+    var int: Int? {
+        Int(hexEncodedString, radix: 16)
+    }
 }

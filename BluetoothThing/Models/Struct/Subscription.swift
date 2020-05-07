@@ -14,7 +14,7 @@ import CoreBluetooth
  https://www.bluetooth.com/specifications/gatt/services/
  */
 
-public struct Subscription {
+public struct Subscription: Hashable {
     public private (set) var serviceUUID: CBUUID
     public private (set) var characteristicUUID: CBUUID?
     
@@ -44,4 +44,6 @@ public struct Subscription {
     }
 }
 
-
+public extension Subscription {
+    static let batteryService = Subscription(.batteryService)
+}

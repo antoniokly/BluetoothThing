@@ -16,8 +16,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public private (set) var id: UUID
     public internal (set) var state: ConnectionState = .disconnected
-    
     public internal (set) var services: Set<BTService> = []
+    public internal (set) var subscriptions: Set<Subscription> = []
     
     public var name: String? = nil {
         didSet {
@@ -56,6 +56,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _disconnect: ((Bool) -> Void)?
     var _request: ((BTRequest) -> Bool)?
     var _notify: ((Bool) -> Void)?
+    var _subscribe: ((Subscription) -> Void)?
+    var _unsubscribe: ((Subscription) -> Void)?
     
     public func connect() {
         _connect?(false)
@@ -81,6 +83,16 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public func unsubscribe() {
         _notify?(false)
+    }
+    
+    public func subscribe(_ subscription: Subscription) {
+        subscriptions.insert(subscription)
+        _subscribe?(subscription)
+    }
+    
+    public func unsubscribe(_ subscription: Subscription) {
+        subscriptions.remove(subscription)
+        _unsubscribe?(subscription)
     }
     
     // Read & write
