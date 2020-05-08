@@ -56,6 +56,8 @@
 		A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
 		A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
 		A4D1398E2413871E00B61BA3 /* BluetoothThing+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D1398D2413871E00B61BA3 /* BluetoothThing+.swift */; };
+		A4D228C42464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
+		A4D228C52464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
 		A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */; };
 		A4F86D0A2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
 		A4F86D0B2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
@@ -110,6 +112,7 @@
 		A4B4D46024061A080017614E /* CoreDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStore.swift; sourceTree = "<group>"; };
 		A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThingManagerDelegate.swift; sourceTree = "<group>"; };
 		A4D1398D2413871E00B61BA3 /* BluetoothThing+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BluetoothThing+.swift"; sourceTree = "<group>"; };
+		A4D228C32464D0E600E40449 /* Integer+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Integer+.swift"; sourceTree = "<group>"; };
 		A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStoreTests.swift; sourceTree = "<group>"; };
 		A4F86D092412266500AF9621 /* BTPeripheral+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -252,6 +255,7 @@
 				A4A66D0B245A55F10047D00E /* Constants+.swift */,
 				A4A66D0D245A56890047D00E /* Constants+Watch.swift */,
 				A482DB8323DF92EC009AB51A /* Data+.swift */,
+				A4D228C32464D0E600E40449 /* Integer+.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -439,6 +443,7 @@
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
 				A4175590240BB11E00F95437 /* UserDefaults+.swift in Sources */,
+				A4D228C42464D0E600E40449 /* Integer+.swift in Sources */,
 				A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */,
 				A4A16EAB2407CA6F002358FF /* BTModel.xcdatamodeld in Sources */,
 				A4A66D0C245A55F10047D00E /* Constants+.swift in Sources */,
@@ -482,6 +487,7 @@
 				A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */,
 				A45F185323DA84B5004C5A52 /* BTCharacteristic.swift in Sources */,
 				A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
+				A4D228C52464D0E600E40449 /* Integer+.swift in Sources */,
 				A4175591240BB11E00F95437 /* UserDefaults+.swift in Sources */,
 				A45F184E23DA84B5004C5A52 /* BluetoothThing.swift in Sources */,
 				A4A16EAC2407CA8C002358FF /* BTModel.xcdatamodeld in Sources */,

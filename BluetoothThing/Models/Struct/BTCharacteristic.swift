@@ -36,7 +36,9 @@ public extension BTCharacteristic {
     // Fitness
     static let heartRateMeasurement = BTCharacteristic(service: "180D", characteristic: "2A37")
     static let bodySensorLocation = BTCharacteristic(service: "180D", characteristic: "2A38")
-    
+    static let cscMeasurement = BTCharacteristic(service: "1816", characteristic: "2A5B")
+    static let cscFeature = BTCharacteristic(service: "1816", characteristic: "2A5C")
+
     // GPS
     static let longitude = Subscription(service: "1819", characteristic: "2AAE")
     static let latitude = Subscription(service: "1819", characteristic: "2AAF")
