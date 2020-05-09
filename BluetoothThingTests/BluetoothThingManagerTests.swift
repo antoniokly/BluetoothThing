@@ -8,7 +8,6 @@
 
 import XCTest
 import CoreBluetooth
-import CoreLocation
 @testable import BluetoothThing
 
 class BluetoothThingManagerTests: XCTestCase {
@@ -20,13 +19,6 @@ class BluetoothThingManagerTests: XCTestCase {
         
         func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
             return true
-        }
-        
-        var locationDidFailCalled = 0
-        var locationDidFailWithError: Error?
-        func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error) {
-            locationDidFailCalled += 1
-            locationDidFailWithError = error
         }
         
         var didFoundThingCalled = 0
@@ -56,17 +48,12 @@ class BluetoothThingManagerTests: XCTestCase {
             didFailToConnectError = error
         }
         
-        var didUpdateLocationCalled = 0
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location) {
-            didUpdateLocationCalled += 1
-        }
-        
         var didUpdateValueCalled = 0
         var didUpdateValueThing: BluetoothThing?
         var didUpdateValueCharacteristic: BTCharacteristic?
         var didUpdateValueSubscription: Subscription?
         var didUpdateValue: Data?
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription) {
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription?) {
             didUpdateValueCalled += 1
             didUpdateValueThing = thing
             didUpdateValueCharacteristic = characteristic
@@ -117,17 +104,14 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
 
-        let locationManager = CLLocationManagerMock()
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
+                                        centralManager: centralManager)
 
         XCTAssertNotNil(sut.delegate)
         XCTAssertNotNil(sut.dataStore)
         XCTAssertNotNil(sut.centralManager.delegate)
-        XCTAssertNotNil(sut.locationManager?.delegate)
 
         XCTAssertEqual(sut.subscriptions.count, 1)
         XCTAssertEqual(sut.serviceUUIDs, [serviceUUID])
@@ -229,7 +213,8 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeStateThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
-        XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
+        XCTAssertEqual(peripheral.discoverServicesCalled, 1)
+        XCTAssertNil(peripheral.discoverServices)
     }
     
     func testPowerOff() {
@@ -278,13 +263,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        let fakeLocation = CLLocation(latitude: 0, longitude: 0)
-        let locationManager = CLLocationManagerMock(fakeLocation: fakeLocation)
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
+                                        centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -294,8 +276,8 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
-        XCTAssertEqual(peripheral.discoverServices, peripheral.services?.map({$0.uuid}))
-        XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
+        XCTAssertNil(peripheral.discoverServices)
+//        XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
         XCTAssertNotNil(thing.deregister)
         XCTAssertNotNil(thing.request)
     }
@@ -507,10 +489,10 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(peripheral.readValueCalled, 1)
-        XCTAssertEqual(peripheral.readValueCharacteristic?.uuid, characteristicUUID)
+        XCTAssertEqual(peripheral.readValueCharacteristics.last?.uuid, characteristicUUID)
         XCTAssertEqual(peripheral.setNotifyValueCalled, 1)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID)
+        XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid, characteristicUUID)
     }
     
     func testDidUpdateValue() {
@@ -587,30 +569,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeRSSIThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeRSSI, 99)
     }
-    
-    func testOlderLocation() {
-        // Given
-        let dataStore = DataStoreMock(peripherals: [])
-        let centralManager = CBCentralManagerMock(peripherals: [])
-        let olderLocation = CLLocation(latitude: 0, longitude: 0)
 
-        let locationManager = CLLocationManagerMock(fakeLocation: nil)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: [],
-                                        dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
-        let newerLocation = CLLocation(latitude: 0, longitude: 0)
-        sut.userLocation = newerLocation
-
-        // When
-        sut.locationManager(locationManager,
-                            didUpdateLocations: [olderLocation])
-
-        // Then
-        XCTAssertEqual(sut.userLocation, newerLocation)
-    }
-    
     func testDidFailToConnect() {
         // Given
         let serviceUUID = CBUUID(string: "FFF0")
@@ -710,67 +669,16 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(delegate.didFoundThingCalled, 1)
-        XCTAssertEqual(delegate.didChangeStateCalled, 1, "state should be changed to connected")
+        // state will be changed to connecting then connected, so count is 2
+        XCTAssertEqual(delegate.didChangeStateCalled, 2)
         
         // When
         thing.deregister()
         
         // Then
-        XCTAssertEqual(delegate.didChangeStateCalled, 2, "state should be changed to disconnected")
+        // state will be changed to disconnecting then disconnected, so count is 4
+        XCTAssertEqual(delegate.didChangeStateCalled, 4)
     }
-    
-    func testLocationDidFail() {
-        // Given
-        let dataStore = DataStoreMock(peripherals: [])
-        let centralManager = CBCentralManagerMock(peripherals: [])
-        let locationManager = CLLocationManagerMock()
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: [],
-                                        dataStore: dataStore,
-                                        centralManager: centralManager,
-                                        locationManager: locationManager)
-        
-        // When
-        sut.locationManager(locationManager, didFailWithError: NSError(domain: "locationError", code: 0, userInfo: nil))
-        
-        // Then
-        XCTAssertEqual(delegate.locationDidFailCalled, 1)
-        XCTAssertNotNil(delegate.locationDidFailWithError)
-    }
-    
-//    func testWillEnterForegroundNotification() {
-//        // Given
-//        let dataStore = DataStoreMock(peripherals: [])
-//        let centralManager = CBCentralManagerMock(peripherals: [])
-//        sut = initBluetoothThingManager(delegate: delegate,
-//                                        subscriptions: [],
-//                                        dataStore: dataStore,
-//                                        centralManager: centralManager)
-//        centralManager._state = .poweredOn
-//
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.willEnterForegroundNotification, object: nil)
-//
-//        // Then
-//        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
-//    }
-//
-//    func testDidEnterBackgroundNotification() {
-//        // Given
-//        let dataStore = DataStoreMock(peripherals: [])
-//        let centralManager = CBCentralManagerMock(peripherals: [])
-//        sut = initBluetoothThingManager(delegate: delegate,
-//                                        subscriptions: [],
-//                                        dataStore: dataStore,
-//                                        centralManager: centralManager)
-//        centralManager._state = .poweredOn
-//
-//        // When
-//        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
-//
-//        // Then
-//        XCTAssertTrue(centralManager.stopScanCalled)
-//    }
     
     func testDidConnectThing() {
         // Given
@@ -785,6 +693,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
+        thing.autoReconnect = true
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = initBluetoothThingManager(delegate: delegate,
                                         subscriptions: subscriptions,
@@ -792,12 +701,15 @@ class BluetoothThingManagerTests: XCTestCase {
                                         centralManager: centralManager)
 
         // When
-        peripheral._state = .connected
-        sut.didConnectThing(thing, peripheral: peripheral)
+        sut.centralManager(sut.centralManager,
+                           didDiscover: peripheral,
+                           advertisementData: [CBAdvertisementDataServiceUUIDsKey: [serviceUUID]],
+                           rssi: 100)
         
         // Then
         XCTAssertEqual(peripheral.didReadRSSICalled, 1)
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
+        XCTAssertEqual(peripheral.readValueCalled, 1) // read once for subscription
         XCTAssertNotNil(thing.request)
         
         // When
@@ -807,8 +719,8 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // Then
         XCTAssertEqual(readRespond, true)
-        XCTAssertEqual(peripheral.readValueCalled, 1)
-        XCTAssertEqual(peripheral.readValueCharacteristic?.uuid, characteristicUUID)
+        XCTAssertEqual(peripheral.readValueCalled, 2)
+        XCTAssertEqual(peripheral.readValueCharacteristics.last?.uuid, characteristicUUID)
         
         // When
         let data = Data()
@@ -823,7 +735,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueType, .withResponse)
     }
     
-    func testClosures() {
+    func testBluetoothThing() {
         // Given
         let serviceUUID = CBUUID(string: "FFF0")
         let characteristicUUID1 = CBUUID(string: "FFF1")
@@ -851,37 +763,79 @@ class BluetoothThingManagerTests: XCTestCase {
         
         // When
         thing.connect()
-        // Then
+        // Then should subscribe
         XCTAssertEqual(peripheral.state, ConnectionState.connected)
         XCTAssertTrue(dataStore.things.contains(thing))
+        XCTAssertFalse(thing.autoReconnect)
+        XCTAssertEqual(peripheral.discoverServicesCalled, 1)
+        XCTAssertNil(peripheral.discoverServices)
+        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 1)
+        XCTAssertEqual(Set(peripheral.discoverCharacteristics),
+                       Set(subscriptions.compactMap({$0.characteristicUUID})))
+        XCTAssertEqual(peripheral.readValueCalled, 2)
+        XCTAssertEqual(Set(peripheral.readValueCharacteristics.map{$0.uuid}),
+                       Set(subscriptions.compactMap({$0.characteristicUUID})))
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
+        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.map{$0.uuid}),
+                       Set(subscriptions.compactMap({$0.characteristicUUID})))
         
         // When
         thing.register()
         // Then
         XCTAssertTrue(dataStore.things.contains(thing))
-
-        // When
-        thing.subscribe()
+        XCTAssertTrue(thing.autoReconnect)
+        
+        // When read unsubscribed characteristic
+        thing.read(.cscMeasurement)
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristic?.uuid, characteristicUUID2)
 
+        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 2)
+        XCTAssertEqual(peripheral.discoverCharacteristics, [BTCharacteristic.cscMeasurement.uuid])
+        XCTAssertEqual(peripheral.readValueCalled, 3)
+        XCTAssertEqual(peripheral.readValueCharacteristics.last?.uuid, BTCharacteristic.cscMeasurement.uuid)
+
+        
         // When
         thing.unsubscribe()
         // Then
         XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
+        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.suffix(from: 2).map{$0.uuid}),
+                       Set(subscriptions.compactMap({$0.characteristicUUID})))
+        
+        // When
+        thing.subscribe(Subscription(.heartRateMeasurement))
+        // Then
+        XCTAssertEqual(peripheral.discoverServicesCalled, 2)
+        XCTAssertEqual(peripheral.discoverServices, [BTCharacteristic.heartRateMeasurement.serviceUUID])
+        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 3)
+        XCTAssertEqual(peripheral.discoverCharacteristics, [BTCharacteristic.heartRateMeasurement.uuid])
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 5)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
+        XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
+                       BTCharacteristic.heartRateMeasurement.uuid)
+
+        // When
+        thing.unsubscribe(Subscription(.heartRateMeasurement))
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 6)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
+        XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
+                       BTCharacteristic.heartRateMeasurement.uuid)
         
         // When
         thing.disconnect()
         // Then
-        XCTAssertEqual(peripheral.state, ConnectionState.disconnected)
-//        XCTAssertTrue(thing.isRegistered)
-        
-        // When
+        XCTAssertEqual(centralManager.cancelConnectionCalled, 1)
+        XCTAssertEqual(centralManager.cancelConnectionPeripheral, peripheral)
+        XCTAssertEqual(peripheral.state, .disconnected)
+        XCTAssertTrue(thing.autoReconnect)
+                
+
         thing.deregister()
         // Then
-//        XCTAssertFalse(thing.isRegistered)
+        XCTAssertEqual(centralManager.cancelConnectionCalled, 2)
+        XCTAssertFalse(thing.autoReconnect)
     }
 }

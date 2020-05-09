@@ -14,7 +14,7 @@ import CoreBluetooth
  https://www.bluetooth.com/specifications/gatt/services/
  */
 
-public struct Subscription {
+public struct Subscription: Hashable {
     public private (set) var serviceUUID: CBUUID
     public private (set) var characteristicUUID: CBUUID?
     
@@ -32,5 +32,28 @@ public struct Subscription {
     public init(serviceUUID: CBUUID, characteristicUUID: CBUUID? = nil) {
         self.serviceUUID = serviceUUID
         self.characteristicUUID = characteristicUUID
+    }
+    
+    public init(_ characteristic: BTCharacteristic) {
+        self.serviceUUID = characteristic.serviceUUID
+        self.characteristicUUID = characteristic.uuid
+    }
+    
+    public init(_ service: BTService) {
+        self.serviceUUID = service.uuid
+    }
+}
+
+public extension Subscription {
+    static let batteryService = Subscription(.batteryService)
+}
+
+public extension Array where Element == Subscription {
+    func toDictionary() -> [CBUUID: Set<CBUUID?>] {
+        Dictionary(grouping: self) {
+            $0.serviceUUID
+        }.mapValues {
+            Set($0.map{$0.characteristicUUID})
+        }
     }
 }

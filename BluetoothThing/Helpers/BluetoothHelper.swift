@@ -9,6 +9,25 @@
 import Foundation
 import CoreBluetooth
 
+extension CBManagerState {
+    var description: String {
+        switch self {
+        case .poweredOn:
+            return "poweredOn"
+        case .poweredOff:
+            return "poweredOff"
+        case .resetting:
+            return "resetting"
+        case .unauthorized:
+            return "unauthorized"
+        case .unsupported:
+            return "unsupported"
+        default:
+            return "unknown"
+        }
+    }
+}
+
 extension CBPeripheral {
     func subscribe(subscriptions: [Subscription]) {
         let characteristics = getSubscribedCharateristics(for: self,

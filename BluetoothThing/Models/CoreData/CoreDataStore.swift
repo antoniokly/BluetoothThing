@@ -14,7 +14,6 @@ import os.log
 class CoreDataStore {
     
     var useCloudKit = false
-    var centralId: UUID
     
     // MARK: - Core Data stack
     lazy var persistentContainer: NSPersistentContainer = {
@@ -27,12 +26,6 @@ class CoreDataStore {
         
         let container: NSPersistentContainer
         let model = "BTModel"
-        
-        #if os(watchOS)
-        let bundle = Bundle(identifier: "yip.antonio.BluetoothThingWatch")!
-        #else
-        let bundle = Bundle(identifier: "yip.antonio.BluetoothThing")!
-        #endif
         
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
@@ -59,14 +52,32 @@ class CoreDataStore {
         return container
     }()
     
-    init(centralId: UUID) {
-        self.centralId = centralId
+    init() {
     }
     
     @available(iOS 13.0, watchOS 6.0, *)
-    init(centralId: UUID, useCloudKit: Bool) {
-        self.centralId = centralId
+    init(useCloudKit: Bool) {
         self.useCloudKit = useCloudKit
+    }
+    
+    func saveDeviceName() {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "BTCentral")
+        var centrals: [BTCentral] = []
+        
+        do {
+            centrals = try persistentContainer.viewContext.fetch(fetchRequest) as! [BTCentral]
+            os_log("fetched BTCentral: %@", centrals)
+        } catch {
+            os_log("fetch error: %@", error.localizedDescription)
+        }
+        
+        let central = centrals.first(where: {$0.id == centralId.uuidString}) ?? {
+            let entity = NSEntityDescription.entity(forEntityName: "BTCentral", in: self.persistentContainer.viewContext)!
+
+            return NSManagedObject(entity: entity, insertInto: persistentContainer.viewContext) as! BTCentral
+        }()
+        
+        central.setValue(deviceName, forKey: .name)
     }
     
     // MARK: - Core Data Saving support
@@ -100,18 +111,18 @@ class CoreDataStore {
 extension CoreDataStore: PersistentStoreProtocol {
     
     func fetch() -> Any? {
+        return fetch(forCentralId: centralId)
+    }
+    
+    func fetch(forCentralId central: UUID) -> Any? {
         let entities: [BTPeripheral] = fetchPeripherals()
 
         return entities.compactMap({ entity in
-            guard let peripheralId = entity.peripheralId(for: centralId) else {
+            guard let peripheralId = entity.peripheralId(for: central) else {
                 return nil
             }
           
             let thing = BluetoothThing(id: peripheralId, name: entity.name)
-            
-            if let data = entity.location {
-                thing.location = try? JSONDecoder().decode(Location.self, from: data)
-            }
             
             for data in entity.customData as! Set<CustomData> {
                 thing.customData[data.key!] = data.value
@@ -169,8 +180,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             
             update(context: context, object: thing, keyValues: [
                 String.customData: thing.customData,
-                String.characteristics: thing.characteristics,
-                String.location: thing.location as Any
+                String.characteristics: thing.characteristics
             ])
         }
                 
@@ -209,12 +219,6 @@ extension CoreDataStore: PersistentStoreProtocol {
         
         for (key, value) in keyValues {
             switch key {
-            case .location:
-                if let location = value as? Location {
-                    btPeripheral.setValue(try? JSONEncoder().encode(location), forKey: key)
-                    
-                    os_log("CoreData updated location")
-                }
             case .customData:
                 if let dict = value as? [String: Data] {
                     for (key, value) in dict {

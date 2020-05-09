@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreBluetooth
+@testable import BluetoothThing
 
 class CBCharacteristicMock: CBCharacteristic {
     var _uuid: CBUUID
@@ -79,11 +80,11 @@ class CBPeripheralMock: CBPeripheral {
     
     var setNotifyValueCalled = 0
     var setNotifyValueEnabled: Bool?
-    var setNotifyValueCharacteristic: CBCharacteristic?
+    var setNotifyValueCharacteristics: [CBCharacteristic] = []
     override func setNotifyValue(_ enabled: Bool, for characteristic: CBCharacteristic) {
         setNotifyValueCalled += 1
         setNotifyValueEnabled = enabled
-        setNotifyValueCharacteristic = characteristic
+        setNotifyValueCharacteristics.append(characteristic)
         
         if let characteristic = characteristic as? CBCharacteristicMock {
             characteristic._isNotifying = enabled
@@ -93,10 +94,10 @@ class CBPeripheralMock: CBPeripheral {
     }
     
     var readValueCalled = 0
-    var readValueCharacteristic: CBCharacteristic?
+    var readValueCharacteristics: [CBCharacteristic] = []
     override func readValue(for characteristic: CBCharacteristic) {
         readValueCalled += 1
-        readValueCharacteristic = characteristic
+        readValueCharacteristics.append(characteristic)
     }
     
     var writeValueCalled = 0
@@ -116,16 +117,50 @@ class CBPeripheralMock: CBPeripheral {
         discoverServicesCalled += 1
         discoverServices = serviceUUIDs
         
+        let uuids: [CBUUID]
+        if let serviceUUIDs = serviceUUIDs {
+            uuids = serviceUUIDs
+        } else {
+            uuids = [
+                CBUUID(string: "FFF0"),
+                BTService.batteryService.uuid,
+                BTService.deviceInformation.uuid,
+                BTService.cyclingSpeedAndCadenceService.uuid
+            ]
+        }
+        
+        self._services = uuids.map {
+            CBServiceMock(uuid: $0)
+        }
+        
         delegate?.peripheral?(self, didDiscoverServices: nil)
     }
     
     var discoverCharacteristicsCalled = 0
-    var discoverCharacteristics: [CBUUID]?
+    var discoverCharacteristics: [CBUUID] = []
     var discoverCharacteristicsService: CBService?
     override func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?, for service: CBService) {
         discoverCharacteristicsCalled += 1
-        discoverCharacteristics = characteristicUUIDs
+        discoverCharacteristics = characteristicUUIDs ?? []
         discoverCharacteristicsService = service
+        
+        let uuids: [CBUUID]
+        if let characteristicUUIDs = characteristicUUIDs {
+            uuids = characteristicUUIDs
+        } else {
+            uuids = [
+                CBUUID(string: "FFF1"),
+                BTService.batteryService.uuid,
+                BTService.deviceInformation.uuid,
+                BTService.cyclingSpeedAndCadenceService.uuid
+            ]
+        }
+        
+        if let service = service as? CBServiceMock {
+            service._characteristics = uuids.map {
+                CBCharacteristicMock(uuid: $0, service: service)
+            }
+        }
         
         delegate?.peripheral?(self, didDiscoverCharacteristicsFor: service, error: nil)
     }

@@ -15,7 +15,6 @@ extension String {
     static let image = "image"
     static let displayName = "displayName"
     static let name = "name"
-    static let location = "location"
     static let data = "data"
     static let characteristics = "characteristics"
     static let customData = "customData"
