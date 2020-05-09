@@ -1,5 +1,6 @@
 # BluetoothThing
 
+[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 
 Find, connect and subscribe to Bluetooth peripherals without much codes, the hard works are done in this framework. Compatible with iOS 10.0+, watchOS 3.0+ and macOS with Bluetooth 4.
