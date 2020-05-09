@@ -189,7 +189,7 @@ public class BluetoothThingManager: NSObject {
         if thing.state != peripheral.state {
             thing.state = peripheral.state
             
-            if thing.state == .connected {
+            if peripheral.state == .connected {
                 didConnectThing(thing, peripheral: peripheral)
             } else {
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
@@ -244,14 +244,20 @@ public class BluetoothThingManager: NSObject {
         
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
+        // state can change to connecting in real case
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
     }
         
     func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, deregister: Bool) {
         thing.disconnecting = true
         
+        if deregister {
+            thing.autoReconnect = false
+        }
+        
         if let peripheral = peripheral {
             centralManager.cancelPeripheralConnection(peripheral)
+            // state can change to disconnecting in real case
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         } else {
             thing.state = .disconnected
@@ -305,7 +311,7 @@ public class BluetoothThingManager: NSObject {
         }
         
         thing._unsubscribe = { subscription in
-            guard let service = peripheral.services?.first(where: {$0 == subscription.serviceUUID}), let characteristics = service.characteristics else {
+            guard let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}), let characteristics = service.characteristics else {
                 return
             }
             
@@ -446,13 +452,12 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
         os_log("didDisconnectPeripheral %@", peripheral)
-                
+        if let error = error {
+            os_log("error %@", error as CVarArg)
+        }
         if let thing = didUpdatePeripheral(peripheral) {
-            thing.state = peripheral.state
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-            
             // reconnect if lost connection unintentionally
-            if !thing.disconnecting || thing.autoReconnect {
+            if !thing.disconnecting {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
             thing.disconnecting = false
@@ -471,40 +476,33 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 //MARK: - CBPeripheralDelegate
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        let thing = things.first(where: {$0.id == peripheral.identifier})
-        var subscriptions = self.subscriptions
-        
-        if let thing = thing {
-            subscriptions.append(contentsOf: thing.subscriptions)
+        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services))
+
+        guard let thing = things.first(where: {$0.id == peripheral.identifier}) else {
+            return
         }
         
         if let services = peripheral.services {
-            os_log("didDiscoverServices %@ %@", peripheral, services)
-            
+            thing.services.formUnion(services.map {
+                BTService(service: $0)
+            })
+
+            let subscriptions = (self.subscriptions + thing.subscriptions).toDictionary()
             
             for service in services {
-                thing?.services.insert(BTService(service: service))
-                
-                guard serviceUUIDs.contains(service.uuid) else {
+                guard let characteristicUUIDs = subscriptions[service.uuid] else {
                     continue
                 }
                 
-                let uuids = subscriptions.filter {
-                    $0.serviceUUID == service.uuid
-                }.map {
-                    $0.characteristicUUID
-                }
-                
-                if uuids.contains(nil) {
+                if characteristicUUIDs.contains(nil) {
                     peripheral.discoverCharacteristics(nil, for: service)
                 } else {
-                    peripheral.discoverCharacteristics(uuids.compactMap({$0}), for: service)
+                    peripheral.discoverCharacteristics(characteristicUUIDs.compactMap({$0}), for: service)
                 }
             }
-            
         }
 
-        if let thing = thing,  peripheral.state == .connected {
+        if peripheral.state == .connected {
             // delay connected state until discovered services
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }

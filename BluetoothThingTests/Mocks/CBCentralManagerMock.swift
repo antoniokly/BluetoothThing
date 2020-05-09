@@ -40,7 +40,7 @@ class CBCentralManagerMock: CBCentralManager {
             p._state = .connected
         }
         
-//        delegate?.centralManager?(self, didConnect: peripheral)
+        delegate?.centralManager?(self, didConnect: peripheral)
     }
     
     var scanForPeripheralsCalled = 0
@@ -60,13 +60,13 @@ class CBCentralManagerMock: CBCentralManager {
     var cancelConnectionCalled = 0
     var cancelConnectionPeripheral: CBPeripheral?
     override func cancelPeripheralConnection(_ peripheral: CBPeripheral) {
-        cancelConnectionCalled = 1
+        cancelConnectionCalled += 1
         cancelConnectionPeripheral = peripheral
 
         if let peripheral = peripheral as? CBPeripheralMock {
             peripheral._state = .disconnected
         }
-//        delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
+        delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
     }
     
     init(peripherals: [CBPeripheralMock]) {

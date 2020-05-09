@@ -16,6 +16,20 @@ public extension Data {
     var int: Int? {
         Int(hexEncodedString, radix: 16)
     }
+    
+    init(hexString string: String) {
+        self.init()
+        var hex = string
+        while(hex.count > 0) {
+            let subIndex = hex.index(hex.startIndex, offsetBy: 2)
+            let c = String(hex[..<subIndex])
+            hex = String(hex[subIndex...])
+            var ch: UInt32 = 0
+            Scanner(string: c).scanHexInt32(&ch)
+            var char = UInt8(ch)
+            self.append(&char, count: 1)
+        }
+    }
 }
 
 public extension Array where Element == UInt8 {

@@ -64,6 +64,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     var _register: (() -> Bool)?
+    /// Registered device will connect automatically whenever available
     public func register() {
         _connect?(true)
     }
@@ -77,6 +78,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         _disconnect?(true)
     }
     
+    /// Listen to changes of all subscriptions defined in BluethoothThingManager
     public func subscribe() {
         _notify?(true)
     }
@@ -85,14 +87,15 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         _notify?(false)
     }
     
+    /// Listen to changes of subscriptions, but will not re-subscribe after disconnect
     public func subscribe(_ subscription: Subscription) {
         subscriptions.insert(subscription)
         _subscribe?(subscription)
     }
     
     public func unsubscribe(_ subscription: Subscription) {
-        subscriptions.remove(subscription)
         _unsubscribe?(subscription)
+        subscriptions.remove(subscription)
     }
     
     // Read & write
@@ -111,7 +114,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         request(BTRequest(method: .write, characteristic: characteristic, value: value))
     }
     
-    public func hasServive(_ service: BTService) -> Bool {
+    public func hasService(_ service: BTService) -> Bool {
         return services.contains(service)
     }
             

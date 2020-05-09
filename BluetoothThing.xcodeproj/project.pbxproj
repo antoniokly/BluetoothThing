@@ -35,6 +35,7 @@
 		A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
 		A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
 		A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
+		A46E10E82466EDA500AE3329 /* DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46E10E72466EDA500AE3329 /* DataTests.swift */; };
 		A482DB8423DF92EC009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
 		A482DB8523DF958B009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
 		A492983D23D5216000889E2B /* BTRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BTRequest.swift */; };
@@ -95,6 +96,7 @@
 		A45F184723DA8487004C5A52 /* BluetoothThingWatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThingWatch.h; sourceTree = "<group>"; };
 		A45F184823DA8487004C5A52 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreProtocol.swift; sourceTree = "<group>"; };
+		A46E10E72466EDA500AE3329 /* DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTests.swift; sourceTree = "<group>"; };
 		A482DB8323DF92EC009AB51A /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		A492983C23D5216000889E2B /* BTRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTRequest.swift; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */,
 				A4553C6B23C5D99100C49AC2 /* Info.plist */,
 				A402498723CC6F8D0012618E /* TestHelper.swift */,
+				A46E10E72466EDA500AE3329 /* DataTests.swift */,
 			);
 			path = BluetoothThingTests;
 			sourceTree = "<group>";
@@ -462,6 +465,7 @@
 				A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */,
 				A4B37BED23D307C300A23E1F /* PersistentStoreMock.swift in Sources */,
 				A435044123C8813600C6AD1C /* BluetoothThingManagerTests.swift in Sources */,
+				A46E10E82466EDA500AE3329 /* DataTests.swift in Sources */,
 				A4411AF123CD5682000C7E11 /* SubscriptionTests.swift in Sources */,
 				A4D1398E2413871E00B61BA3 /* BluetoothThing+.swift in Sources */,
 				A435044B23C9439800C6AD1C /* CoreBluetoothMock.swift in Sources */,
