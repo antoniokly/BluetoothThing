@@ -780,6 +780,11 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.map{$0.uuid}),
                        Set(subscriptions.compactMap({$0.characteristicUUID})))
         
+        XCTAssertTrue(thing.hasService(.batteryService))
+        XCTAssertTrue(thing.hasService(.deviceInformation))
+        XCTAssertTrue(thing.hasService(BTService(service: "FFF0")))
+        XCTAssertFalse(thing.hasService(.cyclingPowerService))
+        
         // When
         thing.register()
         // Then
@@ -789,12 +794,17 @@ class BluetoothThingManagerTests: XCTestCase {
         // When read unsubscribed characteristic
         thing.read(.cscMeasurement)
         // Then
-
         XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 2)
         XCTAssertEqual(peripheral.discoverCharacteristics, [BTCharacteristic.cscMeasurement.uuid])
         XCTAssertEqual(peripheral.readValueCalled, 3)
         XCTAssertEqual(peripheral.readValueCharacteristics.last?.uuid, BTCharacteristic.cscMeasurement.uuid)
 
+        // When
+        thing.write(.cscMeasurement, value: Data(hexString: "ff"))
+        // Then
+        XCTAssertEqual(peripheral.writeValueCalled, 1)
+        XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, BTCharacteristic.cscMeasurement.uuid)
+        XCTAssertEqual(peripheral.writeValueData?.int, 255)
         
         // When
         thing.unsubscribe()
@@ -805,13 +815,21 @@ class BluetoothThingManagerTests: XCTestCase {
                        Set(subscriptions.compactMap({$0.characteristicUUID})))
         
         // When
+        thing.subscribe()
+        // Then
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 6)
+        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
+        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.suffix(from: 4).map{$0.uuid}),
+                       Set(subscriptions.compactMap({$0.characteristicUUID})))
+        
+        // When
         thing.subscribe(Subscription(.heartRateMeasurement))
         // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 2)
         XCTAssertEqual(peripheral.discoverServices, [BTCharacteristic.heartRateMeasurement.serviceUUID])
         XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 3)
         XCTAssertEqual(peripheral.discoverCharacteristics, [BTCharacteristic.heartRateMeasurement.uuid])
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 5)
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 7)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
         XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
                        BTCharacteristic.heartRateMeasurement.uuid)
@@ -819,7 +837,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // When
         thing.unsubscribe(Subscription(.heartRateMeasurement))
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 6)
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
         XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
                        BTCharacteristic.heartRateMeasurement.uuid)
