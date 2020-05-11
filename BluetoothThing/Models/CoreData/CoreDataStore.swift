@@ -203,7 +203,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", thing.id.uuidString)
         
-        guard let btPeripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first else {
+        guard let peripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first else {
             os_log("CoreData cannot found peripheral for %@", thing)
             return
         }
@@ -212,62 +212,14 @@ extension CoreDataStore: PersistentStoreProtocol {
             switch key {
             case .customData:
                 if let dict = value as? [String: Data] {
-                    for (key, value) in dict {
-                        if let set = btPeripheral.customData as? Set<CustomData>, let customData = set.first(where: {$0.key == key}) {
-                            customData.setValuesForKeys([
-                                .value: value,
-                                .modifiedAt: Date()
-                            ])
-                            os_log("Updated customData %@: %@", key, String(describing: value))
-                        } else {
-                            let customData: CustomData = NSManagedObject.createEntity(in: persistentContainer.viewContext)
-                            
-                            customData.peripheral = btPeripheral
-                            customData.key = key
-                            btPeripheral.addToCustomData(customData)
-                            os_log("Created customData")
-
-                            update(context: context, object: object, keyValues: keyValues)
-                        }
-                    }
+                    peripheral.insertCustomData(dict)
                 }
             case .characteristics:
                 if let characteristics = value as? [BTCharacteristic: Data] {
-                    for (characteristic, value) in characteristics {
-                        if let set = btPeripheral.services as? Set<GATTService>, let gattService = set.first(where: {$0.id == characteristic.serviceUUID.uuidString}) {
-                            
-                            if let set = gattService.characteristics as? Set<GATTCharacteristic>, let gattChar = set.first(where: {$0.id == characteristic.uuid.uuidString}) {
-                                gattChar.value = value
-                                
-                                os_log("Updated GATTCharacteristic %@: %@", characteristic.uuid.uuidString, String(describing: value))
-
-                            } else {
-                                let gattChar: GATTCharacteristic = NSManagedObject.createEntity(in: persistentContainer.viewContext)
-                                
-                                gattChar.service = gattService
-                                gattChar.id = characteristic.uuid.uuidString
-                                gattChar.name = characteristic.uuid.description
-                                gattService.addToCharacteristics(gattChar)
-                                os_log("Created GATTCharacteristic")
-                                
-                                update(context: context, object: object, keyValues: keyValues)
-                            }
-                            
-                        } else {
-                            let gattService: GATTService = NSManagedObject.createEntity(in: persistentContainer.viewContext)
-                            
-                            gattService.peripheral = btPeripheral
-                            gattService.id = characteristic.serviceUUID.uuidString
-                            gattService.name = characteristic.serviceUUID.description
-                            btPeripheral.addToServices(gattService)
-                            os_log("Created GATTService")
-                            
-                            update(context: context, object: object, keyValues: keyValues)
-                        }
-                    }
+                    peripheral.insertCharacteristics(characteristics)
                 }
             default:
-                btPeripheral.setValue(value, forKey: key)
+                peripheral.setValue(value, forKey: key)
                 os_log("Updated %@: %@", key, String(describing: value))
             }
         }

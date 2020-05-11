@@ -50,6 +50,7 @@ public class BluetoothThingManager: NSObject {
     var knownPeripherals: Set<CBPeripheral> = []
     var knownThings: Set<BluetoothThing> = []
     
+    // MARK: - Public Initializer
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [Subscription],
                             useCoreData: Bool = false) {
@@ -70,6 +71,7 @@ public class BluetoothThingManager: NSObject {
                     CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard))
     }
     
+    // MARK: - Internal Initializer
     convenience init(delegate: BluetoothThingManagerDelegate,
                      subscriptions: [Subscription],
                      dataStore: DataStoreProtocol,
@@ -90,6 +92,7 @@ public class BluetoothThingManager: NSObject {
         super.init()
     }
 
+    // MARK: -
     public func startScanning(allowDuplicates: Bool) {
         var options: [String: Any]? = nil
         

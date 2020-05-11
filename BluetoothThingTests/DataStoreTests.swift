@@ -124,6 +124,9 @@ class DataStoreTests: XCTestCase {
         XCTAssertFalse(sut.things.contains(where: {$0.id == uuid}))
         XCTAssertEqual(persistentStore.removeObjectCalled, 1)
         XCTAssertEqual(persistentStore.saveCalled, 1)
+        
+        // When delete nonexsit id
+        XCTAssertNil(sut.removeThing(id: UUID()))
     }
     
     func testReset() {

@@ -72,15 +72,14 @@ class DataStore: DataStoreProtocol {
     
     @discardableResult
     func removeThing(id: UUID) -> BluetoothThing? {
-        if let index = things.firstIndex(where: {$0.id == id}) {
-            let thing = things.remove(at: index)
-            self.persistentStoreQueue.async {
-                self.persistentStore.removeObject(context: self.things, object: thing)
-                self.persistentStore.save(context: self.things)
-            }
-            return thing
-        } else {
+        guard let index = things.firstIndex(where: {$0.id == id}) else {
             return nil
         }
+        let thing = things.remove(at: index)
+        self.persistentStoreQueue.async {
+            self.persistentStore.removeObject(context: self.things, object: thing)
+            self.persistentStore.save(context: self.things)
+        }
+        return thing
     }
 }

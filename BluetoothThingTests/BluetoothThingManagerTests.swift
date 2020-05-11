@@ -806,7 +806,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // When
         thing.connect()
         // Then should subscribe
-        XCTAssertEqual(peripheral.state, ConnectionState.connected)
+        XCTAssertEqual(peripheral.state, .connected)
         XCTAssertTrue(dataStore.things.contains(thing))
         XCTAssertFalse(thing.autoReconnect)
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
@@ -897,5 +897,29 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(centralManager.cancelConnectionCalled, 2)
         XCTAssertFalse(thing.autoReconnect)
+    }
+    
+    func testNearbyThings() {
+        // Given
+        let subscriptions = [Subscription.batteryService]
+        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 4)
+        let dataStore = DataStoreMock(peripherals: peripherals)
+        let centralManager = CBCentralManagerMock(peripherals: peripherals)
+        centralManager._state = .poweredOn
+        
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: subscriptions,
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        for i in 0..<peripherals.count {
+            peripherals[i]._state = ConnectionState(rawValue: i)!
+            sut.peripheral(peripherals[i], didReadRSSI: -10, error: nil)
+        }
+        sut.centralManager(centralManager, willRestoreState: [
+            CBCentralManagerRestoredStatePeripheralsKey: peripherals
+        ])
+        
+        XCTAssertEqual(sut.nearbyThings.count, 1)
+        XCTAssertEqual(sut.nearbyThings.first?.state, .connected)
     }
 }

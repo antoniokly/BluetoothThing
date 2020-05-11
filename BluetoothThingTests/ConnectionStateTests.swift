@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import CoreBluetooth
 @testable import BluetoothThing
 
 class ConnectionStateTests: XCTestCase {
@@ -17,20 +18,19 @@ class ConnectionStateTests: XCTestCase {
     override func tearDown() {
     }
 
-     func testConnectionStateString() {
-           var state: ConnectionState
-           
-           state = .connected
-           XCTAssertEqual(state.stringValue, "connected")
-           
-           state = .disconnected
-           XCTAssertEqual(state.stringValue, "disconnected")
-           
-           state = .connecting
-           XCTAssertEqual(state.stringValue, "connecting")
-           
-           state = .disconnecting
-           XCTAssertEqual(state.stringValue, "disconnecting")
-       }
+    func testConnectionStateString() {
+        XCTAssertEqual(ConnectionState.connected.description, "connected")
+        XCTAssertEqual(ConnectionState.disconnected.description, "disconnected")
+        XCTAssertEqual(ConnectionState.connecting.description, "connecting")
+        XCTAssertEqual(ConnectionState.disconnecting.description, "disconnecting")
+    }
 
+    func testCentralStateString() {
+        XCTAssertEqual(CBManagerState.poweredOff.description, "poweredOff")
+        XCTAssertEqual(CBManagerState.poweredOn.description, "poweredOn")
+        XCTAssertEqual(CBManagerState.unsupported.description, "unsupported")
+        XCTAssertEqual(CBManagerState.unauthorized.description, "unauthorized")
+        XCTAssertEqual(CBManagerState.unknown.description, "unknown")
+        XCTAssertEqual(CBManagerState.resetting.description, "resetting")
+    }
 }

@@ -27,23 +27,20 @@ extension UserDefaults: PersistentStoreProtocol {
     }
     
     public func save(context: Any?) {
-        if let things = context as? [BluetoothThing],
-            let data = try? JSONEncoder().encode(things) {
+        if let things = context as? [BluetoothThing], let data = try? JSONEncoder().encode(things) {
             set(data, forKey: Self.storeKey)
             synchronize()
         }
     }
     
+    // UserDefaults can only update the whole context
     public func addObject(context: Any?, object: Any?) {
-        if let things = context as? [BluetoothThing], let data = try? JSONEncoder().encode(things) {
-            set(data, forKey: Self.storeKey)
-        }
+        save(context: context)
     }
     
+    // UserDefaults can only update the whole context
     public func removeObject(context: Any?, object: Any?) {
-        if let things = context as? [BluetoothThing], let data = try? JSONEncoder().encode(things) {
-            set(data, forKey: Self.storeKey)
-        }
+        save(context: context)
     }
     
     public func update(context: Any?, object: Any?, keyValues: [AnyHashable : Any]?) {
