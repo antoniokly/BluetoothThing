@@ -3,9 +3,9 @@
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 
-Find, connect and subscribe to Bluetooth peripherals without much codes, the hard works are done in this framework. Compatible with iOS 10.0+, watchOS 3.0+ and macOS with Bluetooth 4.
+Find, connect and subscribe to Bluetooth peripherals without the hard works. Compatible with iOS 10.0+, watchOS 3.0+ and macOS with Bluetooth 4.
 
-Integrates CoreBluetooth with CoreLocation, CoreData and iCloud. Stores last known data and locations of subscribed Bluetooth peripherals using CoreData with iCloud sync (requires iOS 13.0+ or watchOS 6.0+ or macOS).
+Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData with iCloud synchronization. (iCloud requires iOS 13.0+ or watchOS 6.0+ or macOS)
 
 ## Usage
 
@@ -26,29 +26,23 @@ let subscriptions = [
 CoreData Storage with iCloud sync (requires iCloud and remote notification background mode capability)
 ```
 @available(iOS 13.0, watchOS 6.0, *)
-BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useLocation: Bool, useCoreData: Bool, useCloudKit: Bool)
+BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
 ```
 
 CoreData Storage only for older versions
 ```
-BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useLocation: Bool, useCoreData: Bool)
+BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
 ```
 
 Implement `BluetoothThingManagerDelegate`
 ```
 public protocol BluetoothThingManagerDelegate {
-    
-    var centralId: UUID { get }
-    
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
-    func bluetoothThingManager(_ manager: BluetoothThingManager, locationDidFailWithError error: Error)
-    
     func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)
     func bluetoothThing(_ thing: BluetoothThing, didChangeRSSI rssi: NSNumber)
-    func bluetoothThing(_ thing: BluetoothThing, didUpdateLocation location: Location)
-    func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription)
+    func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription?)
 }
 ```
