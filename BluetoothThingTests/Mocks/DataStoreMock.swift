@@ -16,4 +16,10 @@ class DataStoreMock: DataStore {
         self.things = peripherals.map({BluetoothThing(peripheral: $0)})
     }
     
+    var savedThing: BluetoothThing?
+    var saveThingCalled = 0
+    override func saveThing(_ thing: BluetoothThing) {
+        saveThingCalled += 1
+        savedThing = thing
+    }
 }

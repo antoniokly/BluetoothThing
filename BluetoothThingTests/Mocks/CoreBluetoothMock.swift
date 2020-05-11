@@ -36,6 +36,11 @@ class CBCharacteristicMock: CBCharacteristic {
         _uuid = uuid
         _service = service
     }
+    
+    init(_ characteristic: BTCharacteristic) {
+        _uuid = characteristic.uuid
+        _service = CBServiceMock(uuid: characteristic.serviceUUID)
+    }
 }
 
 class CBServiceMock: CBService {
@@ -54,10 +59,15 @@ class CBServiceMock: CBService {
         _uuid = uuid
         _characteristics = characteristics
     }
+    
+    init(_ service: BTService) {
+        _uuid = service.uuid
+    }
 }
 
 class CBPeripheralMock: CBPeripheral {
     var _identifier: UUID
+    var _name: String?
     var _services: [CBService]?
     var _state: CBPeripheralState = .disconnected
     
@@ -71,6 +81,10 @@ class CBPeripheralMock: CBPeripheral {
     
     override var state: CBPeripheralState {
         return _state
+    }
+    
+    override var name: String? {
+        return _name
     }
     
     init(identifier: UUID, services: [CBService]? = nil) {

@@ -6,11 +6,9 @@
         <relationship name="discoveries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BTDiscovery" inverseName="central" inverseEntity="BTDiscovery"/>
     </entity>
     <entity name="BTDiscovery" representedClassName="BTDiscovery" syncable="YES" codeGenerationType="class">
-        <attribute name="centralId" optional="YES" attributeType="String"/>
         <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="lastFound" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="peripheralId" optional="YES" attributeType="String"/>
         <relationship name="central" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTCentral" inverseName="discoveries" inverseEntity="BTCentral"/>
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="discoveries" inverseEntity="BTPeripheral"/>
     </entity>
@@ -41,7 +39,7 @@
     </entity>
     <elements>
         <element name="BTCentral" positionX="27" positionY="126" width="128" height="88"/>
-        <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="148"/>
+        <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="118"/>
         <element name="BTPeripheral" positionX="15.23828125" positionY="-22.9375" width="128" height="118"/>
         <element name="CustomData" positionX="221.8125" positionY="-22.41796875" width="128" height="103"/>
         <element name="GATTCharacteristic" positionX="414.20703125" positionY="208.8515625" width="128" height="103"/>

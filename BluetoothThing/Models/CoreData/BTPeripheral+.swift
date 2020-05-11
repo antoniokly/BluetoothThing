@@ -13,29 +13,23 @@ import  os.log
 extension BTPeripheral {
     
     func peripheralId(for centralId: UUID) -> UUID? {
-        guard let discoveries = self.discoveries as? Set<BTDiscovery>, let discovery = discoveries.first(where: {$0.centralId == centralId.uuidString}), let peripheralId = discovery.peripheralId else {
+        guard let discoveries = self.discoveries as? Set<BTDiscovery>, let discovery = discoveries.first(where: {$0.central?.id == centralId.uuidString}), let peripheralId = discovery.peripheral?.id else {
             return nil
         }
         
         return UUID(uuidString: peripheralId)
     }
     
-    func insertDiscovery(centralId: UUID, peripheralId: UUID) {
-        if let set = self.discoveries as? Set<BTDiscovery>, let discovery = set.first(where: {$0.centralId == centralId.uuidString}) {
-            discovery.setValue(peripheralId.uuidString,
-                               forKey: .peripheralId)
-            os_log("CoreData updated discovery %@: %@", centralId.uuidString, String(describing: peripheralId.uuidString))
-        } else {
-            let entity = NSEntityDescription.entity(forEntityName: "BTDiscovery", in: self.managedObjectContext!)!
-                                
-            let discovery = NSManagedObject(entity: entity, insertInto: self.managedObjectContext!) as! BTDiscovery
-            
+    func insertDiscovery(centralId: UUID) {
+        if let set = self.discoveries as? Set<BTDiscovery>, let discovery = set.first(where: {$0.central?.id == centralId.uuidString}) {
             discovery.peripheral = self
-            discovery.centralId = centralId.uuidString
+            os_log("updated discovery central: %@, peripheral: %@", centralId.uuidString, String(describing: self.id))
+        } else {
+            let discovery: BTDiscovery = NSManagedObject.createEntity(in: self.managedObjectContext!)
+            discovery.insertCentral()
             self.addToDiscoveries(discovery)
-            os_log("CoreData created discovery")
-            
-            self.insertDiscovery(centralId: centralId, peripheralId: peripheralId)
+            os_log("created discovery %@", discovery.debugDescription)
+            self.insertDiscovery(centralId: centralId)
         }
     }
     
