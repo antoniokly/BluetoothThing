@@ -911,6 +911,8 @@ class BluetoothThingManagerTests: XCTestCase {
                                         subscriptions: subscriptions,
                                         dataStore: dataStore,
                                         centralManager: centralManager)
+        
+        // When
         for i in 0..<peripherals.count {
             peripherals[i]._state = ConnectionState(rawValue: i)!
             sut.peripheral(peripherals[i], didReadRSSI: -10, error: nil)
@@ -919,7 +921,45 @@ class BluetoothThingManagerTests: XCTestCase {
             CBCentralManagerRestoredStatePeripheralsKey: peripherals
         ])
         
+        // Then
         XCTAssertEqual(sut.nearbyThings.count, 1)
         XCTAssertEqual(sut.nearbyThings.first?.state, .connected)
+    }
+    
+    func testPendingConnect() {
+        // Given
+        let uuid = UUID()
+        let thing = BluetoothThing(id: uuid)
+        
+        XCTAssertEqual(thing.pendingConnect, false)
+        
+        // When
+        // connect a thing without a peripheral
+        thing.connect()
+        
+        // Then
+        XCTAssertEqual(thing.pendingConnect, true)
+        
+        // When
+        let peripheral = CBPeripheralMock(identifier: uuid)
+        let dataStore = DataStoreMock(peripherals: [])
+        dataStore.things = [thing]
+        let centralManager = CBCentralManagerMock(peripherals: [peripheral])
+        centralManager._state = .poweredOn
+
+        sut = initBluetoothThingManager(delegate: delegate,
+                                        subscriptions: [.batteryService],
+                                        dataStore: dataStore,
+                                        centralManager: centralManager)
+        
+        sut.centralManager(sut.centralManager,
+                           didDiscover: peripheral,
+                           advertisementData: [CBAdvertisementDataServiceUUIDsKey: [BTService.batteryService.uuid]],
+                           rssi: 100)
+        
+        // Then
+        XCTAssertEqual(dataStore.things.count, 1)
+        XCTAssertEqual(centralManager.connectCalled, 1)
+        XCTAssertEqual(centralManager.connectPeripheral, peripheral)
     }
 }

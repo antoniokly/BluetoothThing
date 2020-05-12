@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import os.log
 
-extension NSManagedObject {
+public extension NSManagedObject {
     static func createEntity<Entity>(in context: NSManagedObjectContext) -> Entity where Entity: NSManagedObject {
         let entityDescription = NSEntityDescription.entity(forEntityName: String(describing: Entity.self), in: context)!
         os_log("CoreData created %@", String(describing: Entity.self))

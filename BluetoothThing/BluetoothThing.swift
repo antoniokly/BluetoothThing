@@ -8,7 +8,7 @@
 
 import Foundation
 import CoreBluetooth
-
+import os.log
 
 public class BluetoothThing: NSObject, Codable, Identifiable {
     
@@ -44,12 +44,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     public var hardwareSerialNumber: String? {
-        return characteristics[.serialNumber]?.hexEncodedString
+        characteristics[.serialNumber]?.hexEncodedString
     }
     
     var autoReconnect = false
     var disconnecting = false
-    
+    var pendingConnect = false
+
     var timer: Timer?
     
     var _connect: ((Bool) -> Void)?
@@ -59,32 +60,36 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _subscribe: ((Subscription) -> Void)?
     var _unsubscribe: ((Subscription) -> Void)?
     
-    public func connect() {
-        _connect?(false)
+    public func connect(register: Bool = false) {
+        guard let _connect = _connect else {
+            pendingConnect = true
+            os_log("pending to connect %@", self.name ?? self.id.uuidString)
+            return
+        }
+        _connect(register)
     }
     
-    var _register: (() -> Bool)?
     /// Registered device will connect automatically whenever available
     public func register() {
-        _connect?(true)
+        connect(register: true)
     }
     
-    public func disconnect() {
-        _disconnect?(false)
+    public func disconnect(deregister: Bool = false) {
+        pendingConnect = false
+        _disconnect?(deregister)
     }
     
-    var _deregister: (() -> Bool)?
     public func deregister() {
-        _disconnect?(true)
+        disconnect(deregister: true)
     }
     
     /// Listen to changes of all subscriptions defined in BluethoothThingManager
-    public func subscribe() {
-        _notify?(true)
+    public func subscribe(_ notify: Bool = true) {
+        _notify?(notify)
     }
     
     public func unsubscribe() {
-        _notify?(false)
+        subscribe(false)
     }
     
     /// Listen to changes of subscriptions, but will not re-subscribe after disconnect
@@ -94,8 +99,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     public func unsubscribe(_ subscription: Subscription) {
-        _unsubscribe?(subscription)
         subscriptions.remove(subscription)
+        _unsubscribe?(subscription)
     }
     
     // Read & write
@@ -115,7 +120,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     public func hasService(_ service: BTService) -> Bool {
-        return services.contains(service)
+        services.contains(service)
     }
             
     private enum CodingKeys: String, CodingKey {

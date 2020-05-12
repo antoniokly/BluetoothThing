@@ -194,6 +194,7 @@
 			children = (
 				A4AB9E6A23C68BD300327FE5 /* Models */,
 				A4AB9E6423C6830400327FE5 /* Helpers */,
+				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
 				A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */,
 				A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */,
 				A4553C5F23C5D99000C49AC2 /* Info.plist */,
@@ -232,9 +233,9 @@
 			children = (
 				A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */,
 				A4B4D46024061A080017614E /* CoreDataStore.swift */,
+				A4362F202468C5B200F5BC02 /* NSManagedObject+.swift */,
 				A4F86D092412266500AF9621 /* BTPeripheral+.swift */,
 				A4362F1D2468C31900F5BC02 /* BTDiscovery+.swift */,
-				A4362F202468C5B200F5BC02 /* NSManagedObject+.swift */,
 				A49C781B246903CD0006AAFD /* GATTService+.swift */,
 			);
 			path = CoreData;
@@ -281,7 +282,6 @@
 				A4A66D0A245A45F70047D00E /* DataStore */,
 				A4A16ECA2408BCB5002358FF /* CoreData */,
 				A4A66D09245A454C0047D00E /* Struct */,
-				A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

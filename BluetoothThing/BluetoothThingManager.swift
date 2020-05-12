@@ -166,6 +166,7 @@ public class BluetoothThingManager: NSObject {
             self.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
         }
         
+        // MARK: Notify request
         thing._notify = { [weak self] notify in
             guard let self = self, self.centralManager.state == .poweredOn, let peripheral = peripheral else {
                 return
@@ -247,7 +248,7 @@ public class BluetoothThingManager: NSObject {
         
         dataStore.addThing(thing)
         centralManager.connect(peripheral, options: Self.peripheralOptions)
-        // state can change to connecting in real case
+        // state may change to connecting in real case
         delegate.bluetoothThing(thing, didChangeState: peripheral.state)
     }
         
@@ -260,7 +261,7 @@ public class BluetoothThingManager: NSObject {
         
         if let peripheral = peripheral {
             centralManager.cancelPeripheralConnection(peripheral)
-            // state can change to disconnecting in real case
+            // state may change to disconnecting in real case
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         } else {
             thing.state = .disconnected
@@ -411,7 +412,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral, rssi: RSSI) {
             setupThing(thing, for: peripheral)
 
-            if thing.autoReconnect {
+            if thing.autoReconnect || thing.pendingConnect {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
             
@@ -425,7 +426,11 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 knownThings.insert(newThing)
                 foundThing = newThing
             }
+
+            setupThing(foundThing, for: peripheral)
         }
+        
+        delegate.bluetoothThingManager(self, didFoundThing: foundThing, rssi: RSSI)
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
@@ -440,14 +445,12 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 }
             )
         }
-        
-        setupThing(foundThing, for: peripheral)
-        delegate.bluetoothThingManager(self, didFoundThing: foundThing, rssi: RSSI)
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
         if let thing = didUpdatePeripheral(peripheral){
+            thing.pendingConnect = false
             thing.timer?.invalidate()
             thing.timer = nil
         }
