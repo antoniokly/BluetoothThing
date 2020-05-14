@@ -17,7 +17,7 @@ extension BTDiscovery {
             central.name = deviceName
             os_log("CoreData updated central %@: %@", centralId.uuidString, deviceName)
         } else {
-            let central: BTCentral = NSManagedObject.createEntity(in: self.managedObjectContext!)
+            let central = BTCentral(context: self.managedObjectContext!)
             os_log("CoreData created central")
             self.central = central
             self.insertCentral()

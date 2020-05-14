@@ -39,7 +39,7 @@ extension BTPeripheral {
             discovery.peripheral = self
             os_log("updated discovery central: %@, peripheral: %@", centralId.uuidString, String(describing: self.id))
         } else {
-            let discovery: BTDiscovery = NSManagedObject.createEntity(in: self.managedObjectContext!)
+            let discovery = BTDiscovery(context: self.managedObjectContext!) 
             discovery.insertCentral()
             self.addToDiscoveries(discovery)
             os_log("created discovery %@", discovery.debugDescription)
@@ -56,7 +56,7 @@ extension BTPeripheral {
                 ])
                 os_log("Updated customData %@: %@", key, String(describing: value))
             } else {
-                let customData: CustomData = NSManagedObject.createEntity(in: self.managedObjectContext!)
+                let customData = CustomData(context: self.managedObjectContext!)
                 customData.peripheral = self
                 customData.key = key
                 self.addToCustomData(customData)
@@ -70,7 +70,7 @@ extension BTPeripheral {
         if let services = self.services as? Set<GATTService>, let service = services.first(where: {$0.id == serviceUUID.uuidString}) {
             return service
         } else {
-            let service: GATTService = NSManagedObject.createEntity(in: self.managedObjectContext!)
+            let service = GATTService(context: self.managedObjectContext!)
             service.peripheral = self
             service.id = serviceUUID.uuidString
             service.name = serviceUUID.description

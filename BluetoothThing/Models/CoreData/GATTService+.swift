@@ -17,7 +17,7 @@ extension GATTService {
             characteristic.value = value
             os_log("Updated GATTCharacteristic %@: %@", characteristicUUID.uuidString, String(describing: value))
         } else {
-            let characteristic: GATTCharacteristic = NSManagedObject.createEntity(in: self.managedObjectContext!)
+            let characteristic = GATTCharacteristic(context: self.managedObjectContext!)
             characteristic.service = self
             characteristic.id = characteristicUUID.uuidString
             characteristic.name = characteristicUUID.description

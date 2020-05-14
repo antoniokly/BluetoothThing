@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 
+public typealias BluetoothState = CBManagerState
 extension CBManagerState {
     var description: String {
         switch self {

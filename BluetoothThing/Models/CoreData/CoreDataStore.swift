@@ -147,7 +147,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             os_log("Periperal with hardwareId: %@ exists", hardwareId)
             peripheral = entity
         } else {
-            peripheral = NSManagedObject.createEntity(in: persistentContainer.viewContext)
+            peripheral = BTPeripheral(context: persistentContainer.viewContext)
             peripheral.setValuesForKeys([
                 .id: thing.id.uuidString,
                 .name: thing.name as Any
@@ -200,13 +200,14 @@ extension CoreDataStore: PersistentStoreProtocol {
             return
         }
 
-        let fetchRequest: NSFetchRequest<BTPeripheral> = BTPeripheral.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", thing.id.uuidString)
+        let peripherals : [BTPeripheral] = fetchEntities(predicate:
+            NSPredicate(format: "id == %@", thing.id.uuidString)
+        )
         
-        guard let peripheral = try? persistentContainer.viewContext.fetch(fetchRequest).first else {
+        guard let peripheral = peripherals.first else {
             os_log("CoreData cannot found peripheral for %@", thing)
             return
-        }
+        }        
         
         for (key, value) in keyValues {
             switch key {

@@ -15,11 +15,11 @@ class BluetoothThingManagerTests: XCTestCase {
     var sut: BluetoothThingManager!
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
-        var centralId: UUID = UUID()
-        
-        func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool {
-            return true
+        func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState) {
+            
         }
+        
+        var centralId: UUID = UUID()
         
         var didFoundThingCalled = 0
         var didFoundThingRSSI: NSNumber?

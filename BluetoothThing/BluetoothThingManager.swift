@@ -21,8 +21,14 @@ public class BluetoothThingManager: NSObject {
     public internal (set) var dataStore: DataStoreProtocol!
     public internal (set) var subscriptions: [Subscription]
         
-    var centralManager: CBCentralManager!
-
+    lazy var centralManager = CBCentralManager(delegate: self,
+                                               queue: nil,
+                                               options: Self.centralManagerOptions)
+    
+    public var things: [BluetoothThing] {
+        dataStore.things
+    }
+    
     var nearbyThings: [BluetoothThing] {
         self.knownPeripherals.compactMap {
             self.dataStore.getThing(id: $0.identifier)
@@ -32,11 +38,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     var serviceUUIDs: [CBUUID] {
-        return [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
-    }
-    
-    var things: [BluetoothThing] {
-        return dataStore.things
+        [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
     }
         
     var isPendingToStart = false
@@ -71,7 +73,7 @@ public class BluetoothThingManager: NSObject {
                     CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard))
     }
     
-    // MARK: - Internal Initializer
+    // MARK: - Internal Initializer for testing
     convenience init(delegate: BluetoothThingManagerDelegate,
                      subscriptions: [Subscription],
                      dataStore: DataStoreProtocol,
@@ -82,8 +84,9 @@ public class BluetoothThingManager: NSObject {
         
         self.knownThings = Set(dataStore.things)
         
-        self.centralManager = centralManager ??
-            CBCentralManager(delegate: self, queue: nil, options: Self.centralManagerOptions)
+        if let central = centralManager {
+            self.centralManager = central
+        }
     }
     
     init(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription]) {
