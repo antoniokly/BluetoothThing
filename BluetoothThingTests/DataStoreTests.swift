@@ -21,7 +21,7 @@ class DataStoreTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 3)

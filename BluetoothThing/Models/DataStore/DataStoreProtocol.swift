@@ -10,11 +10,13 @@ import Foundation
 
 public protocol DataStoreProtocol {
     var things: [BluetoothThing] { get }
+    var persistentStore: PersistentStoreProtocol { get }
     
     func reset()
     func getThing(id: UUID) -> BluetoothThing?
     func addThing(_ thing: BluetoothThing)
     func saveThing(_ thing: BluetoothThing)
+    func updateThing(_ thing: BluetoothThing)
     @discardableResult func removeThing(id: UUID) -> BluetoothThing?
 }
 

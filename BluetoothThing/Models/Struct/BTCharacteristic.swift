@@ -40,8 +40,8 @@ public extension BTCharacteristic {
     static let cscFeature = BTCharacteristic(service: "1816", characteristic: "2A5C")
 
     // GPS
-    static let longitude = Subscription(service: "1819", characteristic: "2AAE")
-    static let latitude = Subscription(service: "1819", characteristic: "2AAF")
-    static let locationName = Subscription(service: "1819", characteristic: "2AB5")
-    static let locationTime = Subscription(service: "1819", characteristic: "2A0F")
+    static let longitude = BTSubscription(service: "1819", characteristic: "2AAE")
+    static let latitude = BTSubscription(service: "1819", characteristic: "2AAF")
+    static let locationName = BTSubscription(service: "1819", characteristic: "2AB5")
+    static let locationTime = BTSubscription(service: "1819", characteristic: "2A0F")
 }

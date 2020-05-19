@@ -19,12 +19,13 @@ public class BluetoothThingManager: NSObject {
     
     public internal (set) var delegate: BluetoothThingManagerDelegate
     public internal (set) var dataStore: DataStoreProtocol!
-    public internal (set) var subscriptions: [Subscription]
+    public internal (set) var subscriptions: [BTSubscription]
+    
         
     lazy var centralManager = CBCentralManager(delegate: self,
                                                queue: nil,
                                                options: Self.centralManagerOptions)
-    
+        
     public var things: [BluetoothThing] {
         dataStore.things
     }
@@ -54,42 +55,28 @@ public class BluetoothThingManager: NSObject {
     
     // MARK: - Public Initializer
     public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [Subscription],
+                            subscriptions: [BTSubscription],
                             useCoreData: Bool = false) {
-        self.init(delegate: delegate,
-                  subscriptions: subscriptions,
-                  dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore() : UserDefaults.standard))
+        self.init(delegate: delegate, subscriptions: subscriptions)
+        self.dataStore = DataStore(persistentStore:
+            useCoreData ? CoreDataStore() : UserDefaults.standard
+        )
+        self.knownThings = Set(dataStore.things)
     }
     
     @available(iOS 13.0, watchOS 6.0, *)
     public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [Subscription],
+                            subscriptions: [BTSubscription],
                             useCoreData: Bool = false,
                             useCloudKit: Bool = false) {
-        self.init(delegate: delegate,
-                  subscriptions: subscriptions,
-                  dataStore: DataStore(persistentStore: useCoreData ?
-                    CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard))
-    }
-    
-    // MARK: - Internal Initializer for testing
-    convenience init(delegate: BluetoothThingManagerDelegate,
-                     subscriptions: [Subscription],
-                     dataStore: DataStoreProtocol,
-                     centralManager: CBCentralManager? = nil) {
-        self.init(delegate: delegate, subscriptions: subscriptions)        
-                
-        self.dataStore = dataStore
-        
+        self.init(delegate: delegate, subscriptions: subscriptions)
+        self.dataStore = DataStore(persistentStore:
+            useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
+        )
         self.knownThings = Set(dataStore.things)
-        
-        if let central = centralManager {
-            self.centralManager = central
-        }
     }
     
-    init(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription]) {
+    init(delegate: BluetoothThingManagerDelegate, subscriptions: [BTSubscription]) {
         self.delegate = delegate
         self.subscriptions = subscriptions
         super.init()
@@ -250,9 +237,12 @@ public class BluetoothThingManager: NSObject {
         }
         
         dataStore.addThing(thing)
-        centralManager.connect(peripheral, options: Self.peripheralOptions)
-        // state may change to connecting in real case
-        delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+        
+        if peripheral.state != .connected && peripheral.state != .connecting {
+            centralManager.connect(peripheral, options: Self.peripheralOptions)
+            // state may change to connecting in real case
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+        }
     }
         
     func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, deregister: Bool) {
@@ -263,9 +253,11 @@ public class BluetoothThingManager: NSObject {
         }
         
         if let peripheral = peripheral {
-            centralManager.cancelPeripheralConnection(peripheral)
-            // state may change to disconnecting in real case
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            if peripheral.state != .disconnected && peripheral.state != .disconnecting {
+                centralManager.cancelPeripheralConnection(peripheral)
+                // state may change to disconnecting in real case
+                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            }
         } else {
             thing.state = .disconnected
             delegate.bluetoothThing(thing, didChangeState: thing.state)
@@ -470,6 +462,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
             thing.disconnecting = false
+            dataStore.updateThing(thing)
         }
     }
     

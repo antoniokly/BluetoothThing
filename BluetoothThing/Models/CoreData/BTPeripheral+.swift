@@ -69,15 +69,15 @@ extension BTPeripheral {
     func insertGATTService(_ serviceUUID: CBUUID) -> GATTService {
         if let services = self.services as? Set<GATTService>, let service = services.first(where: {$0.id == serviceUUID.uuidString}) {
             return service
-        } else {
-            let service = GATTService(context: self.managedObjectContext!)
-            service.peripheral = self
-            service.id = serviceUUID.uuidString
-            service.name = serviceUUID.description
-            self.addToServices(service)
-            os_log("Created GATTService")
-            return service
         }
+        
+        let service = GATTService(context: self.managedObjectContext!)
+        service.peripheral = self
+        service.id = serviceUUID.uuidString
+        service.name = serviceUUID.description
+        self.addToServices(service)
+        os_log("Created GATTService")
+        return service
     }
     
     func insertCharacteristics(_ data: [BTCharacteristic: Data]) {

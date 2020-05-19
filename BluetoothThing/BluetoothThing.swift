@@ -17,12 +17,12 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public private (set) var id: UUID
     public internal (set) var state: ConnectionState = .disconnected
     public internal (set) var services: Set<BTService> = []
-    public internal (set) var subscriptions: Set<Subscription> = []
+    public internal (set) var subscriptions: Set<BTSubscription> = []
     
     public var name: String? = nil {
         didSet {
             if name != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.name: name as Any])
+                NotificationCenter.default.post(name: Self.didChange, object: self.id)
             }
         }
     }
@@ -30,7 +30,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var characteristics: [BTCharacteristic: Data] = [:] {
         didSet {
             if characteristics != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.characteristics: characteristics])
+                NotificationCenter.default.post(name: Self.didChange, object: self.id)
             }
         }
     }
@@ -38,7 +38,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var customData: [String: Data] = [:] {
         didSet {
             if customData != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self, userInfo: [String.customData: customData])
+                NotificationCenter.default.post(name: Self.didChange, object: self.id)
             }
         }
     }
@@ -57,8 +57,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _disconnect: ((Bool) -> Void)?
     var _request: ((BTRequest) -> Bool)?
     var _notify: ((Bool) -> Void)?
-    var _subscribe: ((Subscription) -> Void)?
-    var _unsubscribe: ((Subscription) -> Void)?
+    var _subscribe: ((BTSubscription) -> Void)?
+    var _unsubscribe: ((BTSubscription) -> Void)?
     
     public func connect(register: Bool = false) {
         guard let _connect = _connect else {
@@ -93,12 +93,12 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     /// Listen to changes of subscriptions, but will not re-subscribe after disconnect
-    public func subscribe(_ subscription: Subscription) {
+    public func subscribe(_ subscription: BTSubscription) {
         subscriptions.insert(subscription)
         _subscribe?(subscription)
     }
     
-    public func unsubscribe(_ subscription: Subscription) {
+    public func unsubscribe(_ subscription: BTSubscription) {
         subscriptions.remove(subscription)
         _unsubscribe?(subscription)
     }

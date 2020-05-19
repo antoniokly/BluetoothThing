@@ -33,4 +33,8 @@ public extension BTService {
     static let cyclingSpeedAndCadenceService = BTService(service: "1816")
     static let cyclingPowerService = BTService(service: "1818")
     static let heartRateService = BTService(service: "180D")
+    
+    // Bean
+    static let beanSerialService = BTService(service: "A495FF10-C5B1-4B44-B512-1370F02D74DE")
+    static let beanScratchService = BTService(service: "A495FF20-C5B1-4B44-B512-1370F02D74DE")
 }

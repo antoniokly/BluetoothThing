@@ -10,10 +10,11 @@ import Foundation
 import os.log
 
 class DataStore: DataStoreProtocol {
-    
     var things: [BluetoothThing]
     
-    private var persistentStore: PersistentStoreProtocol
+    var lastUpdated: [UUID: Date] = [:]
+    
+    private(set) var persistentStore: PersistentStoreProtocol
     private var persistentStoreQueue: DispatchQueue
     
     public init(persistentStore: PersistentStoreProtocol,
@@ -22,20 +23,13 @@ class DataStore: DataStoreProtocol {
         self.persistentStoreQueue = queue
         self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
         
-        self.persistentStoreQueue.async {
-            
-        }
-        
         NotificationCenter.default.addObserver(forName: BluetoothThing.didChange, object: nil, queue: nil) { (notification) in
-            
-            if let thing = notification.object as? BluetoothThing {
-                self.persistentStoreQueue.async {
-                    self.persistentStore.update(context: self.things,
-                                                object: thing,
-                                                keyValues: notification.userInfo)
-                    self.persistentStore.save(context: self.things)
-                }
+            guard let id = notification.object as? UUID,
+                let thing = self.things.first(where: {$0.id == id}) else {
+                return
             }
+            
+            self.updateThing(thing)
         }
     }
     
@@ -63,6 +57,25 @@ class DataStore: DataStoreProtocol {
                 self.persistentStore.addObject(context: self.things, object: thing)
                 self.persistentStore.save(context: self.things)
             }
+        }
+    }
+    
+    func updateThing(_ thing: BluetoothThing) {
+        self.persistentStoreQueue.async {
+            if let date = self.lastUpdated[thing.id], date.timeIntervalSinceNow > -10 {
+                return
+            }
+            
+            self.lastUpdated[thing.id] = Date()
+            os_log("saving bluetoothThing %@", thing.id.uuidString)
+            self.persistentStore.update(context: self.things,
+                                        object: thing,
+                                        keyValues: [
+                                            String.name: thing.name as Any,
+                                            String.characteristics: thing.characteristics,
+                                            String.customData: thing.customData
+                ])
+            self.persistentStore.save(context: self.things)
         }
     }
     

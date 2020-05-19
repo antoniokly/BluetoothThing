@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
 
-func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
+func initPeripherals(subscriptions: [BTSubscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
     
     let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
         if let characteristicUUID = subscription.characteristicUUID {
@@ -37,18 +37,4 @@ func initPeripherals(subscriptions: [Subscription], numberOfPeripherals: Int) ->
     }
     
     return peripherals
-}
-
-func initBluetoothThingManager(delegate: BluetoothThingManagerDelegate,
-                               subscriptions: [Subscription],
-                               dataStore: DataStoreProtocol,
-                               centralManager: CBCentralManagerMock) -> BluetoothThingManager {
-    let manager = BluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
-    
-    centralManager.delegate = manager
-    
-    return manager
 }

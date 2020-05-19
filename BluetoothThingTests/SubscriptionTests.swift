@@ -39,7 +39,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testInit() {
-        let subscription = Subscription(service: "FF10", characteristic: "FFF1")
+        let subscription = BTSubscription(service: "FF10", characteristic: "FFF1")
         
         XCTAssertEqual(subscription.serviceUUID, serviceUUID1)
         XCTAssertEqual(subscription.characteristicUUID, characteristicUUID1)
@@ -47,7 +47,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testInitBatteryService() {
-        let subscription = Subscription(service: "180F")
+        let subscription = BTSubscription(service: "180F")
         
         XCTAssertEqual(subscription.serviceUUID, CBUUID(string: "180F"))
         XCTAssertNil(subscription.characteristicUUID)
@@ -65,8 +65,8 @@ class SubscriptionTests: XCTestCase {
     func testSubscribedCharateristics() {
         // Given
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
-            Subscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
+            BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
         
         // When
@@ -83,7 +83,7 @@ class SubscriptionTests: XCTestCase {
     func testSubscribedAllCharateristics() {
         // Given
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID1),
+            BTSubscription(serviceUUID: serviceUUID1),
         ]
         
         // When
@@ -97,7 +97,7 @@ class SubscriptionTests: XCTestCase {
     
     func testSubscription1() {
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
         let subscribed = getSubscribedCharateristics(for: peripheral,
@@ -108,7 +108,7 @@ class SubscriptionTests: XCTestCase {
     
     func testEmptyService() {
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
         peripheral._services = nil
@@ -121,7 +121,7 @@ class SubscriptionTests: XCTestCase {
     
     func testEmptyCharateristic() {
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
                 
         peripheral._services = [CBServiceMock(uuid: serviceUUID1)]
@@ -135,10 +135,10 @@ class SubscriptionTests: XCTestCase {
     func testSubscribePeripheral() {
         // Given
         let subsriptions = [
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
-            Subscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID2),
-            Subscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID1),
-            Subscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
+            BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID2),
+            BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID1),
+            BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
         
         // When

@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 
 public typealias BluetoothState = CBManagerState
-extension CBManagerState {
+public extension CBManagerState {
     var description: String {
         switch self {
         case .poweredOn:
@@ -30,7 +30,7 @@ extension CBManagerState {
 }
 
 extension CBPeripheral {
-    func subscribe(subscriptions: [Subscription]) {
+    func subscribe(subscriptions: [BTSubscription]) {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
@@ -40,7 +40,7 @@ extension CBPeripheral {
         }
     }
     
-    func unsubscribe(subscriptions: [Subscription]) {
+    func unsubscribe(subscriptions: [BTSubscription]) {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
@@ -52,7 +52,7 @@ extension CBPeripheral {
 }
 
 func getSubscribedCharateristics(for peripheral: CBPeripheral,
-                                 subscriptions: [Subscription]) -> [CBCharacteristic] {
+                                 subscriptions: [BTSubscription]) -> [CBCharacteristic] {
     guard let services = peripheral.services else {
         return []
     }
@@ -65,7 +65,7 @@ func getSubscribedCharateristics(for peripheral: CBPeripheral,
 }
 
 func shouldSubscribe(characteristic: CBCharacteristic,
-                     subscriptions: [Subscription]) -> Bool {
+                     subscriptions: [BTSubscription]) -> Bool {
     return subscriptions.contains { subscription in
         if subscription.serviceUUID != characteristic.service.uuid {
             return false

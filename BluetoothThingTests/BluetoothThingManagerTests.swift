@@ -51,9 +51,9 @@ class BluetoothThingManagerTests: XCTestCase {
         var didUpdateValueCalled = 0
         var didUpdateValueThing: BluetoothThing?
         var didUpdateValueCharacteristic: BTCharacteristic?
-        var didUpdateValueSubscription: Subscription?
+        var didUpdateValueSubscription: BTSubscription?
         var didUpdateValue: Data?
-        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription?) {
+        func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: BTSubscription?) {
             didUpdateValueCalled += 1
             didUpdateValueThing = thing
             didUpdateValueCharacteristic = characteristic
@@ -91,23 +91,23 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.dataStore.reset()
     }
     
-    func testInitialization() {
+    func testInitializer() {
         // Given
         let serviceUUID = CBUUID(string: "FFF0")
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 3)
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
 
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         XCTAssertNotNil(sut.delegate)
         XCTAssertNotNil(sut.dataStore)
@@ -119,6 +119,25 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(sut.things.first?.id, peripherals.first?.identifier)
         XCTAssertEqual(sut.things.last?.id, peripherals.last?.identifier)
     }
+    
+    func testPublicInitializer() {
+        // Given
+        let serviceUUID = CBUUID(string: "FFF0")
+        let characteristicUUID = CBUUID(string: "FFF1")
+        
+        let subscriptions = [
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+        ]
+        
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    useCoreData: false)
+        
+        XCTAssertNotNil(sut.delegate)
+        XCTAssertTrue(sut.dataStore.persistentStore is UserDefaults)
+        XCTAssertEqual(sut.subscriptions, subscriptions)
+        sut.dataStore.persistentStore.reset()
+    }
 
     func testStartStop() {
         // Given
@@ -126,16 +145,16 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 2)
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         sut.knownThings = Set(dataStore.things.suffix(1))
         
@@ -181,7 +200,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -189,10 +208,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         // When
         let restoreScanServiceUUIDs: [CBUUID] = []
@@ -223,16 +242,16 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         dataStore.things.first?.state = .connected
         sut.knownThings = Set(dataStore.things)
@@ -255,7 +274,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -263,10 +282,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -288,17 +307,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -315,7 +334,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -323,10 +342,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         centralManager._state = .poweredOn
 
         // When
@@ -357,17 +376,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: [])
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         // When
         centralManager._state = .poweredOn
@@ -420,17 +439,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let unsubscribedPeripheral = CBPeripheralMock(identifier: UUID())
         let unknownServiceUUIDs = [CBUUID(string: "BEEF")]
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: [])
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         // When
         centralManager._state = .poweredOn
@@ -450,7 +469,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -461,10 +480,10 @@ class BluetoothThingManagerTests: XCTestCase {
         
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -482,17 +501,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         peripheral.delegate = sut
 
         // When
@@ -514,17 +533,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         let characteristic = peripheral.services?.first?.characteristics?.first as! CBCharacteristicMock
         let value = Data()
@@ -562,17 +581,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         // When
         sut.peripheral(peripheral, didReadRSSI: 99, error: nil)
@@ -589,17 +608,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         centralManager._state = .poweredOn
@@ -620,17 +639,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         sut.loseThingAfterTimeInterval = 0.5
         
@@ -653,16 +672,16 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         sut.loseThingAfterTimeInterval = 0.5
         
@@ -699,7 +718,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -708,10 +727,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let thing = dataStore.things.first!
         thing.autoReconnect = true
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         sut.centralManager(sut.centralManager,
@@ -754,17 +773,17 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID = CBUUID(string: "FFF1")
         
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
 
         // When
         let serialNumberCharacter = CBCharacteristicMock(.serialNumber)
@@ -784,8 +803,8 @@ class BluetoothThingManagerTests: XCTestCase {
         let characteristicUUID2 = CBUUID(string: "FFF2")
 
         let subscriptions = [
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID1),
-            Subscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID2)
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID1),
+            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID2)
         ]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
@@ -794,10 +813,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         centralManager._state = .poweredOn
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         sut.centralManager(sut.centralManager,
                            didDiscover: peripheral,
                            advertisementData: [CBAdvertisementDataServiceUUIDsKey: [serviceUUID]],
@@ -865,7 +884,7 @@ class BluetoothThingManagerTests: XCTestCase {
                        Set(subscriptions.compactMap({$0.characteristicUUID})))
         
         // When
-        thing.subscribe(Subscription(.heartRateMeasurement))
+        thing.subscribe(BTSubscription(.heartRateMeasurement))
         // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 2)
         XCTAssertEqual(peripheral.discoverServices, [BTCharacteristic.heartRateMeasurement.serviceUUID])
@@ -877,7 +896,7 @@ class BluetoothThingManagerTests: XCTestCase {
                        BTCharacteristic.heartRateMeasurement.uuid)
 
         // When
-        thing.unsubscribe(Subscription(.heartRateMeasurement))
+        thing.unsubscribe(BTSubscription(.heartRateMeasurement))
         // Then
         XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
@@ -895,22 +914,22 @@ class BluetoothThingManagerTests: XCTestCase {
 
         thing.deregister()
         // Then
-        XCTAssertEqual(centralManager.cancelConnectionCalled, 2)
+        XCTAssertEqual(centralManager.cancelConnectionCalled, 1) // should call cancel connect only once
         XCTAssertFalse(thing.autoReconnect)
     }
     
     func testNearbyThings() {
         // Given
-        let subscriptions = [Subscription.batteryService]
+        let subscriptions = [BTSubscription.batteryService]
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 4)
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         centralManager._state = .poweredOn
         
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: subscriptions,
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         // When
         for i in 0..<peripherals.count {
@@ -947,10 +966,10 @@ class BluetoothThingManagerTests: XCTestCase {
         let centralManager = CBCentralManagerMock(peripherals: [peripheral])
         centralManager._state = .poweredOn
 
-        sut = initBluetoothThingManager(delegate: delegate,
-                                        subscriptions: [.batteryService],
-                                        dataStore: dataStore,
-                                        centralManager: centralManager)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: [.batteryService],
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
         
         sut.centralManager(sut.centralManager,
                            didDiscover: peripheral,

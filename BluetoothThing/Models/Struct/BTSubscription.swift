@@ -1,5 +1,5 @@
 //
-//  Subscription.swift
+//  BTSubscription.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 11/01/20.
@@ -14,7 +14,7 @@ import CoreBluetooth
  https://www.bluetooth.com/specifications/gatt/services/
  */
 
-public struct Subscription: Hashable {
+public struct BTSubscription: Hashable {
     public private (set) var serviceUUID: CBUUID
     public private (set) var characteristicUUID: CBUUID?
     
@@ -44,11 +44,11 @@ public struct Subscription: Hashable {
     }
 }
 
-public extension Subscription {
-    static let batteryService = Subscription(.batteryService)
+public extension BTSubscription {
+    static let batteryService = BTSubscription(.batteryService)
 }
 
-public extension Array where Element == Subscription {
+public extension Array where Element == BTSubscription {
     func toDictionary() -> [CBUUID: Set<CBUUID?>] {
         Dictionary(grouping: self) {
             $0.serviceUUID
