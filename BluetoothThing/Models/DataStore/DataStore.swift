@@ -62,7 +62,7 @@ class DataStore: DataStoreProtocol {
     
     func updateThing(_ thing: BluetoothThing) {
         self.persistentStoreQueue.async {
-            if let date = self.lastUpdated[thing.id], date.timeIntervalSinceNow > -10 {
+            if let date = self.lastUpdated[thing.id], date.timeIntervalSinceNow > -30 {
                 return
             }
             
