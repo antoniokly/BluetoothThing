@@ -6,7 +6,7 @@
 
 Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
-Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData with iCloud synchronization. (iCloud requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+)
+Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData database and synchronized on iCloud. (iCloud sync requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+)
 
 ## Usage
 
@@ -14,23 +14,23 @@ Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and me
 import BluetoothThing  
 ```
 
-Subscribe to GATT services
+Subscribe to GATT services or GATT Characteristic
 
-Find GATT UUID here: https://www.bluetooth.com/specifications/gatt/services/
+Find GATT UUIDs here: https://www.bluetooth.com/specifications/gatt/services/
 ```
 let subscriptions = [
-    Subscription(service: "180F"),
-    Subscription(service: "180A")
+    Subscription(service: "180A"), // Device Information
+    Subscription(service: "180F" , "2A19") // Battery Level
 ]
 ```
 
 CoreData Storage with iCloud sync (requires iCloud and remote notification background mode capability)
 ```
-@available(iOS 13.0, watchOS 6.0, *)
+@available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
 BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
 ```
 
-CoreData Storage only for older versions
+CoreData local Storage for older versions
 ```
 BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
 ```
