@@ -1,11 +1,12 @@
 # BluetoothThing
-
+[![Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat)](https://swift.org)
+[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/Platforms-iOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20macOS-lightgray.svg?style=flat)](http://www.apple.com)
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 
-Find, connect and subscribe to Bluetooth peripherals without the hard works. Compatible with iOS 10.0+, watchOS 3.0+ and macOS with Bluetooth 4.
+Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
-Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData with iCloud synchronization. (iCloud requires iOS 13.0+ or watchOS 6.0+ or macOS)
+Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData with iCloud synchronization. (iCloud requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+)
 
 ## Usage
 
@@ -36,13 +37,13 @@ BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [S
 
 Implement `BluetoothThingManagerDelegate`
 ```
-public protocol BluetoothThingManagerDelegate {
+protocol BluetoothThingManagerDelegate {
+    func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
-    func bluetoothThingShouldSubscribeOnConnect(_ thing: BluetoothThing) -> Bool
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)
     func bluetoothThing(_ thing: BluetoothThing, didChangeRSSI rssi: NSNumber)
-    func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: Subscription?)
+    func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: BTSubscription?)
 }
 ```
