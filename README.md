@@ -14,7 +14,7 @@ Integrates CoreBluetooth with CoreData and iCloud. Stores last known data and me
 import BluetoothThing  
 ```
 
-Subscribe to GATT services or GATT Characteristic
+Subscribe to GATT services or GATT Characteristics
 
 Find GATT UUIDs here: https://www.bluetooth.com/specifications/gatt/services/
 ```
