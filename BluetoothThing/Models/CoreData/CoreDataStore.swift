@@ -30,7 +30,7 @@ class CoreDataStore {
         let modelURL = bundle.url(forResource: model, withExtension: "momd")!
         let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
         
-        if #available(iOS 13.0, watchOS 6.0, *), useCloudKit {
+        if #available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *), useCloudKit {
             container = NSPersistentCloudKitContainer(name: model, managedObjectModel: managedObjectModel)
         } else {
             container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)

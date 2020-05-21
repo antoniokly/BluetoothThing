@@ -50,7 +50,7 @@
 		A4A16EAC2407CA8C002358FF /* BTModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */; };
 		A4A66D0724598F200047D00E /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0624598F200047D00E /* BTService.swift */; };
 		A4A66D0824598F200047D00E /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0624598F200047D00E /* BTService.swift */; };
-		A4A66D0C245A55F10047D00E /* Constants+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0B245A55F10047D00E /* Constants+.swift */; };
+		A4A66D0C245A55F10047D00E /* Constants+iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0B245A55F10047D00E /* Constants+iOS.swift */; };
 		A4A66D0E245A56890047D00E /* Constants+Watch.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0D245A56890047D00E /* Constants+Watch.swift */; };
 		A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
 		A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
@@ -63,6 +63,48 @@
 		A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
 		A4CABD862475F51300DAE257 /* BluetoothThingMac.h in Headers */ = {isa = PBXBuildFile; fileRef = A4CABD842475F51300DAE257 /* BluetoothThingMac.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4CABD932475F58A00DAE257 /* BluetoothThingTV.h in Headers */ = {isa = PBXBuildFile; fileRef = A4CABD912475F58A00DAE257 /* BluetoothThingTV.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A4CABD972475F75300DAE257 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
+		A4CABD982475F75300DAE257 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
+		A4CABD992475F75300DAE257 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A417558F240BB11E00F95437 /* UserDefaults+.swift */; };
+		A4CABD9A2475F75400DAE257 /* DataStoreProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A45F185A23DA8BC7004C5A52 /* DataStoreProtocol.swift */; };
+		A4CABD9B2475F75400DAE257 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E7123C68F8200327FE5 /* DataStore.swift */; };
+		A4CABD9C2475F75400DAE257 /* UserDefaults+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A417558F240BB11E00F95437 /* UserDefaults+.swift */; };
+		A4CABD9D2475F76700DAE257 /* BTModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */; };
+		A4CABD9E2475F76800DAE257 /* BTModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */; };
+		A4CABD9F2475F76D00DAE257 /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
+		A4CABDA02475F76D00DAE257 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
+		A4CABDA12475F76D00DAE257 /* BTDiscovery+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4362F1D2468C31900F5BC02 /* BTDiscovery+.swift */; };
+		A4CABDA22475F76D00DAE257 /* GATTService+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49C781B246903CD0006AAFD /* GATTService+.swift */; };
+		A4CABDA32475F76D00DAE257 /* CoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B4D46024061A080017614E /* CoreDataStore.swift */; };
+		A4CABDA42475F76D00DAE257 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
+		A4CABDA52475F76D00DAE257 /* BTDiscovery+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4362F1D2468C31900F5BC02 /* BTDiscovery+.swift */; };
+		A4CABDA62475F76D00DAE257 /* GATTService+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49C781B246903CD0006AAFD /* GATTService+.swift */; };
+		A4CABDA72475F77200DAE257 /* BTCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A413F19223D7AD83007BDE30 /* BTCharacteristic.swift */; };
+		A4CABDA82475F77200DAE257 /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0624598F200047D00E /* BTService.swift */; };
+		A4CABDA92475F77200DAE257 /* BTRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BTRequest.swift */; };
+		A4CABDAA2475F77200DAE257 /* BTSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* BTSubscription.swift */; };
+		A4CABDAB2475F77200DAE257 /* BTCharacteristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A413F19223D7AD83007BDE30 /* BTCharacteristic.swift */; };
+		A4CABDAC2475F77200DAE257 /* BTService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4A66D0624598F200047D00E /* BTService.swift */; };
+		A4CABDAD2475F77200DAE257 /* BTRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BTRequest.swift */; };
+		A4CABDAE2475F77200DAE257 /* BTSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044523C9330300C6AD1C /* BTSubscription.swift */; };
+		A4CABDAF2475F77700DAE257 /* BluetoothHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044723C935B800C6AD1C /* BluetoothHelper.swift */; };
+		A4CABDB02475F77700DAE257 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
+		A4CABDB12475F77700DAE257 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4175592240BB32E00F95437 /* Constants.swift */; };
+		A4CABDB42475F77700DAE257 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
+		A4CABDB52475F77700DAE257 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
+		A4CABDB62475F77800DAE257 /* BluetoothHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A435044723C935B800C6AD1C /* BluetoothHelper.swift */; };
+		A4CABDB72475F77800DAE257 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */; };
+		A4CABDB82475F77800DAE257 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4175592240BB32E00F95437 /* Constants.swift */; };
+		A4CABDBB2475F77800DAE257 /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
+		A4CABDBC2475F77800DAE257 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
+		A4CABDBE2475F7AB00DAE257 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
+		A4CABDBF2475F7AC00DAE257 /* BluetoothThing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */; };
+		A4CABDC02475F7AF00DAE257 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A4CABDC12475F7AF00DAE257 /* BluetoothThingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4553C9923C5DDA300C49AC2 /* BluetoothThingManager.swift */; };
+		A4CABDC22475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
+		A4CABDC32475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4BFCA5E23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift */; };
+		A4CABDC52475F88300DAE257 /* Constants+Mac.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CABDC42475F88300DAE257 /* Constants+Mac.swift */; };
+		A4CABDC72475FA7600DAE257 /* Constants+TV.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4CABDC62475FA7600DAE257 /* Constants+TV.swift */; };
 		A4D1398E2413871E00B61BA3 /* BluetoothThing+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D1398D2413871E00B61BA3 /* BluetoothThing+.swift */; };
 		A4D228C42464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
 		A4D228C52464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
@@ -113,7 +155,7 @@
 		A49E466723CC41D50065B96C /* ConnectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStateTests.swift; sourceTree = "<group>"; };
 		A4A16EAA2407CA6F002358FF /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		A4A66D0624598F200047D00E /* BTService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTService.swift; sourceTree = "<group>"; };
-		A4A66D0B245A55F10047D00E /* Constants+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+.swift"; sourceTree = "<group>"; };
+		A4A66D0B245A55F10047D00E /* Constants+iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+iOS.swift"; sourceTree = "<group>"; };
 		A4A66D0D245A56890047D00E /* Constants+Watch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+Watch.swift"; sourceTree = "<group>"; };
 		A4AB9E6523C684A200327FE5 /* BluetoothThing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BluetoothThing.swift; sourceTree = "<group>"; };
 		A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
@@ -129,6 +171,8 @@
 		A4CABD8F2475F58A00DAE257 /* BluetoothThingTV.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BluetoothThingTV.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4CABD912475F58A00DAE257 /* BluetoothThingTV.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BluetoothThingTV.h; sourceTree = "<group>"; };
 		A4CABD922475F58A00DAE257 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A4CABDC42475F88300DAE257 /* Constants+Mac.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+Mac.swift"; sourceTree = "<group>"; };
+		A4CABDC62475FA7600DAE257 /* Constants+TV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Constants+TV.swift"; sourceTree = "<group>"; };
 		A4D1398D2413871E00B61BA3 /* BluetoothThing+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BluetoothThing+.swift"; sourceTree = "<group>"; };
 		A4D228C32464D0E600E40449 /* Integer+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Integer+.swift"; sourceTree = "<group>"; };
 		A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStoreTests.swift; sourceTree = "<group>"; };
@@ -293,8 +337,10 @@
 				A435044723C935B800C6AD1C /* BluetoothHelper.swift */,
 				A4AB9E6B23C68C2C00327FE5 /* ConnectionState.swift */,
 				A4175592240BB32E00F95437 /* Constants.swift */,
-				A4A66D0B245A55F10047D00E /* Constants+.swift */,
+				A4A66D0B245A55F10047D00E /* Constants+iOS.swift */,
 				A4A66D0D245A56890047D00E /* Constants+Watch.swift */,
+				A4CABDC42475F88300DAE257 /* Constants+Mac.swift */,
+				A4CABDC62475FA7600DAE257 /* Constants+TV.swift */,
 				A482DB8323DF92EC009AB51A /* Data+.swift */,
 				A4D228C32464D0E600E40449 /* Integer+.swift */,
 			);
@@ -582,7 +628,7 @@
 				A4D228C42464D0E600E40449 /* Integer+.swift in Sources */,
 				A4AB9E7223C68F8200327FE5 /* DataStore.swift in Sources */,
 				A4A16EAB2407CA6F002358FF /* BTModel.xcdatamodeld in Sources */,
-				A4A66D0C245A55F10047D00E /* Constants+.swift in Sources */,
+				A4A66D0C245A55F10047D00E /* Constants+iOS.swift in Sources */,
 				A4AB9E6C23C68C2C00327FE5 /* ConnectionState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -639,6 +685,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4CABDA92475F77200DAE257 /* BTRequest.swift in Sources */,
+				A4CABDA12475F76D00DAE257 /* BTDiscovery+.swift in Sources */,
+				A4CABDA22475F76D00DAE257 /* GATTService+.swift in Sources */,
+				A4CABD972475F75300DAE257 /* DataStoreProtocol.swift in Sources */,
+				A4CABD992475F75300DAE257 /* UserDefaults+.swift in Sources */,
+				A4CABDC52475F88300DAE257 /* Constants+Mac.swift in Sources */,
+				A4CABDC22475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A4CABDB52475F77700DAE257 /* Integer+.swift in Sources */,
+				A4CABDB12475F77700DAE257 /* Constants.swift in Sources */,
+				A4CABD982475F75300DAE257 /* DataStore.swift in Sources */,
+				A4CABDB42475F77700DAE257 /* Data+.swift in Sources */,
+				A4CABDAA2475F77200DAE257 /* BTSubscription.swift in Sources */,
+				A4CABDA72475F77200DAE257 /* BTCharacteristic.swift in Sources */,
+				A4CABDA02475F76D00DAE257 /* BTPeripheral+.swift in Sources */,
+				A4CABDB02475F77700DAE257 /* ConnectionState.swift in Sources */,
+				A4CABDAF2475F77700DAE257 /* BluetoothHelper.swift in Sources */,
+				A4CABDA82475F77200DAE257 /* BTService.swift in Sources */,
+				A4CABD9D2475F76700DAE257 /* BTModel.xcdatamodeld in Sources */,
+				A4CABD9F2475F76D00DAE257 /* CoreDataStore.swift in Sources */,
+				A4CABDC02475F7AF00DAE257 /* BluetoothThingManager.swift in Sources */,
+				A4CABDBE2475F7AB00DAE257 /* BluetoothThing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,6 +713,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4CABDAD2475F77200DAE257 /* BTRequest.swift in Sources */,
+				A4CABDA52475F76D00DAE257 /* BTDiscovery+.swift in Sources */,
+				A4CABDA62475F76D00DAE257 /* GATTService+.swift in Sources */,
+				A4CABD9A2475F75400DAE257 /* DataStoreProtocol.swift in Sources */,
+				A4CABD9C2475F75400DAE257 /* UserDefaults+.swift in Sources */,
+				A4CABDC32475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A4CABDBC2475F77800DAE257 /* Integer+.swift in Sources */,
+				A4CABDB82475F77800DAE257 /* Constants.swift in Sources */,
+				A4CABDC72475FA7600DAE257 /* Constants+TV.swift in Sources */,
+				A4CABD9B2475F75400DAE257 /* DataStore.swift in Sources */,
+				A4CABDBB2475F77800DAE257 /* Data+.swift in Sources */,
+				A4CABDAE2475F77200DAE257 /* BTSubscription.swift in Sources */,
+				A4CABDAB2475F77200DAE257 /* BTCharacteristic.swift in Sources */,
+				A4CABDA42475F76D00DAE257 /* BTPeripheral+.swift in Sources */,
+				A4CABDB72475F77800DAE257 /* ConnectionState.swift in Sources */,
+				A4CABDB62475F77800DAE257 /* BluetoothHelper.swift in Sources */,
+				A4CABDAC2475F77200DAE257 /* BTService.swift in Sources */,
+				A4CABD9E2475F76800DAE257 /* BTModel.xcdatamodeld in Sources */,
+				A4CABDA32475F76D00DAE257 /* CoreDataStore.swift in Sources */,
+				A4CABDC12475F7AF00DAE257 /* BluetoothThingManager.swift in Sources */,
+				A4CABDBF2475F7AC00DAE257 /* BluetoothThing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -923,7 +1011,7 @@
 				INFOPLIST_FILE = BluetoothThingMac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingMac;
@@ -948,7 +1036,7 @@
 				INFOPLIST_FILE = BluetoothThingMac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingMac;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -979,7 +1067,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Debug;
 		};
@@ -1003,7 +1091,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 9.0;
+				TVOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
 		};

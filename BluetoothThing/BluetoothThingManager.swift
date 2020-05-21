@@ -64,7 +64,7 @@ public class BluetoothThingManager: NSObject {
         self.knownThings = Set(dataStore.things)
     }
     
-    @available(iOS 13.0, watchOS 6.0, *)
+    @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init(delegate: BluetoothThingManagerDelegate,
                             subscriptions: [BTSubscription],
                             useCoreData: Bool = false,
