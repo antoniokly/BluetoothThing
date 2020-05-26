@@ -11,14 +11,14 @@ Integrates CoreBluetooth with CoreData and CloudKit. Stores last known data and 
 
 ## Usage
 
-```
+```swift
 import BluetoothThing  
 ```
 
 Subscribe to GATT services or GATT Characteristics
 
 Find GATT UUIDs here: https://www.bluetooth.com/specifications/gatt/services/
-```
+```swift
 let subscriptions = [
     Subscription(service: "180A"), // Device Information
     Subscription(service: "180F" , "2A19") // Battery Level
@@ -26,18 +26,18 @@ let subscriptions = [
 ```
 
 CoreData Storage with iCloud sync (requires iCloud and remote notification background mode capability)
-```
+```swift
 @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
 BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
 ```
 
 CoreData local Storage for older versions
-```
-BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
+```swift
+let btManager = BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
 ```
 
 Implement `BluetoothThingManagerDelegate`
-```
+```swift
 protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFindThing thing: BluetoothThing, rssi: NSNumber)
@@ -48,6 +48,29 @@ protocol BluetoothThingManagerDelegate {
     func bluetoothThing(_ thing: BluetoothThing, didUpdateValue value: Data?, for characteristic: BTCharacteristic, subscription: BTSubscription?)
 }
 ```
+
+Retrive Things
+```swift
+let thing = btManager.things.first
+```
+
+Methods
+```swift
+thing.connect() // Can be called anytime, will connect once comes in range
+
+thing.disconnect()
+
+thing.register() // always reconnect if reachable
+
+thing.deregister() // 
+
+thing.read(characteristic) // read once, no notify
+
+thing.subscribe(characteristic) // get notified when data changes
+
+thing.write(characteristic) // write to characteristic
+```
+
 ## Donation
 
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=UXRR2S35YMCQC&source=url)
