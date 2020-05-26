@@ -40,7 +40,7 @@ Implement `BluetoothThingManagerDelegate`
 ```
 protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState)
-    func bluetoothThingManager(_ manager: BluetoothThingManager, didFoundThing thing: BluetoothThing, rssi: NSNumber)
+    func bluetoothThingManager(_ manager: BluetoothThingManager, didFindThing thing: BluetoothThing, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFailToConnect thing: BluetoothThing, error: Error?)
     func bluetoothThing(_ thing: BluetoothThing, didChangeState state: ConnectionState)
