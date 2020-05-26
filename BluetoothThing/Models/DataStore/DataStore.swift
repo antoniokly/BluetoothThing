@@ -18,7 +18,7 @@ class DataStore: DataStoreProtocol {
     private var persistentStoreQueue: DispatchQueue
     
     public init(persistentStore: PersistentStoreProtocol,
-                queue: DispatchQueue = DispatchQueue(label: "persistentStoreQueue.serial.queue")) {
+                queue: DispatchQueue = DispatchQueue.main) {
         self.persistentStore = persistentStore
         self.persistentStoreQueue = queue
         self.things = persistentStore.fetch() as? [BluetoothThing] ?? []
