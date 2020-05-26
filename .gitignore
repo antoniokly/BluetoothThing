@@ -91,3 +91,4 @@ iOSInjectionProject/
 
 # Codecov
 *.coverage.txt
+cobertura.xml
