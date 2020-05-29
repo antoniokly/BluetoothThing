@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "BluetoothThing",
     platforms: [.macOS(.v10_13),
-                .iOS(.v10),
-                .tvOS(.v10),
-                .watchOS(.v3)],
+                .iOS(.v11),
+                .tvOS(.v11),
+                .watchOS(.v4)],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(
@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+         .package(url: "https://github.com/antoniokly/core-data-model-description", from: "0.0.12"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

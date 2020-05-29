@@ -3,10 +3,62 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A401E8022481BC1D0009BBC4 /* CoreDataModelDescription in Frameworks */ = {isa = PBXBuildFile; productRef = A401E8012481BC1D0009BBC4 /* CoreDataModelDescription */; };
+		A401E8042481BC260009BBC4 /* CoreDataModelDescription in Frameworks */ = {isa = PBXBuildFile; productRef = A401E8032481BC260009BBC4 /* CoreDataModelDescription */; };
+		A401E8062481BC2D0009BBC4 /* CoreDataModelDescription in Frameworks */ = {isa = PBXBuildFile; productRef = A401E8052481BC2D0009BBC4 /* CoreDataModelDescription */; };
+		A401E8082481BC310009BBC4 /* CoreDataModelDescription in Frameworks */ = {isa = PBXBuildFile; productRef = A401E8072481BC310009BBC4 /* CoreDataModelDescription */; };
+		A401E8172481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */; };
+		A401E8182481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */; };
+		A401E8192481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */; };
+		A401E81A2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */; };
+		A401E81B2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */; };
+		A401E81C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */; };
+		A401E81D2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */; };
+		A401E81E2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */; };
+		A401E81F2481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */; };
+		A401E8202481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */; };
+		A401E8212481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */; };
+		A401E8222481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */; };
+		A401E8232481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */; };
+		A401E8242481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */; };
+		A401E8252481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */; };
+		A401E8262481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */; };
+		A401E8272481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */; };
+		A401E8282481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */; };
+		A401E8292481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */; };
+		A401E82A2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */; };
+		A401E82B2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */; };
+		A401E82C2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */; };
+		A401E82D2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */; };
+		A401E82E2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */; };
+		A401E82F2481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */; };
+		A401E8302481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */; };
+		A401E8312481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */; };
+		A401E8322481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */; };
+		A401E8332481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */; };
+		A401E8342481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */; };
+		A401E8352481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */; };
+		A401E8362481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */; };
+		A401E8372481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */; };
+		A401E8382481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */; };
+		A401E8392481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */; };
+		A401E83A2481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */; };
+		A401E83B2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */; };
+		A401E83C2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */; };
+		A401E83D2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */; };
+		A401E83E2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */; };
+		A401E83F2481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */; };
+		A401E8402481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */; };
+		A401E8412481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */; };
+		A401E8422481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */; };
+		A401E8432481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */; };
+		A401E8442481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */; };
+		A401E8452481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */; };
+		A401E8462481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */; };
 		A402498623CC6F020012618E /* DataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402498523CC6F020012618E /* DataStoreTests.swift */; };
 		A402498823CC6F8D0012618E /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A402498723CC6F8D0012618E /* TestHelper.swift */; };
 		A40B82542473EB780095E256 /* BluetoothThingManager+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40B82532473EB780095E256 /* BluetoothThingManager+.swift */; };
@@ -42,6 +94,10 @@
 		A482DB8423DF92EC009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
 		A482DB8523DF958B009AB51A /* Data+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A482DB8323DF92EC009AB51A /* Data+.swift */; };
 		A492983D23D5216000889E2B /* BTRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A492983C23D5216000889E2B /* BTRequest.swift */; };
+		A496ED482481C5A70044905C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496ED472481C5A70044905C /* NSManagedObject+.swift */; };
+		A496ED492481C5A70044905C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496ED472481C5A70044905C /* NSManagedObject+.swift */; };
+		A496ED4A2481C5A70044905C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496ED472481C5A70044905C /* NSManagedObject+.swift */; };
+		A496ED4B2481C5A70044905C /* NSManagedObject+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A496ED472481C5A70044905C /* NSManagedObject+.swift */; };
 		A49C781C246903CD0006AAFD /* GATTService+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49C781B246903CD0006AAFD /* GATTService+.swift */; };
 		A49C781D246903CD0006AAFD /* GATTService+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49C781B246903CD0006AAFD /* GATTService+.swift */; };
 		A49E465E23CBC6AF0065B96C /* DataStoreMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */; };
@@ -109,6 +165,10 @@
 		A4D228C42464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
 		A4D228C52464D0E600E40449 /* Integer+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D228C32464D0E600E40449 /* Integer+.swift */; };
 		A4D7092F240E4983003E95A8 /* CoreDataStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4D7092E240E4983003E95A8 /* CoreDataStoreTests.swift */; };
+		A4F06A04248138990083FAF9 /* BTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F06A03248138990083FAF9 /* BTModel.swift */; };
+		A4F06A05248138990083FAF9 /* BTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F06A03248138990083FAF9 /* BTModel.swift */; };
+		A4F06A06248138990083FAF9 /* BTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F06A03248138990083FAF9 /* BTModel.swift */; };
+		A4F06A07248138990083FAF9 /* BTModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F06A03248138990083FAF9 /* BTModel.swift */; };
 		A4F86D0A2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
 		A4F86D0B2412266500AF9621 /* BTPeripheral+.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4F86D092412266500AF9621 /* BTPeripheral+.swift */; };
 /* End PBXBuildFile section */
@@ -124,6 +184,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTDiscovery+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTDiscovery+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GATTService+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GATTService+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomData+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CustomData+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTCentral+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTCentral+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GATTCharacteristic+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GATTCharacteristic+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A402498523CC6F020012618E /* DataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreTests.swift; sourceTree = "<group>"; };
 		A402498723CC6F8D0012618E /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		A40B82532473EB780095E256 /* BluetoothThingManager+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BluetoothThingManager+.swift"; sourceTree = "<group>"; };
@@ -150,6 +222,7 @@
 		A46E10E72466EDA500AE3329 /* DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTests.swift; sourceTree = "<group>"; };
 		A482DB8323DF92EC009AB51A /* Data+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+.swift"; sourceTree = "<group>"; };
 		A492983C23D5216000889E2B /* BTRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTRequest.swift; sourceTree = "<group>"; };
+		A496ED472481C5A70044905C /* NSManagedObject+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+.swift"; sourceTree = "<group>"; };
 		A49C781B246903CD0006AAFD /* GATTService+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GATTService+.swift"; sourceTree = "<group>"; };
 		A49E465D23CBC6AF0065B96C /* DataStoreMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStoreMock.swift; sourceTree = "<group>"; };
 		A49E466723CC41D50065B96C /* ConnectionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStateTests.swift; sourceTree = "<group>"; };
@@ -181,6 +254,8 @@
 		A4D9CD7B2480AE8800D066D2 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		A4D9CD7C2480AE8800D066D2 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		A4D9CD7D2480AE8800D066D2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		A4F06A03248138990083FAF9 /* BTModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BTModel.swift; sourceTree = "<group>"; };
+		A4F06A0F248138E80083FAF9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS13.4.sdk/System/Library/Frameworks/CoreData.framework; sourceTree = DEVELOPER_DIR; };
 		A4F86D092412266500AF9621 /* BTPeripheral+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BTPeripheral+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -189,6 +264,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A401E8022481BC1D0009BBC4 /* CoreDataModelDescription in Frameworks */,
 				A4B4D455240614580017614E /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,6 +281,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A401E8042481BC260009BBC4 /* CoreDataModelDescription in Frameworks */,
 				A4B4D457240614620017614E /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -213,6 +290,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A401E8062481BC2D0009BBC4 /* CoreDataModelDescription in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,12 +298,32 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A401E8082481BC310009BBC4 /* CoreDataModelDescription in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A43377D324813C7400C4C249 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				A401E80B2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift */,
+				A401E80C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift */,
+				A401E80D2481BEA50009BBC4 /* GATTService+CoreDataClass.swift */,
+				A401E80E2481BEA50009BBC4 /* GATTService+CoreDataProperties.swift */,
+				A401E80F2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift */,
+				A401E8102481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift */,
+				A401E8112481BEA50009BBC4 /* CustomData+CoreDataClass.swift */,
+				A401E8122481BEA50009BBC4 /* CustomData+CoreDataProperties.swift */,
+				A401E8132481BEA50009BBC4 /* BTCentral+CoreDataClass.swift */,
+				A401E8142481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift */,
+				A401E8152481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift */,
+				A401E8162481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
 		A435044923C9437900C6AD1C /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -298,11 +396,14 @@
 		A4A16ECA2408BCB5002358FF /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
+				A43377D324813C7400C4C249 /* Entities */,
 				A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */,
+				A4F06A03248138990083FAF9 /* BTModel.swift */,
 				A4B4D46024061A080017614E /* CoreDataStore.swift */,
 				A4F86D092412266500AF9621 /* BTPeripheral+.swift */,
 				A4362F1D2468C31900F5BC02 /* BTDiscovery+.swift */,
 				A49C781B246903CD0006AAFD /* GATTService+.swift */,
+				A496ED472481C5A70044905C /* NSManagedObject+.swift */,
 			);
 			path = CoreData;
 			sourceTree = "<group>";
@@ -357,6 +458,7 @@
 		A4B4D453240614570017614E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A4F06A0F248138E80083FAF9 /* CoreData.framework */,
 				A4B4D456240614620017614E /* CoreData.framework */,
 				A4B4D454240614580017614E /* CoreData.framework */,
 			);
@@ -478,6 +580,9 @@
 			dependencies = (
 			);
 			name = BluetoothThing;
+			packageProductDependencies = (
+				A401E8012481BC1D0009BBC4 /* CoreDataModelDescription */,
+			);
 			productName = BluetoothThing;
 			productReference = A4553C5B23C5D99000C49AC2 /* BluetoothThing.framework */;
 			productType = "com.apple.product-type.framework";
@@ -514,6 +619,9 @@
 			dependencies = (
 			);
 			name = BluetoothThingWatch;
+			packageProductDependencies = (
+				A401E8032481BC260009BBC4 /* CoreDataModelDescription */,
+			);
 			productName = BluetoothThingWatch;
 			productReference = A45F184523DA8487004C5A52 /* BluetoothThing.framework */;
 			productType = "com.apple.product-type.framework";
@@ -532,6 +640,9 @@
 			dependencies = (
 			);
 			name = BluetoothThingMac;
+			packageProductDependencies = (
+				A401E8052481BC2D0009BBC4 /* CoreDataModelDescription */,
+			);
 			productName = BluetoothThingMac;
 			productReference = A4CABD822475F51300DAE257 /* BluetoothThingMac.framework */;
 			productType = "com.apple.product-type.framework";
@@ -550,6 +661,9 @@
 			dependencies = (
 			);
 			name = BluetoothThingTV;
+			packageProductDependencies = (
+				A401E8072481BC310009BBC4 /* CoreDataModelDescription */,
+			);
 			productName = BluetoothThingTV;
 			productReference = A4CABD8F2475F58A00DAE257 /* BluetoothThingTV.framework */;
 			productType = "com.apple.product-type.framework";
@@ -595,6 +709,9 @@
 				en,
 			);
 			mainGroup = A4553C5123C5D99000C49AC2;
+			packageReferences = (
+				A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */,
+			);
 			productRefGroup = A4553C5C23C5D99000C49AC2 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -651,20 +768,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F06A04248138990083FAF9 /* BTModel.swift in Sources */,
+				A401E82F2481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */,
+				A401E83F2481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */,
 				A4362F1E2468C31900F5BC02 /* BTDiscovery+.swift in Sources */,
 				A4A66D0724598F200047D00E /* BTService.swift in Sources */,
 				A435044823C935B800C6AD1C /* BluetoothHelper.swift in Sources */,
 				A49C781C246903CD0006AAFD /* GATTService+.swift in Sources */,
+				A401E8232481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */,
 				A4175593240BB32E00F95437 /* Constants.swift in Sources */,
 				A413F19323D7AD83007BDE30 /* BTCharacteristic.swift in Sources */,
+				A401E8432481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */,
+				A401E8172481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */,
+				A401E81B2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */,
 				A4F86D0A2412266500AF9621 /* BTPeripheral+.swift in Sources */,
 				A492983D23D5216000889E2B /* BTRequest.swift in Sources */,
 				A482DB8423DF92EC009AB51A /* Data+.swift in Sources */,
+				A401E8272481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A45F185B23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
+				A496ED482481C5A70044905C /* NSManagedObject+.swift in Sources */,
 				A4553C9A23C5DDA300C49AC2 /* BluetoothThingManager.swift in Sources */,
+				A401E81F2481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */,
+				A401E8372481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */,
+				A401E83B2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */,
+				A401E82B2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A4B4D46124061A080017614E /* CoreDataStore.swift in Sources */,
 				A435045823CA77C000C6AD1C /* BTSubscription.swift in Sources */,
 				A4BFCA5F23C6B9D5000DE817 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A401E8332481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */,
 				A4AB9E6623C684A200327FE5 /* BluetoothThing.swift in Sources */,
 				A4175590240BB11E00F95437 /* UserDefaults+.swift in Sources */,
 				A4D228C42464D0E600E40449 /* Integer+.swift in Sources */,
@@ -699,20 +830,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F06A05248138990083FAF9 /* BTModel.swift in Sources */,
+				A401E8302481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */,
+				A401E8402481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */,
 				A4362F1F2468C31900F5BC02 /* BTDiscovery+.swift in Sources */,
 				A4A66D0824598F200047D00E /* BTService.swift in Sources */,
 				A45F185223DA84B5004C5A52 /* BTSubscription.swift in Sources */,
 				A49C781D246903CD0006AAFD /* GATTService+.swift in Sources */,
+				A401E8242481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */,
 				A4A66D0E245A56890047D00E /* Constants+Watch.swift in Sources */,
 				A4175594240BB32E00F95437 /* Constants.swift in Sources */,
+				A401E8442481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */,
+				A401E8182481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */,
+				A401E81C2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */,
 				A45F185D23DA8C42004C5A52 /* DataStore.swift in Sources */,
 				A4F86D0B2412266500AF9621 /* BTPeripheral+.swift in Sources */,
 				A482DB8523DF958B009AB51A /* Data+.swift in Sources */,
+				A401E8282481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A45F185523DA84BF004C5A52 /* BluetoothHelper.swift in Sources */,
+				A496ED492481C5A70044905C /* NSManagedObject+.swift in Sources */,
 				A45F185123DA84B5004C5A52 /* ConnectionState.swift in Sources */,
+				A401E8202481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */,
+				A401E8382481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */,
+				A401E83C2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */,
+				A401E82C2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A45F185923DA8987004C5A52 /* BluetoothThingManager.swift in Sources */,
 				A45F185723DA84C6004C5A52 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4B4D46224061A080017614E /* CoreDataStore.swift in Sources */,
+				A401E8342481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */,
 				A45F185323DA84B5004C5A52 /* BTCharacteristic.swift in Sources */,
 				A45F185C23DA8BC7004C5A52 /* DataStoreProtocol.swift in Sources */,
 				A4D228C52464D0E600E40449 /* Integer+.swift in Sources */,
@@ -727,20 +872,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F06A06248138990083FAF9 /* BTModel.swift in Sources */,
+				A401E8312481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */,
+				A401E8412481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */,
 				A4CABDA92475F77200DAE257 /* BTRequest.swift in Sources */,
 				A4CABDA12475F76D00DAE257 /* BTDiscovery+.swift in Sources */,
 				A4CABDA22475F76D00DAE257 /* GATTService+.swift in Sources */,
 				A4CABD972475F75300DAE257 /* DataStoreProtocol.swift in Sources */,
+				A401E8252481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */,
 				A4CABD992475F75300DAE257 /* UserDefaults+.swift in Sources */,
 				A4CABDC52475F88300DAE257 /* Constants+Mac.swift in Sources */,
+				A401E8452481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */,
+				A401E8192481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */,
+				A401E81D2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */,
 				A4CABDC22475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */,
 				A4CABDB52475F77700DAE257 /* Integer+.swift in Sources */,
 				A4CABDB12475F77700DAE257 /* Constants.swift in Sources */,
+				A401E8292481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A4CABD982475F75300DAE257 /* DataStore.swift in Sources */,
+				A496ED4A2481C5A70044905C /* NSManagedObject+.swift in Sources */,
 				A4CABDB42475F77700DAE257 /* Data+.swift in Sources */,
+				A401E8212481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */,
+				A401E8392481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */,
+				A401E83D2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */,
+				A401E82D2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A4CABDAA2475F77200DAE257 /* BTSubscription.swift in Sources */,
 				A4CABDA72475F77200DAE257 /* BTCharacteristic.swift in Sources */,
 				A4CABDA02475F76D00DAE257 /* BTPeripheral+.swift in Sources */,
+				A401E8352481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */,
 				A4CABDB02475F77700DAE257 /* ConnectionState.swift in Sources */,
 				A4CABDAF2475F77700DAE257 /* BluetoothHelper.swift in Sources */,
 				A4CABDA82475F77200DAE257 /* BTService.swift in Sources */,
@@ -755,20 +914,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4F06A07248138990083FAF9 /* BTModel.swift in Sources */,
+				A401E8322481BEA50009BBC4 /* CustomData+CoreDataClass.swift in Sources */,
+				A401E8422481BEA50009BBC4 /* GATTCharacteristic+CoreDataClass.swift in Sources */,
 				A4CABDAD2475F77200DAE257 /* BTRequest.swift in Sources */,
 				A4CABDA52475F76D00DAE257 /* BTDiscovery+.swift in Sources */,
 				A4CABDA62475F76D00DAE257 /* GATTService+.swift in Sources */,
 				A4CABD9A2475F75400DAE257 /* DataStoreProtocol.swift in Sources */,
+				A401E8262481BEA50009BBC4 /* GATTService+CoreDataProperties.swift in Sources */,
 				A4CABD9C2475F75400DAE257 /* UserDefaults+.swift in Sources */,
 				A4CABDC32475F7B200DAE257 /* BluetoothThingManagerDelegate.swift in Sources */,
+				A401E8462481BEA50009BBC4 /* GATTCharacteristic+CoreDataProperties.swift in Sources */,
+				A401E81A2481BEA50009BBC4 /* BTDiscovery+CoreDataClass.swift in Sources */,
+				A401E81E2481BEA50009BBC4 /* BTDiscovery+CoreDataProperties.swift in Sources */,
 				A4CABDBC2475F77800DAE257 /* Integer+.swift in Sources */,
 				A4CABDB82475F77800DAE257 /* Constants.swift in Sources */,
 				A4CABDC72475FA7600DAE257 /* Constants+TV.swift in Sources */,
+				A401E82A2481BEA50009BBC4 /* BTPeripheral+CoreDataClass.swift in Sources */,
 				A4CABD9B2475F75400DAE257 /* DataStore.swift in Sources */,
+				A496ED4B2481C5A70044905C /* NSManagedObject+.swift in Sources */,
 				A4CABDBB2475F77800DAE257 /* Data+.swift in Sources */,
+				A401E8222481BEA50009BBC4 /* GATTService+CoreDataClass.swift in Sources */,
+				A401E83A2481BEA50009BBC4 /* BTCentral+CoreDataClass.swift in Sources */,
+				A401E83E2481BEA50009BBC4 /* BTCentral+CoreDataProperties.swift in Sources */,
+				A401E82E2481BEA50009BBC4 /* BTPeripheral+CoreDataProperties.swift in Sources */,
 				A4CABDAE2475F77200DAE257 /* BTSubscription.swift in Sources */,
 				A4CABDAB2475F77200DAE257 /* BTCharacteristic.swift in Sources */,
 				A4CABDA42475F76D00DAE257 /* BTPeripheral+.swift in Sources */,
+				A401E8362481BEA50009BBC4 /* CustomData+CoreDataProperties.swift in Sources */,
 				A4CABDB72475F77800DAE257 /* ConnectionState.swift in Sources */,
 				A4CABDB62475F77800DAE257 /* BluetoothHelper.swift in Sources */,
 				A4CABDAC2475F77200DAE257 /* BTService.swift in Sources */,
@@ -901,7 +1074,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -923,8 +1097,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -948,8 +1126,12 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThing/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThing;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -965,7 +1147,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				INFOPLIST_FILE = BluetoothThingTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -980,7 +1166,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3CWSQGN6ET;
 				INFOPLIST_FILE = BluetoothThingTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1001,7 +1191,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingWatch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingWatch;
@@ -1010,7 +1204,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
 			name = Debug;
 		};
@@ -1027,7 +1221,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingWatch/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingWatch;
 				PRODUCT_NAME = BluetoothThing;
@@ -1035,7 +1233,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 3.0;
+				WATCHOS_DEPLOYMENT_TARGET = 4.0;
 			};
 			name = Release;
 		};
@@ -1052,7 +1250,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingMac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1077,7 +1279,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingMac/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingMac;
@@ -1100,7 +1306,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingTV/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTV;
@@ -1109,7 +1319,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Debug;
 		};
@@ -1125,7 +1335,11 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = BluetoothThingTV/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = yip.antonio.BluetoothThingTV;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1133,7 +1347,7 @@
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 3;
-				TVOS_DEPLOYMENT_TARGET = 10.0;
+				TVOS_DEPLOYMENT_TARGET = 11.0;
 			};
 			name = Release;
 		};
@@ -1195,6 +1409,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/antoniokly/core-data-model-description";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.10;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A401E8012481BC1D0009BBC4 /* CoreDataModelDescription */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */;
+			productName = CoreDataModelDescription;
+		};
+		A401E8032481BC260009BBC4 /* CoreDataModelDescription */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */;
+			productName = CoreDataModelDescription;
+		};
+		A401E8052481BC2D0009BBC4 /* CoreDataModelDescription */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */;
+			productName = CoreDataModelDescription;
+		};
+		A401E8072481BC310009BBC4 /* CoreDataModelDescription */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A401E8002481BC1D0009BBC4 /* XCRemoteSwiftPackageReference "core-data-model-description" */;
+			productName = CoreDataModelDescription;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		A4A16EA92407CA6F002358FF /* BTModel.xcdatamodeld */ = {
