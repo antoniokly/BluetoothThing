@@ -1,9 +1,9 @@
 # BluetoothThing 
-
+[![Latest Stable Version](https://img.shields.io/github/v/tag/antoniokly/BluetoothThing?color=orange&label=Swift%20Package)](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
 [![Swift 5.1](https://img.shields.io/badge/Swift-5.1-orange.svg?style=flat)](https://swift.org)
-[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/Platforms-iOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20macOS-lightgray.svg?style=flat)](http://www.apple.com)
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
+[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/platforms-iOS%2010.0%20%7C%20tvOS%2010.0%20%7C%20watchOS%203.0%20%7C%20macOS%2010.13-orange.svg)](https://developer.apple.com/documentation/swiftui)
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
+[![GitHub](https://img.shields.io/github/license/antoniokly/HandySwiftUI?color=orange)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
 
 Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
