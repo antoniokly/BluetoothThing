@@ -30,3 +30,33 @@ let package = Package(
             dependencies: ["BluetoothThing"]),
     ]
 )
+
+#if os(iOS)
+package.targets.first(where: { $0.name == "BluetoothThing" })!
+    .exclude += [
+        "Helpers/Constants+Watch.swift",
+        "Helpers/Constants+Mac.swift",
+        "Helpers/Constants+TV.swift",
+    ]
+#elseif os(macOS)
+package.targets.first(where: { $0.name == "BluetoothThing" })!
+    .exclude += [
+        "Helpers/Constants+iOS.swift",
+        "Helpers/Constants+Watch.swift",
+        "Helpers/Constants+TV.swift",
+    ]
+#elseif os(watchOS)
+package.targets.first(where: { $0.name == "BluetoothThing" })!
+    .exclude += [
+        "Helpers/Constants+iOS.swift",
+        "Helpers/Constants+Mac.swift",
+        "Helpers/Constants+TV.swift",
+    ]
+#elseif os(tvOS)
+package.targets.first(where: { $0.name == "BluetoothThing" })!
+    .exclude += [
+        "Helpers/Constants+iOS.swift",
+        "Helpers/Constants+Mac.swift",
+        "Helpers/Constants+Watch.swift",
+    ]
+#endif
