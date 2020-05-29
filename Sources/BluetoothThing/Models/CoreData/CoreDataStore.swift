@@ -25,15 +25,19 @@ class CoreDataStore {
          */
         
         let container: NSPersistentContainer
-        let model = "BTModel"
         
-        let modelURL = bundle.url(forResource: model, withExtension: "momd")!
-        let managedObjectModel =  NSManagedObjectModel(contentsOf: modelURL)!
+//        For future develop
+//        let model = "BTModel"
+//        let modelURL = bundle.url(forResource: model, withExtension: "momd")!
+//        let managedObjectModel = NSManagedObjectModel(contentsOf: modelURL)!
+        
+        let model = BTModel.self
+        let managedObjectModel = NSManagedObjectModel(modelDescription: model.modelDescription)
         
         if #available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *), useCloudKit {
-            container = NSPersistentCloudKitContainer(name: model, managedObjectModel: managedObjectModel)
+            container = NSPersistentCloudKitContainer(name: model.name, managedObjectModel: managedObjectModel)
         } else {
-            container = NSPersistentContainer(name: model, managedObjectModel: managedObjectModel)
+            container = NSPersistentContainer(name: model.name, managedObjectModel: managedObjectModel)
         }
                 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
