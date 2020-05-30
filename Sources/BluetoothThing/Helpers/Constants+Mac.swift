@@ -5,7 +5,7 @@
 //  Created by Antonio Yip on 21/05/20.
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
-
+#if os(macOS)
 import Foundation
 
 var bundle: Bundle {
@@ -26,3 +26,4 @@ var centralId: UUID {
         return uuid
     }
 }
+#endif

@@ -5,7 +5,7 @@
 //  Created by Antonio Yip on 30/04/20.
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
-
+#if os(iOS)
 import Foundation
 
 var deviceName: String {
@@ -19,3 +19,4 @@ var bundle: Bundle {
 var centralId: UUID {
     UIDevice.current.identifierForVendor!
 }
+#endif

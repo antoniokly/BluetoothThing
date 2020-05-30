@@ -5,7 +5,7 @@
 //  Created by Antonio Yip on 30/04/20.
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
-
+#if os(watchOS)
 import Foundation
 import WatchKit
 
@@ -27,3 +27,4 @@ var centralId: UUID {
         return uuid
     }
 }
+#endif
