@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 #if canImport(WatchKit)
 import WatchKit
 #endif
