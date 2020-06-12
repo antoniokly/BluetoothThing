@@ -92,3 +92,4 @@ iOSInjectionProject/
 # Codecov
 *.coverage.txt
 cobertura.xml
+info.lcov
