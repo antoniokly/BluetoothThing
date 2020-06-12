@@ -294,6 +294,7 @@ public class BluetoothThingManager: NSObject {
                 peripheral.readValue(for: charateristic)
             case .write:
                 guard let data = request.value else { return false }
+                
                 peripheral.writeValue(data, for: charateristic, type: .withResponse)
                 peripheral.readValue(for: charateristic)
             }
@@ -301,7 +302,9 @@ public class BluetoothThingManager: NSObject {
             return true
         }
         
-        thing._subscribe = { subscription in
+        thing._subscribe = { [weak peripheral] subscription in
+            guard let peripheral = peripheral else { return }
+            
             if let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}) {
                 peripheral.discoverCharacteristics(nil, for: service)
             } else {
@@ -309,8 +312,11 @@ public class BluetoothThingManager: NSObject {
             }
         }
         
-        thing._unsubscribe = { subscription in
-            guard let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}), let characteristics = service.characteristics else {
+        thing._unsubscribe = { [weak peripheral] subscription in
+            guard
+                let peripheral = peripheral,
+                let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}),
+                let characteristics = service.characteristics else {
                 return
             }
             
