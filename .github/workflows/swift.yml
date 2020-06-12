@@ -18,7 +18,7 @@ jobs:
     - name: Run tests
       run: swift test -v --enable-code-coverage --show-codecov-path
     - name: Generate code coverage
-      run: xcrun llvm-cov report .build/x86_64-apple-macosx/debug/BluetoothThingPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
+      run: xcrun llvm-cov report .build/x86_64-apple-macosx/debug/BluetoothThingPackageTests.xctest/Contents/MacOS/BluetoothThingPackageTests -instr-profile .build/debug/codecov/default.profdata > info.lcov
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
