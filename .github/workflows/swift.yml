@@ -19,3 +19,5 @@ jobs:
       run: swift test -v --enable-code-coverage --show-codecov-path
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
+      with:
+        file: .build/x86_64-apple-macosx/debug/codecov/BluetoothThing.json
