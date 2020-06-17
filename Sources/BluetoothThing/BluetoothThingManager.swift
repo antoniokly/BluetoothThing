@@ -341,13 +341,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
          case poweredOn
          */
         os_log("centralManagerDidUpdateState: %@", central.state.description)
-                    
-        if central.state == .poweredOn {
+
+        switch central.state {
+        case .poweredOn:
             for peripheral in knownPeripherals {
                 if let thing = didUpdatePeripheral(peripheral) {
                     if thing.autoReconnect {
                         central.connect(peripheral, options: Self.peripheralOptions)
-                    }                   
+                    }
                 } else {
                     central.cancelPeripheralConnection(peripheral)
                 }
@@ -356,8 +357,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             if isPendingToStart {
                 startScanning(options: scanningOptions)
             }
-                        
-        } else {
+        case .poweredOff, .resetting, .unauthorized:
             for peripheral in knownPeripherals {
                 didUpdatePeripheral(peripheral)
             }
@@ -367,6 +367,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             }
             
             startScanning(options: scanningOptions)
+        default:
+            break
         }
     }
     
