@@ -98,7 +98,8 @@ public class BluetoothThingManager: NSObject {
     func startScanning(options: [String: Any]?) {
         scanningOptions = options
         
-        if centralManager.state == .poweredOn {
+        switch centralManager.state {
+        case .poweredOn:
             isPendingToStart = false
             
             for thing in knownThings.filter({$0.state == .disconnected}) {
@@ -107,9 +108,10 @@ public class BluetoothThingManager: NSObject {
             
             os_log("start scanning", serviceUUIDs)
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
-            
-        } else {
+        case .poweredOff, .resetting, .unauthorized:
             isPendingToStart = true
+        default:
+            break
         }
     }
     
