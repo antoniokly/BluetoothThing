@@ -96,7 +96,7 @@ class CoreDataStore {
 extension CoreDataStore: PersistentStoreProtocol {
     
     func fetch() -> Any? {
-        return fetch(forCentralId: centralId)
+        return fetch(forCentralId: BluetoothThingManager.centralId)
     }
     
     func fetch(forCentralId centralId: UUID) -> Any? {
@@ -165,7 +165,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             ])
         }
                 
-        peripheral.insertDiscovery(centralId: centralId)
+        peripheral.insertDiscovery(centralId: BluetoothThingManager.centralId)
         saveContext()
     }
     
@@ -179,7 +179,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         ).first
         
         let central: BTCentral? = fetchEntities(
-            predicate: NSPredicate(format: "id == %@", centralId.uuidString)
+            predicate: NSPredicate(format: "id == %@", BluetoothThingManager.centralId.uuidString)
         ).first
         
         guard let peripheralId = peripheral?.id, let centralId = central?.id else {

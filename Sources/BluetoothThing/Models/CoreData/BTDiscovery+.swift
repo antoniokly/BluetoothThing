@@ -13,9 +13,9 @@ import os.log
 extension BTDiscovery {
     func insertCentral() {
         if let central = self.central {
-            central.id = centralId.uuidString
-            central.name = deviceName
-            os_log("CoreData updated central %@: %@", centralId.uuidString, deviceName)
+            central.id = BluetoothThingManager.centralId.uuidString
+            central.name = BluetoothThingManager.deviceName
+            os_log("CoreData updated central %@: %@", central.id!, central.name!)
         } else {
             let central = BTCentral(context: self.managedObjectContext!)
             os_log("CoreData created central")

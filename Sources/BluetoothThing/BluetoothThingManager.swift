@@ -10,7 +10,46 @@ import Foundation
 import CoreBluetooth
 import os.log
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
+#if canImport(WatchKit)
+import WatchKit
+#endif
+
+#if canImport(TVUIKit)
+import TVUIKit
+#endif
+
 public class BluetoothThingManager: NSObject {
+    public static var deviceName: String {
+        #if os(iOS)
+        return UIDevice.current.name
+        #elseif os(OSX)
+        return Host.current().localizedName!
+        #elseif os(watchOS)
+        return WKInterfaceDevice.current().name
+        #else
+        return "unknown"
+        #endif
+    }
+
+    public static var centralId: UUID {
+        #if os(iOS)
+        return UIDevice.current.identifierForVendor!
+        #else
+        if let uuidString = UserDefaults.standard.object(forKey: .centralId) as? String,
+            let uuid = UUID(uuidString: uuidString) {
+            return uuid
+        } else {
+            let uuid = UUID()
+            UserDefaults.standard.set(uuid.uuidString, forKey: .centralId)
+            return uuid
+        }
+        #endif
+    }
+    
     static let centralManagerOptions: [String: Any]? = [
         CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
     ]
