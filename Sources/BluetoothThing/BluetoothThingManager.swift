@@ -335,8 +335,7 @@ public class BluetoothThingManager: NSObject {
             case .write:
                 guard let data = request.value else { return false }
                 
-                peripheral.writeValue(data, for: charateristic, type: .withResponse)
-                peripheral.readValue(for: charateristic)
+                peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
             }
             
             return true

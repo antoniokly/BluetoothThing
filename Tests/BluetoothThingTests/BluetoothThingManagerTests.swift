@@ -677,7 +677,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueCalled, 1)
         XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, .fff1)
         XCTAssertEqual(peripheral.writeValueData, data)
-        XCTAssertEqual(peripheral.writeValueType, .withResponse)
+        XCTAssertEqual(peripheral.writeValueType, .withoutResponse)
     }
     
     func testDidUpdateCharacteristic() {
