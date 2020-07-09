@@ -58,9 +58,8 @@ public class BluetoothThingManager: NSObject {
     
     public internal (set) var delegate: BluetoothThingManagerDelegate
     public internal (set) var dataStore: DataStoreProtocol!
-    public internal (set) var subscriptions: [BTSubscription]
-    
-        
+    public internal (set) var subscriptions: Set<BTSubscription>
+            
     lazy var centralManager = CBCentralManager(delegate: self,
                                                queue: nil,
                                                options: Self.centralManagerOptions)
@@ -94,7 +93,7 @@ public class BluetoothThingManager: NSObject {
     
     // MARK: - Public Initializer
     public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [BTSubscription],
+                            subscriptions: Set<BTSubscription>,
                             useCoreData: Bool = false) {
         self.init(delegate: delegate, subscriptions: subscriptions)
         self.dataStore = DataStore(persistentStore:
@@ -105,7 +104,7 @@ public class BluetoothThingManager: NSObject {
     
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [BTSubscription],
+                            subscriptions: Set<BTSubscription>,
                             useCoreData: Bool = false,
                             useCloudKit: Bool = false) {
         self.init(delegate: delegate, subscriptions: subscriptions)
@@ -115,7 +114,7 @@ public class BluetoothThingManager: NSObject {
         self.knownThings = Set(dataStore.things)
     }
     
-    init(delegate: BluetoothThingManagerDelegate, subscriptions: [BTSubscription]) {
+    init(delegate: BluetoothThingManagerDelegate, subscriptions: Set<BTSubscription>) {
         self.delegate = delegate
         self.subscriptions = subscriptions
         super.init()
@@ -344,10 +343,24 @@ public class BluetoothThingManager: NSObject {
         }
         
         thing._subscribe = { [weak peripheral] subscription in
-            guard let peripheral = peripheral else { return }
+            guard let peripheral = peripheral else {
+                return
+            }
             
             if let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}) {
-                peripheral.discoverCharacteristics(nil, for: service)
+                
+                if let characteristic = service.characteristics?.first(where: {$0.uuid == subscription.characteristicUUID}) {
+                    if !characteristic.isNotifying {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    }
+                } else {
+                    if let uuid = subscription.characteristicUUID {
+                        peripheral.discoverCharacteristics([uuid], for: service)
+                    } else {
+                        peripheral.discoverCharacteristics(nil, for: service)
+                    }
+                }
+                
             } else {
                 peripheral.discoverServices([subscription.serviceUUID])
             }
@@ -364,7 +377,9 @@ public class BluetoothThingManager: NSObject {
             for characteristic in characteristics.filter({
                 subscription.characteristicUUID == nil || $0.uuid == subscription.characteristicUUID
             }) {
-                peripheral.setNotifyValue(false, for: characteristic)
+                if characteristic.isNotifying {
+                    peripheral.setNotifyValue(false, for: characteristic)
+                }
             }
         }
     }
@@ -534,21 +549,25 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         }
         
         if let services = peripheral.services {
-            thing.services.formUnion(services.map {
-                BTService(service: $0)
-            })
-
-            let subscriptions = (self.subscriptions + thing.subscriptions).toDictionary()
-            
             for service in services {
-                guard let characteristicUUIDs = subscriptions[service.uuid] else {
-                    continue
-                }
-                
-                if characteristicUUIDs.contains(nil) {
-                    peripheral.discoverCharacteristics(nil, for: service)
-                } else {
-                    peripheral.discoverCharacteristics(characteristicUUIDs.compactMap({$0}), for: service)
+                if thing.services.insert(BTService(service: service)).inserted {
+                    // new discovery
+                    
+                    let characteristicUUIDs = subscriptions.union(thing.subscriptions).filter {
+                        $0.serviceUUID == service.uuid
+                    }.map {
+                        $0.characteristicUUID
+                    }
+                    
+                    if characteristicUUIDs.isEmpty {
+                        continue
+                    }
+                    
+                    if characteristicUUIDs.contains(nil) {
+                        peripheral.discoverCharacteristics(nil, for: service)
+                    } else {
+                        peripheral.discoverCharacteristics(characteristicUUIDs.compactMap({$0}), for: service)
+                    }
                 }
             }
         }
@@ -566,7 +585,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             var subscriptions = self.subscriptions
             
             if let thing = getThing(for: peripheral) {
-                subscriptions += thing.subscriptions
+                subscriptions = subscriptions.union(thing.subscriptions)
             }
             
             for characteristic in characteristics {

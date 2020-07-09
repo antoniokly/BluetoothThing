@@ -64,7 +64,7 @@ class SubscriptionTests: XCTestCase {
 
     func testSubscribedCharateristics() {
         // Given
-        let subsriptions = [
+        let subsriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
             BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
@@ -82,7 +82,7 @@ class SubscriptionTests: XCTestCase {
     
     func testSubscribedAllCharateristics() {
         // Given
-        let subsriptions = [
+        let subsriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1),
         ]
         
@@ -96,7 +96,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testSubscription1() {
-        let subscriptions = [
+        let subscriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
@@ -107,7 +107,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testEmptyService() {
-        let subscriptions = [
+        let subscriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
@@ -120,7 +120,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testEmptyCharateristic() {
-        let subscriptions = [
+        let subscriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
                 
@@ -134,7 +134,7 @@ class SubscriptionTests: XCTestCase {
 
     func testSubscribePeripheral() {
         // Given
-        let subsriptions = [
+        let subsriptions: Set<BTSubscription> = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID2),
             BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID1),

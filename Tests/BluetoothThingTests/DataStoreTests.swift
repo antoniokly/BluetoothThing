@@ -16,13 +16,8 @@ class DataStoreTests: XCTestCase {
     var persistentStore = PersistentStoreMock()
     var peripherals: [CBPeripheralMock]!
     
-    override func setUp() {
-        let serviceUUID = CBUUID(string: "FFF0")
-        let characteristicUUID = CBUUID(string: "FFF1")
-        
-        let subsriptions = [
-            BTSubscription(serviceUUID: serviceUUID, characteristicUUID: characteristicUUID)
-        ]
+    override func setUp() {        
+        let subsriptions: Set<BTSubscription> = .test1
         
         peripherals = initPeripherals(subscriptions: subsriptions, numberOfPeripherals: 3)
         

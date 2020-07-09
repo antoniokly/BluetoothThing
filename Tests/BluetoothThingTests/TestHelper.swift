@@ -10,7 +10,7 @@ import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
 
-func initPeripherals(subscriptions: [BTSubscription], numberOfPeripherals: Int) -> [CBPeripheralMock] {
+func initPeripherals(subscriptions: Set<BTSubscription>, numberOfPeripherals: Int) -> [CBPeripheralMock] {
     
     let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
         if let characteristicUUID = subscription.characteristicUUID {
@@ -38,3 +38,25 @@ func initPeripherals(subscriptions: [BTSubscription], numberOfPeripherals: Int) 
     
     return peripherals
 }
+
+extension CBUUID {
+    static let fff0 = CBUUID(string: "FFF0")
+    static let fff1 = CBUUID(string: "FFF1")
+    static let fff2 = CBUUID(string: "FFF2")
+}
+
+extension BTSubscription {
+    static let fff1: BTSubscription = {
+        return BTSubscription(serviceUUID: .fff0, characteristicUUID: .fff1)
+    }()
+    
+    static let fff2: BTSubscription = {        
+        return BTSubscription(serviceUUID: .fff0, characteristicUUID: .fff2)
+    }()
+}
+
+extension Set where Element == BTSubscription {
+    static let test1: Set<BTSubscription> = .init([.fff1])
+    static let test2: Set<BTSubscription> = .init([.fff1, .fff2])
+}
+

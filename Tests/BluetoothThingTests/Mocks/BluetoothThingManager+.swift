@@ -13,7 +13,7 @@ import CoreBluetooth
 extension BluetoothThingManager {
     // MARK: - Internal Initializer
     convenience init(delegate: BluetoothThingManagerDelegate,
-                     subscriptions: [BTSubscription],
+                     subscriptions: Set<BTSubscription>,
                      dataStore: DataStoreProtocol,
                      centralManager: CBCentralManagerMock) {
         self.init(delegate: delegate, subscriptions: subscriptions)

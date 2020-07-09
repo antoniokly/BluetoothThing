@@ -47,13 +47,3 @@ public struct BTSubscription: Hashable {
 public extension BTSubscription {
     static let batteryService = BTSubscription(.batteryService)
 }
-
-public extension Array where Element == BTSubscription {
-    func toDictionary() -> [CBUUID: Set<CBUUID?>] {
-        Dictionary(grouping: self) {
-            $0.serviceUUID
-        }.mapValues {
-            Set($0.map{$0.characteristicUUID})
-        }
-    }
-}

@@ -136,7 +136,7 @@ class CBPeripheralMock: CBPeripheral {
             uuids = serviceUUIDs
         } else {
             uuids = [
-                CBUUID(string: "FFF0"),
+                .fff0,
                 BTService.batteryService.uuid,
                 BTService.deviceInformation.uuid,
                 BTService.cyclingSpeedAndCadenceService.uuid
