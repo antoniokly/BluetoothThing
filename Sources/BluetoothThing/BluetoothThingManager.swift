@@ -92,9 +92,9 @@ public class BluetoothThingManager: NSObject {
     var knownThings: Set<BluetoothThing> = []
     
     // MARK: - Public Initializer
-    public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: Set<BTSubscription>,
-                            useCoreData: Bool = false) {
+    public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
+                            subscriptions: T,
+                            useCoreData: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
@@ -103,10 +103,10 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
-    public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: Set<BTSubscription>,
+    public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
+                            subscriptions: T,
                             useCoreData: Bool = false,
-                            useCloudKit: Bool = false) {
+                            useCloudKit: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
@@ -114,9 +114,9 @@ public class BluetoothThingManager: NSObject {
         self.knownThings = Set(dataStore.things)
     }
     
-    init(delegate: BluetoothThingManagerDelegate, subscriptions: Set<BTSubscription>) {
+    init<T: Sequence>(delegate: BluetoothThingManagerDelegate, subscriptions: T) where T.Element == BTSubscription {
         self.delegate = delegate
-        self.subscriptions = subscriptions
+        self.subscriptions = Set(subscriptions)
         super.init()
     }
 

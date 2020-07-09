@@ -18,7 +18,7 @@ class SubscriptionTests: XCTestCase {
     let characteristicUUID2 = CBUUID(string: "FFF2")
     
     var peripheral: CBPeripheralMock!
-    
+
     override func setUp() {
         let services = [
             CBServiceMock(uuid: serviceUUID1),
@@ -64,7 +64,7 @@ class SubscriptionTests: XCTestCase {
 
     func testSubscribedCharateristics() {
         // Given
-        let subsriptions: Set<BTSubscription> = [
+        let subsriptions = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
             BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
@@ -82,7 +82,7 @@ class SubscriptionTests: XCTestCase {
     
     func testSubscribedAllCharateristics() {
         // Given
-        let subsriptions: Set<BTSubscription> = [
+        let subsriptions = [
             BTSubscription(serviceUUID: serviceUUID1),
         ]
         
@@ -96,7 +96,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testSubscription1() {
-        let subscriptions: Set<BTSubscription> = [
+        let subscriptions = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
@@ -107,7 +107,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testEmptyService() {
-        let subscriptions: Set<BTSubscription> = [
+        let subscriptions = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
@@ -120,7 +120,7 @@ class SubscriptionTests: XCTestCase {
     }
     
     func testEmptyCharateristic() {
-        let subscriptions: Set<BTSubscription> = [
+        let subscriptions = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
                 
@@ -134,7 +134,7 @@ class SubscriptionTests: XCTestCase {
 
     func testSubscribePeripheral() {
         // Given
-        let subsriptions: Set<BTSubscription> = [
+        let subsriptions = [
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1),
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID2),
             BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID1),

@@ -30,7 +30,7 @@ public extension CBManagerState {
 }
 
 extension CBPeripheral {
-    func subscribe(subscriptions: Set<BTSubscription>) {
+    func subscribe<T: Sequence>(subscriptions: T) where T.Element == BTSubscription {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
@@ -40,7 +40,7 @@ extension CBPeripheral {
         }
     }
     
-    func unsubscribe(subscriptions: Set<BTSubscription>) {
+    func unsubscribe<T: Sequence>(subscriptions: T) where T.Element == BTSubscription {
         let characteristics = getSubscribedCharateristics(for: self,
                                                           subscriptions: subscriptions)
         for characteristic in characteristics {
@@ -51,8 +51,8 @@ extension CBPeripheral {
     }
 }
 
-func getSubscribedCharateristics(for peripheral: CBPeripheral,
-                                 subscriptions: Set<BTSubscription>) -> [CBCharacteristic] {
+func getSubscribedCharateristics<T: Sequence>(for peripheral: CBPeripheral,
+                                 subscriptions: T) -> [CBCharacteristic] where T.Element == BTSubscription {
     guard let services = peripheral.services else {
         return []
     }
@@ -64,8 +64,8 @@ func getSubscribedCharateristics(for peripheral: CBPeripheral,
     }
 }
 
-func shouldSubscribe(characteristic: CBCharacteristic,
-                     subscriptions: Set<BTSubscription>) -> Bool {
+func shouldSubscribe<T: Sequence>(characteristic: CBCharacteristic,
+                     subscriptions: T) -> Bool where T.Element == BTSubscription {
     return subscriptions.contains { subscription in
         if subscription.serviceUUID != characteristic.service.uuid {
             return false

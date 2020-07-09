@@ -13,6 +13,7 @@ import CoreBluetooth
 class BluetoothThingManagerTests: XCTestCase {
     
     var sut: BluetoothThingManager!
+    var subscriptions: [BTSubscription] = []
         
     class BluetoothThingManagerDelegateSpy: BluetoothThingManagerDelegate {
         func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState) {
@@ -93,7 +94,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testInitializer() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 3)
         let dataStore = DataStoreMock(peripherals: peripherals)
@@ -117,7 +118,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testPublicInitializer() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
         
         sut = BluetoothThingManager(delegate: delegate,
                                     subscriptions: subscriptions,
@@ -125,13 +126,13 @@ class BluetoothThingManagerTests: XCTestCase {
         
         XCTAssertNotNil(sut.delegate)
         XCTAssertTrue(sut.dataStore.persistentStore is UserDefaults)
-        XCTAssertEqual(sut.subscriptions, subscriptions)
+        XCTAssertEqual(sut.subscriptions, Set(subscriptions))
         sut.dataStore.persistentStore.reset()
     }
 
     func testStartStop() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 2)
         let dataStore = DataStoreMock(peripherals: peripherals)
@@ -181,7 +182,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testRestoreState() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -218,7 +219,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testPowerOff() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
         
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let dataStore = DataStoreMock(peripherals: peripherals)
@@ -245,7 +246,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidConnect() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -273,7 +274,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDisconnect() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -295,7 +296,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDiscover() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -332,7 +333,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDiscoverNewThing() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -390,7 +391,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDiscoverUnsubscribedPeripheral() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let unsubscribedPeripheral = CBPeripheralMock(identifier: UUID())
         let unknownServiceUUIDs = [CBUUID(string: "BEEF")]
@@ -415,7 +416,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDiscoverServices() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -444,7 +445,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidDiscoverCharacteristics() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -471,7 +472,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidUpdateValue() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -514,7 +515,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidReadRSSI() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -536,7 +537,7 @@ class BluetoothThingManagerTests: XCTestCase {
 
     func testDidFailToConnect() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -562,7 +563,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidLoseThing() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -590,7 +591,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDeregistering() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let dataStore = DataStoreMock(peripherals: [])
@@ -631,7 +632,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidConnectThing() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -681,7 +682,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testDidUpdateCharacteristic() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test1
+        subscriptions = [.fff1]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -705,7 +706,7 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testBluetoothThing() {
         // Given
-        let subscriptions: Set<BTSubscription> = .test2
+        subscriptions = [.fff1, .fff2]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
@@ -829,7 +830,8 @@ class BluetoothThingManagerTests: XCTestCase {
     
     func testNearbyThings() {
         // Given
-        let subscriptions: Set<BTSubscription> = [.batteryService]
+        subscriptions = [.batteryService]
+        
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 4)
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
