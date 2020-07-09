@@ -103,6 +103,30 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         _unsubscribe?(subscription)
     }
     
+    public func subscribe(_ service: BTService) {
+        let subscription = BTSubscription(service)
+        subscriptions.insert(subscription)
+        _subscribe?(subscription)
+    }
+    
+    public func unsubscribe(_ service: BTService) {
+        let subscription = BTSubscription(service)
+        subscriptions.remove(subscription)
+        _unsubscribe?(subscription)
+    }
+
+    public func subscribe(_ characteristic: BTCharacteristic) {
+        let subscription = BTSubscription(characteristic)
+        subscriptions.insert(subscription)
+        _subscribe?(subscription)
+    }
+    
+    public func unsubscribe(_ characteristic: BTCharacteristic) {
+        let subscription = BTSubscription(characteristic)
+        subscriptions.remove(subscription)
+        _unsubscribe?(subscription)
+    }
+    
     // Read & write
     @discardableResult
     public func request(_ request: BTRequest) -> Bool {
