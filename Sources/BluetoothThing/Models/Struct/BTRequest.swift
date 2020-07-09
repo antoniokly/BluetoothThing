@@ -9,7 +9,7 @@
 import Foundation
 import CoreBluetooth
 
-public struct BTRequest {
+public struct BTRequest: Hashable {
     public enum Method: String {
         case read
         case write

@@ -51,6 +51,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var disconnecting = false
     var pendingConnect = false
 
+    var pendingRequests: [BTRequest] = []
+
     var timer: Timer?
     
     var _connect: ((Bool) -> Void)?

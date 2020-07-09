@@ -90,7 +90,7 @@ public class BluetoothThingManager: NSObject {
     
     var knownPeripherals: Set<CBPeripheral> = []
     var knownThings: Set<BluetoothThing> = []
-    
+            
     // MARK: - Public Initializer
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
@@ -314,9 +314,10 @@ public class BluetoothThingManager: NSObject {
         peripheral.discoverServices(nil)
                 
         // MARK: Data Request
-        thing._request = { [weak peripheral] (request) in
+        thing._request = { [weak thing, weak peripheral] (request) in
             os_log("request %@", request.method.rawValue)
             guard
+                let thing = thing,
                 let peripheral = peripheral,
                 peripheral.state == .connected,
                 let service = peripheral.services?.first(where: {$0.uuid == request.characteristic.serviceUUID})
@@ -326,6 +327,7 @@ public class BluetoothThingManager: NSObject {
             
             guard let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid}) else {
                 peripheral.discoverCharacteristics([request.characteristic.uuid], for: service)
+                thing.pendingRequests.append(request)
                 return false
             }
             
@@ -334,7 +336,6 @@ public class BluetoothThingManager: NSObject {
                 peripheral.readValue(for: charateristic)
             case .write:
                 guard let data = request.value else { return false }
-                
                 peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
             }
             
@@ -586,13 +587,24 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         if let characteristics = service.characteristics {
             os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
             
-            var subscriptions = self.subscriptions
-            
-            if let thing = getThing(for: peripheral) {
-                subscriptions = subscriptions.union(thing.subscriptions)
+            guard let thing = getThing(for: peripheral) else {
+                return
             }
             
+            let subscriptions = self.subscriptions.union(thing.subscriptions)
+            
             for characteristic in characteristics {
+                let requests = thing.pendingRequests.filter({$0.characteristic.uuid == characteristic.uuid})
+                
+                guard requests.isEmpty else {
+                    for request in requests {
+                        if let i = thing.pendingRequests.firstIndex(of: request) {
+                            thing.request(thing.pendingRequests.remove(at: i))
+                        }
+                    }
+                    continue
+                }
+                
                 if shouldSubscribe(characteristic: characteristic, subscriptions: subscriptions) {
                     if !characteristic.isNotifying {
                         peripheral.setNotifyValue(true, for: characteristic)
