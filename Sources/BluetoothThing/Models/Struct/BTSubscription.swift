@@ -46,4 +46,5 @@ public struct BTSubscription: Hashable {
 
 public extension BTSubscription {
     static let batteryService = BTSubscription(.batteryService)
+    static let deviceInfomation = BTSubscription(.deviceInformation)
 }

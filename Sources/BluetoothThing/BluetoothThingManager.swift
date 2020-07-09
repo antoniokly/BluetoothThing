@@ -221,11 +221,11 @@ public class BluetoothThingManager: NSObject {
         }
         
         if thing.state != peripheral.state {
-            thing.state = peripheral.state
-            
             if peripheral.state == .connected {
+                // delay setting connected state until discovered services
                 didConnectThing(thing, peripheral: peripheral)
             } else {
+                thing.state = peripheral.state
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
         }
@@ -552,6 +552,10 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             for service in services {
                 if thing.services.insert(BTService(service: service)).inserted {
                     // new discovery
+                    if service.uuid == BTService.deviceInformation.uuid {
+                        peripheral.discoverCharacteristics(nil, for: service)
+                        continue
+                    }
                     
                     let characteristicUUIDs = subscriptions.union(thing.subscriptions).filter {
                         $0.serviceUUID == service.uuid
@@ -572,8 +576,9 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             }
         }
 
-        if peripheral.state == .connected {
-            // delay connected state until discovered services
+        // delay setting connected state until discovered services
+        if peripheral.state == .connected && thing.state != .connected {
+            thing.state = peripheral.state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }
     }

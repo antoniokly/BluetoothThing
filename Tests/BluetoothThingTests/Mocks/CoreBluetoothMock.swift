@@ -151,22 +151,26 @@ class CBPeripheralMock: CBPeripheral {
     }
     
     var discoverCharacteristicsCalled = 0
-    var discoverCharacteristics: [CBUUID] = []
+    var discoverCharacteristics: Set<CBUUID> = []
     var discoverCharacteristicsService: CBService?
     override func discoverCharacteristics(_ characteristicUUIDs: [CBUUID]?, for service: CBService) {
         discoverCharacteristicsCalled += 1
-        discoverCharacteristics = characteristicUUIDs ?? []
+        discoverCharacteristics.formUnion(characteristicUUIDs ?? [])
         discoverCharacteristicsService = service
         
-        let uuids: [CBUUID]
+        var uuids: [CBUUID] = []
         if let characteristicUUIDs = characteristicUUIDs {
             uuids = characteristicUUIDs
-        } else {
+        } else if service.uuid == .fff0 {
+            uuids = [.fff1]
+        } else if service.uuid == BTService.batteryService.uuid {
+            uuids = [BTCharacteristic.batteryLevel.uuid]
+        } else if service.uuid == BTService.deviceInformation.uuid {
+            uuids = [BTCharacteristic.serialNumber.uuid]
+        } else if service.uuid == BTService.cyclingSpeedAndCadenceService.uuid {
             uuids = [
-                CBUUID(string: "FFF1"),
-                BTService.batteryService.uuid,
-                BTService.deviceInformation.uuid,
-                BTService.cyclingSpeedAndCadenceService.uuid
+                BTCharacteristic.cscMeasurement.uuid,
+                BTCharacteristic.cscFeature.uuid
             ]
         }
         
