@@ -225,6 +225,11 @@ public class BluetoothThingManager: NSObject {
                 // delay setting connected state until discovered services
                 didConnectThing(thing, peripheral: peripheral)
             } else {
+                if peripheral.state == .disconnected {
+                    // force to discover on next connect
+                    thing.services.removeAll()
+                }
+                
                 thing.state = peripheral.state
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
@@ -350,7 +355,9 @@ public class BluetoothThingManager: NSObject {
             if let service = peripheral.services?.first(where: {$0.uuid == subscription.serviceUUID}) {
                 
                 if let characteristic = service.characteristics?.first(where: {$0.uuid == subscription.characteristicUUID}) {
-                    peripheral.setNotifyValue(true, for: characteristic)
+                    if !characteristic.isNotifying {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    }
                 } else {
                     if let uuid = subscription.characteristicUUID {
                         peripheral.discoverCharacteristics([uuid], for: service)
@@ -375,7 +382,9 @@ public class BluetoothThingManager: NSObject {
             for characteristic in characteristics.filter({
                 subscription.characteristicUUID == nil || $0.uuid == subscription.characteristicUUID
             }) {
-                peripheral.setNotifyValue(false, for: characteristic)
+                if characteristic.isNotifying {
+                    peripheral.setNotifyValue(false, for: characteristic)
+                }
             }
         }
     }
@@ -602,7 +611,9 @@ extension BluetoothThingManager: CBPeripheralDelegate {
                 }
                 
                 if shouldSubscribe(characteristic: characteristic, subscriptions: subscriptions) {
-                    peripheral.setNotifyValue(true, for: characteristic)
+                    if !characteristic.isNotifying {
+                        peripheral.setNotifyValue(true, for: characteristic)
+                    }
                 } else {
                     peripheral.readValue(for: characteristic)
                 }

@@ -802,14 +802,13 @@ class BluetoothThingManagerTests: XCTestCase {
         // discovery should not be called again
         XCTAssertEqual(peripheral.discoverServicesCalled, 2)
         XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 4)
-        // always call setNotify
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 7)
 
         
         // When
         thing.unsubscribe(.heartRateMeasurement)
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 9)
+        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
         XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
         XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
                        BTCharacteristic.heartRateMeasurement.uuid)
