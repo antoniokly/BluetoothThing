@@ -32,7 +32,8 @@ public extension BTCharacteristic {
     static let firmwareRevisionString = BTCharacteristic(service: "180A", characteristic: "2A26")
     static let manufacturerNameString = BTCharacteristic(service: "180A", characteristic: "2A29")
     static let batteryLevel = BTCharacteristic(service: "180F", characteristic: "2A19")
-    
+    static let batteryPowerState = BTCharacteristic(service: "180F", characteristic: "2A1A")
+
     // Fitness
     static let heartRateMeasurement = BTCharacteristic(service: "180D", characteristic: "2A37")
     static let bodySensorLocation = BTCharacteristic(service: "180D", characteristic: "2A38")
