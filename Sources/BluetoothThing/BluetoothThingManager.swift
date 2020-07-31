@@ -476,7 +476,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral, rssi: RSSI) {
             setupThing(thing, for: peripheral)
 
-            if thing.autoReconnect || thing.pendingConnect {
+            if (thing.autoReconnect || thing.pendingConnect) && !thing.disconnecting {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
             
