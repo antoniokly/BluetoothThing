@@ -515,6 +515,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         os_log("didConnect %@", peripheral)
         if let thing = didUpdatePeripheral(peripheral){
             thing.pendingConnect = false
+            thing.disconnecting = false
             thing.timer?.invalidate()
             thing.timer = nil
         }
@@ -530,7 +531,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             if !thing.disconnecting {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
-            thing.disconnecting = false
             dataStore.updateThing(thing)
         }
     }
