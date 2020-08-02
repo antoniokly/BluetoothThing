@@ -62,6 +62,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _subscribe: ((BTSubscription) -> Void)?
     var _unsubscribe: ((BTSubscription) -> Void)?
     
+    public var isRegistered: Bool { autoReconnect }
+    
     public func connect(register: Bool = false) {
         guard let _connect = _connect else {
             pendingConnect = true
