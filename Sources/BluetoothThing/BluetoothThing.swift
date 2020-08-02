@@ -148,6 +148,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case name
         case characteristics
         case customData
+        case autoReconnect
     }
     
     public init(id: UUID, name: String? = nil) {
