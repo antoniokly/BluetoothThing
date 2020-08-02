@@ -19,6 +19,7 @@ extension String {
     static let characteristics = "characteristics"
     static let customData = "customData"
     static let isRegistered = "isRegistered"
+    static let autoReconnect = "autoReconnect"
     static let key = "key"
     static let value = "value"
     static let modifiedAt = "modifiedAt"

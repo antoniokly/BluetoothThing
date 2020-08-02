@@ -42,7 +42,8 @@ struct BTModel {
                 managedObjectClass: BTPeripheral.self,
                 attributes: [
                     .attribute(name: "id", type: .stringAttributeType, isOptional: true),
-                    .attribute(name: "name", type: .stringAttributeType, isOptional: true)
+                    .attribute(name: "name", type: .stringAttributeType, isOptional: true),
+                    .attribute(name: "autoReconnect", type: .booleanAttributeType, isOptional: true)
                 ],
                 relationships: [
                     .relationship(name: "customData", destination: CustomData.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),

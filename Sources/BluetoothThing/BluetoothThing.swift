@@ -47,7 +47,16 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         characteristics[.serialNumber]?.hexEncodedString
     }
     
-    var autoReconnect = false
+    public var isRegistered: Bool { autoReconnect }
+    
+    var autoReconnect = false {
+        didSet {
+            if autoReconnect != oldValue {
+                NotificationCenter.default.post(name: Self.didChange, object: self.id)
+            }
+        }
+    }
+    
     var disconnecting = false
     var pendingConnect = false
 
@@ -61,9 +70,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _notify: ((Bool) -> Void)?
     var _subscribe: ((BTSubscription) -> Void)?
     var _unsubscribe: ((BTSubscription) -> Void)?
-    
-    public var isRegistered: Bool { autoReconnect }
-    
+        
     public func connect(register: Bool = false) {
         guard let _connect = _connect else {
             pendingConnect = true
@@ -148,7 +155,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         case name
         case characteristics
         case customData
-        case autoReconnect
     }
     
     public init(id: UUID, name: String? = nil) {
