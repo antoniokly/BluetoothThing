@@ -471,6 +471,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             return
         }
         
+        let manufacturerData = advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
+        
         let foundThing: BluetoothThing
 
         if let thing = didUpdatePeripheral(peripheral, rssi: RSSI) {
@@ -494,7 +496,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             setupThing(foundThing, for: peripheral)
         }
         
-        delegate.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
+        delegate.bluetoothThingManager(self, didFindThing: foundThing, manufacturerData: manufacturerData, rssi: RSSI)
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
