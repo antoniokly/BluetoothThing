@@ -494,7 +494,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             setupThing(foundThing, for: peripheral)
         }
         
-        delegate.bluetoothThingManager(self, didFindThing: foundThing, rssi: RSSI)
+        delegate.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
         
         foundThing.timer?.invalidate()
         foundThing.timer = nil
