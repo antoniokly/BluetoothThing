@@ -109,8 +109,6 @@ extension CoreDataStore: PersistentStoreProtocol {
           
             let thing = BluetoothThing(id: peripheralId, name: entity.name)
             
-            thing.autoReconnect = entity.autoReconnect
-            
             for data in entity.customData as! Set<CustomData> {
                 thing.customData[data.key!] = data.value
             }
@@ -156,8 +154,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             peripheral = BTPeripheral(context: persistentContainer.viewContext)
             peripheral.setValuesForKeys([
                 .id: thing.id.uuidString,
-                .name: thing.name as Any,
-                .autoReconnect: thing.autoReconnect
+                .name: thing.name as Any
             ])
             
             os_log("Created an BTPeripheral")

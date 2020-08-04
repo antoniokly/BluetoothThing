@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17175" systemVersion="20A5323l" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="BTCentral" representedClassName="BTCentral" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
@@ -13,7 +13,6 @@
         <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="discoveries" inverseEntity="BTPeripheral"/>
     </entity>
     <entity name="BTPeripheral" representedClassName="BTPeripheral" syncable="YES">
-        <attribute name="autoReconnect" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="customData" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CustomData" inverseName="peripheral" inverseEntity="CustomData"/>
@@ -41,7 +40,7 @@
     <elements>
         <element name="BTCentral" positionX="2.6328125" positionY="-16.01953125" width="128" height="88"/>
         <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="118"/>
-        <element name="BTPeripheral" positionX="4.875" positionY="101.9296875" width="128" height="119"/>
+        <element name="BTPeripheral" positionX="4.875" positionY="101.9296875" width="128" height="118"/>
         <element name="CustomData" positionX="221.8125" positionY="-22.41796875" width="128" height="103"/>
         <element name="GATTCharacteristic" positionX="414.20703125" positionY="208.8515625" width="128" height="103"/>
         <element name="GATTService" positionX="221.6484375" positionY="148.81640625" width="128" height="103"/>

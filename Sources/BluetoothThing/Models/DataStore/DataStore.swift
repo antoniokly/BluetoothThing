@@ -73,8 +73,7 @@ class DataStore: DataStoreProtocol {
                                         keyValues: [
                                             String.name: thing.name as Any,
                                             String.characteristics: thing.characteristics,
-                                            String.customData: thing.customData,
-                                            String.autoReconnect: thing.autoReconnect
+                                            String.customData: thing.customData
                 ])
             self.persistentStore.save(context: self.things)
         }

@@ -2,7 +2,8 @@
 //  BTPeripheral+CoreDataProperties.swift
 //  BluetoothThing
 //
-//  Created by Antonio Yip on 2/08/20.
+//  Created by Antonio Yip on 30/05/20.
+//  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 //
 
@@ -12,13 +13,8 @@ import CoreData
 
 extension BTPeripheral {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<BTPeripheral> {
-        return NSFetchRequest<BTPeripheral>(entityName: "BTPeripheral")
-    }
-
     @NSManaged public var id: String?
     @NSManaged public var name: String?
-    @NSManaged public var autoReconnect: Bool
     @NSManaged public var customData: NSSet?
     @NSManaged public var discoveries: NSSet?
     @NSManaged public var services: NSSet?
