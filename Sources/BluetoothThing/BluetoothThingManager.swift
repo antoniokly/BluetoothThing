@@ -520,6 +520,8 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             thing.disconnecting = false
             thing.timer?.invalidate()
             thing.timer = nil
+            thing._onConnected?()
+            thing._onConnected = nil
         }
     }
     

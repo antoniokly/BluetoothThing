@@ -60,13 +60,14 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     var _notify: ((Bool) -> Void)?
     var _subscribe: ((BTSubscription) -> Void)?
     var _unsubscribe: ((BTSubscription) -> Void)?
+    var _onConnected: (() -> Void)?
     
     @available(*, deprecated, message: "Use connect()")
-    public func connect(register: Bool = false) {
+    public func connect(register: Bool) {
         connect()
     }
     
-    public func connect() {
+    public func connect(completion: @escaping () -> Void = {}) {
         disconnecting = false
         guard let _connect = _connect else {
             pendingConnect = true
@@ -74,6 +75,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
             return
         }
         _connect()
+        _onConnected = completion
     }
     
     @available(*, deprecated, message: "Connection will be restored if disconnected y the peripheral, other connection logic should be implemented by the app.")
@@ -82,7 +84,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     @available(*, deprecated, message: "Use forget() or disconnect()")
-    public func disconnect(deregister: Bool = false) {
+    public func disconnect(deregister: Bool) {
         if deregister {
             forget()
         } else {
