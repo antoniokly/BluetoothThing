@@ -608,7 +608,9 @@ extension BluetoothThingManager: CBPeripheralDelegate {
                 guard requests.isEmpty else {
                     for request in requests {
                         if let i = thing.pendingRequests.firstIndex(of: request) {
-                            thing.request(thing.pendingRequests.remove(at: i))
+                            thing.request(request)
+                            request.completion()
+                            thing.pendingRequests.remove(at: i)
                         }
                     }
                     continue
