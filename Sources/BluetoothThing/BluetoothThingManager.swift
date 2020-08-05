@@ -520,8 +520,6 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             thing.disconnecting = false
             thing.timer?.invalidate()
             thing.timer = nil
-            thing._onConnected?()
-            thing._onConnected = nil
         }
     }
     
@@ -589,6 +587,8 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         if peripheral.state == .connected && thing.state != .connected {
             thing.state = peripheral.state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            thing._onConnected?()
+            thing._onConnected = nil
         }
     }
     
