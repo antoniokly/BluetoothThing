@@ -21,6 +21,11 @@ public struct BTCharacteristic: Hashable, Codable {
         self.characteristic = characteristic
     }
     
+    public init(service: BTService, characteristic: String) {
+        self.service = service.uuid.uuidString
+        self.characteristic = characteristic
+    }
+    
     init(characteristic: CBCharacteristic) {
         self.init(service: characteristic.service.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
     }
