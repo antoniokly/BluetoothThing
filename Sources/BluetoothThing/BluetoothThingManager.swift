@@ -140,6 +140,8 @@ public class BluetoothThingManager: NSObject {
         case .poweredOn:
             isPendingToStart = false
             
+            centralManager.stopScan()
+            
             for thing in knownThings.filter({$0.state == .disconnected}) {
                 loseThing(thing)
             }
