@@ -146,10 +146,8 @@ public class BluetoothThingManager: NSObject {
             
             os_log("start scanning", serviceUUIDs)
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
-        case .poweredOff, .resetting, .unauthorized:
-            isPendingToStart = true
         default:
-            break
+            isPendingToStart = true
         }
     }
     
