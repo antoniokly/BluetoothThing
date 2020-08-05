@@ -47,42 +47,64 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         characteristics[.serialNumber]?.hexEncodedString
     }
     
-    var autoReconnect = false
-    var disconnecting = false
     var pendingConnect = false
+    var disconnecting = false
 
     var pendingRequests: [BTRequest] = []
 
     var timer: Timer?
     
-    var _connect: ((Bool) -> Void)?
+    var _connect: (() -> Void)?
     var _disconnect: ((Bool) -> Void)?
     var _request: ((BTRequest) -> Bool)?
     var _notify: ((Bool) -> Void)?
     var _subscribe: ((BTSubscription) -> Void)?
     var _unsubscribe: ((BTSubscription) -> Void)?
     
+    @available(*, deprecated, message: "Use connect()")
     public func connect(register: Bool = false) {
+        connect()
+    }
+    
+    public func connect() {
+        disconnecting = false
         guard let _connect = _connect else {
             pendingConnect = true
             os_log("pending to connect %@", self.name ?? self.id.uuidString)
             return
         }
-        _connect(register)
+        _connect()
     }
     
-    /// Registered device will connect automatically whenever available
+    @available(*, deprecated, message: "Connection will be restored if disconnected y the peripheral, other connection logic should be implemented by the app.")
     public func register() {
-        connect(register: true)
+        connect()
     }
     
+    @available(*, deprecated, message: "Use forget() or disconnect()")
     public func disconnect(deregister: Bool = false) {
-        pendingConnect = false
-        _disconnect?(deregister)
+        if deregister {
+            forget()
+        } else {
+            disconnect()
+        }
     }
     
+    public func disconnect() {
+        pendingConnect = false
+        disconnecting = true
+        _disconnect?(false)
+    }
+    
+    @available(*, deprecated, renamed: "forget")
     public func deregister() {
-        disconnect(deregister: true)
+        forget()
+    }
+    
+    public func forget() {
+        pendingConnect = false
+        disconnecting = true
+        _disconnect?(true)
     }
     
     /// Listen to changes of all subscriptions defined in BluethoothThingManager

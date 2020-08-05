@@ -179,21 +179,21 @@ public class BluetoothThingManager: NSObject {
     
     func setupThing(_ thing: BluetoothThing, for peripheral: CBPeripheral?) {
         // MARK: Connect request
-        thing._connect = { [weak self, weak peripheral, weak thing] register in
+        thing._connect = { [weak self, weak peripheral, weak thing] in
             guard let self = self, self.centralManager.state == .poweredOn, let peripheral = peripheral, let thing = thing else {
                 return
             }
 
-            self.connectThing(thing, peripheral: peripheral, register: register)
+            self.connectThing(thing, peripheral: peripheral)
         }
         
         // MARK: Disconnect request
-        thing._disconnect = { [weak self, weak thing] deregister in
+        thing._disconnect = { [weak self, weak peripheral, weak thing] forget in
             guard let self = self, self.centralManager.state == .poweredOn, let thing = thing else {
                 return
             }
             
-            self.disconnectThing(thing, peripheral: peripheral, deregister: deregister)
+            self.disconnectThing(thing, peripheral: peripheral, forget: forget)
         }
         
         // MARK: Notify request
@@ -208,116 +208,7 @@ public class BluetoothThingManager: NSObject {
                 peripheral.unsubscribe(subscriptions: self.subscriptions)
             }
         }
-    }
-    
-    @discardableResult
-    func didUpdatePeripheral(_ peripheral: CBPeripheral, rssi: NSNumber? = nil) -> BluetoothThing? {
-        guard let thing = getThing(for: peripheral) else {
-            return nil
-        }
         
-        if thing.name != peripheral.name && peripheral.name != nil {
-            thing.name = peripheral.name
-        }
-        
-        if thing.state != peripheral.state {
-            if peripheral.state == .connected {
-                // delay setting connected state until discovered services
-                didConnectThing(thing, peripheral: peripheral)
-            } else {
-                if peripheral.state == .disconnected {
-                    // force to discover on next connect
-                    thing.services.removeAll()
-                }
-                
-                thing.state = peripheral.state
-                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-            }
-        }
-        
-        if let rssi = rssi {
-            delegate.bluetoothThing(thing, didChangeRSSI: rssi)
-        }
-        
-        return thing
-    }
-    
-    @discardableResult
-    func didUpdateCharacteristic(_ characteristic: CBCharacteristic, for peripheral: CBPeripheral) -> BluetoothThing?  {
-        guard let thing = dataStore.getThing(id: peripheral.identifier) else {
-            return nil
-        }
-                
-        let btCharacteristic = BTCharacteristic(characteristic: characteristic)
-        let isNewThing = thing.hardwareSerialNumber == nil
-        
-        thing.characteristics[btCharacteristic] = characteristic.value
-        
-        if isNewThing && btCharacteristic == .serialNumber {
-            dataStore.saveThing(thing)
-        }
-            
-        let subscription = self.subscriptions.first(where: { shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) })
-        delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
-        
-
-        return thing
-    }
-    
-    func loseThing(_ thing: BluetoothThing) {
-        os_log("didLoseThing %@", thing.name ?? thing.id.uuidString)
-        
-        thing.timer?.invalidate()
-        thing.timer = nil
-        
-        self.delegate.bluetoothThingManager(self, didLoseThing: thing)
-    }
-    
-    func connectThing(_ thing: BluetoothThing, peripheral: CBPeripheral, register: Bool) {
-        thing.timer?.invalidate()
-        thing.timer = nil
-        
-        if register {
-            thing.autoReconnect = true
-        }
-        
-        dataStore.addThing(thing)
-        
-        if peripheral.state != .connected && peripheral.state != .connecting {
-            centralManager.connect(peripheral, options: Self.peripheralOptions)
-            // state may change to connecting in real case
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-        }
-    }
-        
-    func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, deregister: Bool) {
-        thing.disconnecting = true
-        
-        if deregister {
-            thing.autoReconnect = false
-        }
-        
-        if let peripheral = peripheral {
-            if peripheral.state != .disconnected && peripheral.state != .disconnecting {
-                centralManager.cancelPeripheralConnection(peripheral)
-                // state may change to disconnecting in real case
-                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-            }
-        } else {
-            thing.state = .disconnected
-            delegate.bluetoothThing(thing, didChangeState: thing.state)
-        }
-        
-        if deregister {
-            dataStore.removeThing(id: thing.id)
-            loseThing(thing)
-        }
-    }
-    
-    func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
-        peripheral.readRSSI()
-        peripheral.discoverServices(nil)
-                
         // MARK: Data Request
         thing._request = { [weak thing, weak peripheral] (request) in
             os_log("request %@", request.method.rawValue)
@@ -388,6 +279,115 @@ public class BluetoothThingManager: NSObject {
             }
         }
     }
+    
+    @discardableResult
+    func didUpdatePeripheral(_ peripheral: CBPeripheral, rssi: NSNumber? = nil) -> BluetoothThing? {
+        guard let thing = getThing(for: peripheral) else {
+            return nil
+        }
+        
+        if thing.name != peripheral.name && peripheral.name != nil {
+            thing.name = peripheral.name
+        }
+        
+        if thing.state != peripheral.state {
+            if peripheral.state == .connected {
+                // delay setting connected state until discovered services
+                didConnectThing(thing, peripheral: peripheral)
+            } else {
+                if peripheral.state == .disconnected {
+                    // force to discover on next connect
+                    thing.services.removeAll()
+                }
+                
+                thing.state = peripheral.state
+                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            }
+        }
+        
+        if let rssi = rssi {
+            delegate.bluetoothThing(thing, didChangeRSSI: rssi)
+        }
+        
+        return thing
+    }
+    
+    @discardableResult
+    func didUpdateCharacteristic(_ characteristic: CBCharacteristic, for peripheral: CBPeripheral) -> BluetoothThing?  {
+        guard let thing = dataStore.getThing(id: peripheral.identifier) else {
+            return nil
+        }
+                
+        let btCharacteristic = BTCharacteristic(characteristic: characteristic)
+        let isNewThing = thing.hardwareSerialNumber == nil
+        
+        thing.characteristics[btCharacteristic] = characteristic.value
+        
+        if isNewThing && btCharacteristic == .serialNumber {
+            dataStore.saveThing(thing)
+        }
+            
+        let subscription = self.subscriptions.first(where: { shouldSubscribe(characteristic: characteristic, subscriptions: [$0]) })
+        delegate.bluetoothThing(thing, didUpdateValue: characteristic.value, for: btCharacteristic, subscription: subscription)
+        
+
+        return thing
+    }
+    
+    func loseThing(_ thing: BluetoothThing) {
+        os_log("didLoseThing %@", thing.name ?? thing.id.uuidString)
+        
+        thing.timer?.invalidate()
+        thing.timer = nil
+        
+        self.delegate.bluetoothThingManager(self, didLoseThing: thing)
+    }
+    
+    func connectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        thing.timer?.invalidate()
+        thing.timer = nil
+        
+//        if register {
+//            thing.autoReconnect = true
+//        }
+        
+        dataStore.addThing(thing)
+        
+        if peripheral.state != .connected && peripheral.state != .connecting {
+            centralManager.connect(peripheral, options: Self.peripheralOptions)
+            // state may change to connecting in real case
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+        }
+    }
+        
+    func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, forget: Bool) {
+//        thing.disconnecting = true
+        
+//        if deregister {
+//            thing.autoReconnect = false
+//        }
+        
+        if let peripheral = peripheral {
+            if peripheral.state != .disconnected && peripheral.state != .disconnecting {
+                centralManager.cancelPeripheralConnection(peripheral)
+                // state may change to disconnecting in real case
+                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+            }
+        } else {
+            thing.state = .disconnected
+            delegate.bluetoothThing(thing, didChangeState: thing.state)
+        }
+        
+        if forget {
+            dataStore.removeThing(id: thing.id)
+            loseThing(thing)
+        }
+    }
+    
+    func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
+        peripheral.readRSSI()
+        peripheral.discoverServices(nil)
+    }
 }
 
 //MARK: - CBCentralManagerDelegate
@@ -407,7 +407,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         case .poweredOn:
             for peripheral in knownPeripherals {
                 if let thing = didUpdatePeripheral(peripheral) {
-                    if thing.autoReconnect {
+                    if thing.pendingConnect {
                         central.connect(peripheral, options: Self.peripheralOptions)
                     }
                 } else {
@@ -478,7 +478,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         if let thing = didUpdatePeripheral(peripheral, rssi: RSSI) {
             setupThing(thing, for: peripheral)
 
-            if (thing.autoReconnect || thing.pendingConnect) && !thing.disconnecting {
+            if thing.pendingConnect && !thing.disconnecting {
                 central.connect(peripheral, options: Self.peripheralOptions)
             }
             

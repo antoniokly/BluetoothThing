@@ -209,7 +209,7 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.centralManagerDidUpdateState(centralManager)
         
         // Then
-        XCTAssertNotNil(thing.deregister)
+        XCTAssertNotNil(thing._disconnect)
         XCTAssertEqual(delegate.didChangeStateThing?.id, peripheral.identifier)
         XCTAssertEqual(delegate.didChangeStateThing?.state, .connected)
         XCTAssertEqual(delegate.didChangeState, .connected)
@@ -262,14 +262,18 @@ class BluetoothThingManagerTests: XCTestCase {
         centralManager._state = .poweredOn
         sut.knownPeripherals = Set(peripherals)
         peripheral._state = .connected
+        sut.setupThing(thing, for: peripheral)
         sut.centralManager(sut.centralManager, didConnect: peripheral)
         
         // Then
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
         XCTAssertNil(peripheral.discoverServices)
 //        XCTAssertEqual(delegate.didUpdateLocationCalled, 1)
-        XCTAssertNotNil(thing.deregister)
-        XCTAssertNotNil(thing.request)
+        XCTAssertNotNil(thing._disconnect)
+        XCTAssertNotNil(thing._notify)
+        XCTAssertNotNil(thing._subscribe)
+        XCTAssertNotNil(thing._unsubscribe)
+        XCTAssertNotNil(thing._request)
     }
     
     func testDidDisconnect() {
@@ -310,7 +314,7 @@ class BluetoothThingManagerTests: XCTestCase {
         centralManager._state = .poweredOn
 
         // When
-        thing.autoReconnect = false
+        thing.pendingConnect = false
         sut.centralManager(sut.centralManager,
                            didDiscover: peripheral,
                            advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.fff0]],
@@ -320,7 +324,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(centralManager.connectCalled, 0)
         
         // When
-        thing.autoReconnect = true
+        thing.pendingConnect = true
         sut.centralManager(sut.centralManager,
                            didDiscover: peripheral,
                            advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.fff0]],
@@ -373,7 +377,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.foundThing?.name, "beef")
         
         // When
-        delegate.foundThing?.register()
+        delegate.foundThing?.connect()
         
         // Then
         XCTAssertEqual(dataStore.things.count, 1)
@@ -381,7 +385,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(centralManager.connectPeripheral, peripheral)
         
         // When
-        delegate.foundThing?.deregister()
+        delegate.foundThing?.forget()
         
         // Then
         XCTAssertEqual(dataStore.things.count, 0)
@@ -615,7 +619,7 @@ class BluetoothThingManagerTests: XCTestCase {
         }
         
         // When
-        thing.register()
+        thing.connect()
         
         // Then
         XCTAssertEqual(delegate.didFoundThingCalled, 1)
@@ -623,7 +627,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didChangeStateCalled, 2)
         
         // When
-        thing.deregister()
+        thing.forget()
         
         // Then
         // state will be changed to disconnecting then disconnected, so count is 4
@@ -638,7 +642,7 @@ class BluetoothThingManagerTests: XCTestCase {
         let peripheral = peripherals.first!
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
-        thing.autoReconnect = true
+        thing.pendingConnect = true
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
                                     subscriptions: subscriptions,
@@ -728,7 +732,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then should subscribe
         XCTAssertEqual(peripheral.state, .connected)
         XCTAssertTrue(dataStore.things.contains(thing))
-        XCTAssertFalse(thing.autoReconnect)
+        XCTAssertFalse(thing.pendingConnect)
         XCTAssertEqual(peripheral.discoverServicesCalled, 1)
         XCTAssertNil(peripheral.discoverServices)
         XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 2) // read once for subscription plus once for serialNumber
@@ -748,10 +752,10 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertFalse(thing.hasService(.cyclingPowerService))
         
         // When
-        thing.register()
+        thing.connect()
         // Then
         XCTAssertTrue(dataStore.things.contains(thing))
-        XCTAssertTrue(thing.autoReconnect)
+//        XCTAssertTrue(thing.pendingConnect)
         
         // When read unsubscribed characteristic
         thing.read(.cscMeasurement)
@@ -819,13 +823,13 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(centralManager.cancelConnectionCalled, 1)
         XCTAssertEqual(centralManager.cancelConnectionPeripheral, peripheral)
         XCTAssertEqual(peripheral.state, .disconnected)
-        XCTAssertTrue(thing.autoReconnect)
+        XCTAssertFalse(thing.pendingConnect)
                 
 
-        thing.deregister()
+        thing.forget()
         // Then
         XCTAssertEqual(centralManager.cancelConnectionCalled, 1) // should call cancel connect only once
-        XCTAssertFalse(thing.autoReconnect)
+        XCTAssertFalse(thing.pendingConnect)
     }
     
     func testNearbyThings() {
