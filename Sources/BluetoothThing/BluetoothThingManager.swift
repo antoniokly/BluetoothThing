@@ -385,8 +385,15 @@ public class BluetoothThingManager: NSObject {
     }
     
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
-        peripheral.readRSSI()
-        peripheral.discoverServices(nil)
+//        peripheral.readRSSI()
+        
+        let subscribedServices = self.subscriptions.map({$0.serviceUUID})
+        guard let services = peripheral.services?.map({$0.uuid}), Set(services).isSuperset(of: subscribedServices) else {
+            peripheral.discoverServices(nil)
+            return
+        }
+        
+        thing.subscribe()
     }
 }
 
@@ -406,8 +413,10 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         switch central.state {
         case .poweredOn:
             for peripheral in knownPeripherals {
-                if let thing = didUpdatePeripheral(peripheral) {
-                    if thing.pendingConnect {
+                if let thing = getThing(for: peripheral) {
+                    if peripheral.state == .connected {
+                        didConnectThing(thing, peripheral: peripheral)
+                    } else if thing.pendingConnect {
                         central.connect(peripheral, options: Self.peripheralOptions)
                     }
                 } else {
