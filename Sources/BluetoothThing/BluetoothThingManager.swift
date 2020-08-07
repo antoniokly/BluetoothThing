@@ -123,14 +123,14 @@ public class BluetoothThingManager: NSObject {
     }
 
     // MARK: -
-    public func startScanning(allowDuplicates: Bool) {
+    public func startScanning(allowDuplicates: Bool, timeout: TimeInterval = 10) {
         var options: [String: Any]? = nil
         
         if allowDuplicates {
             options = [
                 CBCentralManagerScanOptionAllowDuplicatesKey: allowDuplicates
             ]
-            loseThingAfterTimeInterval = 10
+            loseThingAfterTimeInterval = timeout
         }
         
         startScanning(options: options)
@@ -309,6 +309,7 @@ public class BluetoothThingManager: NSObject {
         }
         
         if thing.state != peripheral.state {
+            thing.state = peripheral.state
             if peripheral.state == .connected {
                 // delay setting connected state until discovered services
                 didConnectThing(thing, peripheral: peripheral)
@@ -318,7 +319,6 @@ public class BluetoothThingManager: NSObject {
                     thing.services.removeAll()
                 }
                 
-                thing.state = peripheral.state
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
         }
