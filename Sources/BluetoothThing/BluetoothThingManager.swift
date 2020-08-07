@@ -138,6 +138,8 @@ public class BluetoothThingManager: NSObject {
     
     public func startScanning(refresh timeInterval: TimeInterval) {
         loseThingAfterTimeInterval = timeInterval + 1
+        startScanning(options: nil)
+        
         refreshTimer?.invalidate()
         refreshTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
             self.startScanning(options: nil)
