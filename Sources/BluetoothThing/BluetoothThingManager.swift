@@ -415,7 +415,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             for peripheral in knownPeripherals {
                 if let thing = getThing(for: peripheral) {
                     if peripheral.state == .connected {
+                        // retsore state
                         didConnectThing(thing, peripheral: peripheral)
+                        delegate.bluetoothThing(thing, didChangeState: peripheral.state)
                     } else if thing.pendingConnect {
                         central.connect(peripheral, options: Self.peripheralOptions)
                     }
