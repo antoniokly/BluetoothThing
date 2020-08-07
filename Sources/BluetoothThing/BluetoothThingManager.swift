@@ -63,7 +63,9 @@ public class BluetoothThingManager: NSObject {
     lazy var centralManager = CBCentralManager(delegate: self,
                                                queue: nil,
                                                options: Self.centralManagerOptions)
-        
+    
+    var refreshTimer: Timer?
+    
     public var things: [BluetoothThing] {
         dataStore.things
     }
@@ -128,9 +130,18 @@ public class BluetoothThingManager: NSObject {
             options = [
                 CBCentralManagerScanOptionAllowDuplicatesKey: allowDuplicates
             ]
+            loseThingAfterTimeInterval = 10
         }
         
         startScanning(options: options)
+    }
+    
+    public func startScanning(refresh timeInterval: TimeInterval) {
+        loseThingAfterTimeInterval = timeInterval + 1
+        refreshTimer?.invalidate()
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: true, block: { _ in
+            self.startScanning(options: nil)
+        })
     }
     
     func startScanning(options: [String: Any]?) {
@@ -142,8 +153,10 @@ public class BluetoothThingManager: NSObject {
             
             centralManager.stopScan()
             
-            for thing in knownThings.filter({$0.state == .disconnected}) {
-                loseThing(thing)
+            if refreshTimer?.isValid != true {
+                for thing in knownThings.filter({$0.state == .disconnected}) {
+                    loseThing(thing)
+                }
             }
             
             os_log("start scanning", serviceUUIDs)
@@ -154,6 +167,9 @@ public class BluetoothThingManager: NSObject {
     }
     
     public func stopScanning() {
+        refreshTimer?.invalidate()
+        refreshTimer = nil
+        
         isPendingToStart = false
 
         guard centralManager.state == .poweredOn else {
@@ -512,7 +528,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         foundThing.timer?.invalidate()
         foundThing.timer = nil
         
-        if allowDuplicates {
+        if allowDuplicates || refreshTimer?.isValid == true {
             foundThing.timer = Timer.scheduledTimer(
                 withTimeInterval: loseThingAfterTimeInterval,
                 repeats: false,
