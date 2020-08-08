@@ -309,8 +309,6 @@ public class BluetoothThingManager: NSObject {
         }
         
         if thing.state != peripheral.state {
-            thing.state = peripheral.state
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             if peripheral.state == .connected {
                 // delay setting connected state until discovered services
                 didConnectThing(thing, peripheral: peripheral)
@@ -319,6 +317,8 @@ public class BluetoothThingManager: NSObject {
                     // force to discover on next connect
                     thing.services.removeAll()
                 }
+                thing.state = peripheral.state
+                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
         }
         

@@ -856,6 +856,7 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.centralManager(centralManager, willRestoreState: [
             CBCentralManagerRestoredStatePeripheralsKey: peripherals
         ])
+        sut.centralManagerDidUpdateState(centralManager)
         
         // Then
         XCTAssertEqual(sut.nearbyThings.count, 1)
