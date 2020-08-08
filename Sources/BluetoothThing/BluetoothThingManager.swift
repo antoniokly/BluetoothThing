@@ -604,12 +604,13 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         }
 
         // delay setting connected state until discovered services
-        if peripheral.state == .connected && thing.state != .connected {
+        if thing.state != .connected {
             thing.state = peripheral.state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-            thing._onConnected?()
-            thing._onConnected = nil
         }
+        
+        thing._onConnected?()
+        thing._onConnected = nil
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
