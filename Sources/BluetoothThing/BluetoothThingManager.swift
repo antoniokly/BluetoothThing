@@ -394,30 +394,28 @@ public class BluetoothThingManager: NSObject {
     }
     
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
-        let subscribedServices = self.subscriptions.map {
-            $0.serviceUUID
-        }
+//        let subscribedServices = self.subscriptions.map {
+//            $0.serviceUUID
+//        }
+//
+//        let requestedServices = thing.pendingRequests.map {
+//            $0.characteristic.serviceUUID
+//        }
         
-        let requestedServices = thing.pendingRequests.map {
-            $0.characteristic.serviceUUID
-        }
+//        guard let services = peripheral.services?.map({$0.uuid}),
+//              Set(services).isSuperset(of: Set(subscribedServices).union(requestedServices)
+//              ) else {
+//            // delay delegate connected call
+//            return
+//        }
+    
+        peripheral.discoverServices(nil)
         
-        guard let services = peripheral.services?.map({$0.uuid}),
-              Set(services).isSuperset(of: Set(subscribedServices).union(requestedServices)
-              ) else {
-            peripheral.discoverServices(nil)
-            // delay delegate connected call
-            return
-        }
-        
-        if thing.state != peripheral.state {
-            thing.state = peripheral.state
-            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-        }
-        
-        thing._onConnected?()
-        thing._onConnected = nil
-        thing.subscribe()
+//        if thing.state != peripheral.state {
+//            thing.state = peripheral.state
+//            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+//        }
+//        thing.subscribe()
     }
 }
 
@@ -476,7 +474,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             
             for peripheral in peripherals {
                 peripheral.delegate = self
-                didUpdatePeripheral(peripheral)
+//                didUpdatePeripheral(peripheral)
             }
             
             for thing in dataStore.things {
@@ -618,14 +616,14 @@ extension BluetoothThingManager: CBPeripheralDelegate {
             }
         }
 
+        thing._onConnected?()
+        thing._onConnected = nil
+
         // delay setting connected state until discovered services
         if thing.state != peripheral.state {
             thing.state = peripheral.state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }
-        
-        thing._onConnected?()
-        thing._onConnected = nil
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
