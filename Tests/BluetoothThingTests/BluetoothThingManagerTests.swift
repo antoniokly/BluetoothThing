@@ -623,14 +623,15 @@ class BluetoothThingManagerTests: XCTestCase {
         // Then
         XCTAssertEqual(delegate.didFoundThingCalled, 1)
         // state will be changed to connecting then connected, so count is 2
-//        XCTAssertEqual(delegate.didChangeStateCalled, 2)
+        XCTAssertEqual(delegate.didChangeStateCalled, 2)
         
         // When
         thing.forget()
         
         // Then
+        XCTAssertEqual(delegate.didLoseThingCalled, 1)
         // state will be changed to disconnecting then disconnected, so count is 4
-        XCTAssertEqual(delegate.didChangeStateCalled, 3)
+        XCTAssertEqual(delegate.didChangeStateCalled, 4)
     }
     
     func testDidConnectThing() {
@@ -662,7 +663,7 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertNotNil(thing.request)
         
         // When
-        let characteristic = BTCharacteristic(service: "FFF0", characteristic: "FFF1")
+        let characteristic = BTCharacteristic(service: BTService(service: "fff0"), characteristic: "FFF1")
         let readRequest = BTRequest(method: .read, characteristic: characteristic, value: nil)
         let readRespond = thing.request(readRequest)
         

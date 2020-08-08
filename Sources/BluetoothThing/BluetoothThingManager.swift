@@ -310,6 +310,7 @@ public class BluetoothThingManager: NSObject {
         
         if thing.state != peripheral.state {
             thing.state = peripheral.state
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             if peripheral.state == .connected {
                 // delay setting connected state until discovered services
                 didConnectThing(thing, peripheral: peripheral)
@@ -318,8 +319,6 @@ public class BluetoothThingManager: NSObject {
                     // force to discover on next connect
                     thing.services.removeAll()
                 }
-                
-                delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
         }
         
@@ -365,30 +364,22 @@ public class BluetoothThingManager: NSObject {
         thing.timer?.invalidate()
         thing.timer = nil
         
-//        if register {
-//            thing.autoReconnect = true
-//        }
-        
         dataStore.addThing(thing)
         
         if peripheral.state != .connected && peripheral.state != .connecting {
             centralManager.connect(peripheral, options: Self.peripheralOptions)
-            // state may change to connecting in real case
+            
+            // update for connecting state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }
     }
         
-    func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, forget: Bool) {
-//        thing.disconnecting = true
-        
-//        if deregister {
-//            thing.autoReconnect = false
-//        }
-        
+    func disconnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral?, forget: Bool) {        
         if let peripheral = peripheral {
             if peripheral.state != .disconnected && peripheral.state != .disconnecting {
                 centralManager.cancelPeripheralConnection(peripheral)
-                // state may change to disconnecting in real case
+                
+                // update for disconnecting state
                 delegate.bluetoothThing(thing, didChangeState: peripheral.state)
             }
         } else {
