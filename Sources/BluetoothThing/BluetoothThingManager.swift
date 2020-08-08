@@ -240,8 +240,8 @@ public class BluetoothThingManager: NSObject {
             }
             
             guard let charateristic = service.characteristics?.first(where: {$0.uuid == request.characteristic.uuid}) else {
-                peripheral.discoverCharacteristics([request.characteristic.uuid], for: service)
                 thing.pendingRequests.append(request)
+                peripheral.discoverCharacteristics([request.characteristic.uuid], for: service)
                 return false
             }
             
@@ -252,7 +252,7 @@ public class BluetoothThingManager: NSObject {
                 guard let data = request.value else { return false }
                 peripheral.writeValue(data, for: charateristic, type: .withoutResponse)
             }
-            
+            request.completion()
             return true
         }
         
@@ -394,28 +394,8 @@ public class BluetoothThingManager: NSObject {
     }
     
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
-//        let subscribedServices = self.subscriptions.map {
-//            $0.serviceUUID
-//        }
-//
-//        let requestedServices = thing.pendingRequests.map {
-//            $0.characteristic.serviceUUID
-//        }
-        
-//        guard let services = peripheral.services?.map({$0.uuid}),
-//              Set(services).isSuperset(of: Set(subscribedServices).union(requestedServices)
-//              ) else {
-//            // delay delegate connected call
-//            return
-//        }
-    
+        // peripheral's services are always nil on connect
         peripheral.discoverServices(nil)
-        
-//        if thing.state != peripheral.state {
-//            thing.state = peripheral.state
-//            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
-//        }
-//        thing.subscribe()
     }
 }
 
@@ -643,7 +623,6 @@ extension BluetoothThingManager: CBPeripheralDelegate {
                     for request in requests {
                         if let i = thing.pendingRequests.firstIndex(of: request) {
                             thing.request(request)
-                            request.completion()
                             thing.pendingRequests.remove(at: i)
                         }
                     }

@@ -685,6 +685,50 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.writeValueType, .withoutResponse)
     }
     
+    func testPendingRequest() {
+        // Given
+        subscriptions = [.fff1]
+
+        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
+        let peripheral = peripherals.first!
+        peripheral._services = nil
+        let dataStore = DataStoreMock(peripherals: peripherals)
+        let thing = dataStore.things.first!
+        let centralManager = CBCentralManagerMock(peripherals: peripherals)
+        centralManager._state = .poweredOn
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
+        
+        // When
+        sut.centralManager(sut.centralManager,
+                           didDiscover: peripheral,
+                           advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.fff0]],
+                           rssi: 100)
+        
+        let completionExpectation = XCTestExpectation(description: "completion")
+        let characteristic = BTCharacteristic(service: CBUUID.fff0.uuidString,
+                                              characteristic: CBUUID.fff1.uuidString)
+        let request = BTRequest(method: .write,
+                                characteristic: characteristic,
+                                value: Data(), completion: {
+                                    completionExpectation.fulfill()
+                                })
+        thing.connect {
+            let respond = thing.request(request)
+            XCTAssertFalse(respond)
+        }
+        
+        // Then
+        XCTAssertEqual(centralManager.connectCalled, 1)
+        wait(for: [completionExpectation], timeout: 2)
+        XCTAssertEqual(peripheral.writeValueCalled, 1)
+        XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, characteristic.uuid)
+        XCTAssertEqual(peripheral.writeValueData?.count, 0)
+        XCTAssertEqual(peripheral.writeValueType, .withoutResponse)
+    }
+    
     func testDidUpdateCharacteristic() {
         // Given
         subscriptions = [.fff1]
