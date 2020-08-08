@@ -406,9 +406,17 @@ public class BluetoothThingManager: NSObject {
               Set(services).isSuperset(of: Set(subscribedServices).union(requestedServices)
               ) else {
             peripheral.discoverServices(nil)
+            // delay delegate connected call
             return
         }
         
+        if thing.state != peripheral.state {
+            thing.state = peripheral.state
+            delegate.bluetoothThing(thing, didChangeState: peripheral.state)
+        }
+        
+        thing._onConnected?()
+        thing._onConnected = nil
         thing.subscribe()
     }
 }
@@ -611,7 +619,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
         }
 
         // delay setting connected state until discovered services
-        if thing.state != .connected {
+        if thing.state != peripheral.state {
             thing.state = peripheral.state
             delegate.bluetoothThing(thing, didChangeState: peripheral.state)
         }
