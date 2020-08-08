@@ -150,11 +150,11 @@ class BluetoothThingManagerTests: XCTestCase {
         
         //Then
         XCTAssertFalse(sut.isPendingToStart)
-        XCTAssertFalse(centralManager.stopScanCalled)
+        XCTAssertEqual(centralManager.stopScanCalled, 0)
         
         // When
         sut.startScanning(allowDuplicates: true)
-        
+
         //Then
         XCTAssertTrue(sut.isPendingToStart)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 0)
@@ -169,15 +169,16 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(delegate.didLoseThingCalled, 1)
         XCTAssertEqual(delegate.didLoseThing?.id, sut.knownThings.first?.id)
         XCTAssertFalse(sut.isPendingToStart)
+        XCTAssertEqual(centralManager.stopScanCalled, 1)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
         XCTAssertEqual(centralManager.scanForPeripheralsServiceUUIDs, [.fff0])
-        
+
         // When
         sut.stopScanning()
         
         //Then
         XCTAssertFalse(sut.isPendingToStart)
-        XCTAssertTrue(centralManager.stopScanCalled)
+        XCTAssertEqual(centralManager.stopScanCalled, 2)
     }
     
     func testRestoreState() {
@@ -942,5 +943,29 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(dataStore.things.count, 1)
         XCTAssertEqual(centralManager.connectCalled, 1)
         XCTAssertEqual(centralManager.connectPeripheral, peripheral)
+    }
+    
+    func testScaningRefresh() {
+        // Given
+        subscriptions = [.batteryService]
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        centralManager._state = .poweredOn
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
+        
+        // When
+        sut.startScanning(refresh: 0.3)
+        
+        // Then
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+        let exp = expectation(description: "exp")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 2)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
     }
 }

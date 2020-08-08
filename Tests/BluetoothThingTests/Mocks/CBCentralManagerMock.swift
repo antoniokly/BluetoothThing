@@ -26,9 +26,9 @@ class CBCentralManagerMock: CBCentralManager {
         return _state
     }
     
-    var stopScanCalled = false
+    var stopScanCalled = 0
     override func stopScan() {
-        stopScanCalled = true
+        stopScanCalled += 1
     }
     
     var connectCalled = 0
