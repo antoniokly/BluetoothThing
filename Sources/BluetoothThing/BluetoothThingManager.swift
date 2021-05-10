@@ -205,6 +205,10 @@ public class BluetoothThingManager: NSObject {
             self.connectThing(thing, peripheral: peripheral)
         }
         
+        if thing.pendingConnect {
+            thing._connect?()
+        }
+        
         // MARK: Disconnect request
         thing._disconnect = { [weak self, weak peripheral, weak thing] forget in
             guard let self = self, self.centralManager.state == .poweredOn, let thing = thing else {
