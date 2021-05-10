@@ -69,13 +69,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public func connect(completion: @escaping () -> Void = {}) {
         disconnecting = false
+        _onConnected = completion
         guard let _connect = _connect else {
             pendingConnect = true
             os_log("pending to connect %@", self.name ?? self.id.uuidString)
             return
         }
         _connect()
-        _onConnected = completion
     }
     
     @available(*, deprecated, message: "Connection will be restored if disconnected y the peripheral, other connection logic should be implemented by the app.")
