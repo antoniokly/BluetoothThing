@@ -6,6 +6,7 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
+#if swift(<5.5)
 import XCTest
 import CoreBluetooth
 @testable import BluetoothThing
@@ -164,3 +165,4 @@ class SubscriptionTests: XCTestCase {
         }
     }
 }
+#endif

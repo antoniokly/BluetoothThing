@@ -6,6 +6,7 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
+#if swift(<5.5)
 import Foundation
 @testable import BluetoothThing
 
@@ -23,3 +24,4 @@ class DataStoreMock: DataStore {
         savedThing = thing
     }
 }
+#endif

@@ -67,7 +67,7 @@ func getSubscribedCharateristics<T: Sequence>(for peripheral: CBPeripheral,
 func shouldSubscribe<T: Sequence>(characteristic: CBCharacteristic,
                      subscriptions: T) -> Bool where T.Element == BTSubscription {
     return subscriptions.contains { subscription in
-        if subscription.serviceUUID != characteristic.service.uuid {
+        if subscription.serviceUUID != characteristic.service?.uuid {
             return false
         }
         

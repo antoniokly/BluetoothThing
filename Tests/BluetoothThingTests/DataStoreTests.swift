@@ -6,6 +6,7 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
+#if swift(<5.5)
 import XCTest
 import CoreBluetooth
 @testable import BluetoothThing
@@ -145,3 +146,4 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(persistentStore.saveCalled, 1)
     }
 }
+#endif

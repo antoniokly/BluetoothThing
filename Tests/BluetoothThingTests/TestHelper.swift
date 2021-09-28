@@ -6,6 +6,7 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
+#if swift(<5.5)
 import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
@@ -54,3 +55,4 @@ extension BTSubscription {
         return BTSubscription(serviceUUID: .fff0, characteristicUUID: .fff2)
     }()
 }
+#endif

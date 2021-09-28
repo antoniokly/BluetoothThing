@@ -6,6 +6,7 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
+#if swift(<5.5)
 import XCTest
 import CoreBluetooth
 @testable import BluetoothThing
@@ -969,3 +970,4 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
     }
 }
+#endif

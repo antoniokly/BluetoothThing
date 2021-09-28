@@ -27,7 +27,7 @@ public struct BTCharacteristic: Hashable, Codable {
     }
     
     init(characteristic: CBCharacteristic) {
-        self.init(service: characteristic.service.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
+        self.init(service: characteristic.service!.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
     }
 }
 
