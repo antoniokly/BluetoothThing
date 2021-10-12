@@ -45,6 +45,13 @@ public extension BTCharacteristic {
     static let cscMeasurement = BTCharacteristic(service: "1816", characteristic: "2A5B")
     static let cscFeature = BTCharacteristic(service: "1816", characteristic: "2A5C")
 
+    // Cycling Power
+    static let sensorLocation = BTSubscription(service: "1818", characteristic: "2A5D")
+    static let cyclingPowerMeasurement = BTSubscription(service: "1818", characteristic: "2A63")
+    static let cyclingPowerVector = BTSubscription(service: "1818", characteristic: "2A64")
+    static let cyclingPowerFeature = BTSubscription(service: "1818", characteristic: "2A65")
+    static let cyclingPowerControlPoint = BTSubscription(service: "1818", characteristic: "2A66")
+    
     // GPS
     static let longitude = BTSubscription(service: "1819", characteristic: "2AAE")
     static let latitude = BTSubscription(service: "1819", characteristic: "2AAF")
