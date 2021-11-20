@@ -27,7 +27,11 @@ public struct BTCharacteristic: Hashable, Codable {
     }
     
     init(characteristic: CBCharacteristic) {
+        #if swift(<5.5)
+        self.init(service: characteristic.service!.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
+        #else
         self.init(service: characteristic.service.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
+        #endif
     }
 }
 
