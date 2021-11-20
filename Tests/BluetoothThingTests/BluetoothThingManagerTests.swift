@@ -719,7 +719,6 @@ class BluetoothThingManagerTests: XCTestCase {
                                 })
         thing.connect {
             let respond = thing.request(request)
-            XCTAssertFalse(respond)
         }
         
         // Then
