@@ -97,13 +97,13 @@ public class BluetoothThingManager: NSObject {
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
                             useCoreData: Bool = false) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, options: Self.centralManagerOptions!)
+        self.init(delegate: delegate, subscriptions: subscriptions, options: nil)
     }
     
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                                          subscriptions: T,
                                          useCoreData: Bool = false,
-                                         options: [String: Any]) where T.Element == BTSubscription {
+                                         options: [String: Any]?) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, options: options)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
@@ -117,7 +117,7 @@ public class BluetoothThingManager: NSObject {
                             subscriptions: T,
                             useCoreData: Bool = false,
                             useCloudKit: Bool = false) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions)
+        self.init(delegate: delegate, subscriptions: subscriptions, options: nil)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
         )
@@ -129,7 +129,7 @@ public class BluetoothThingManager: NSObject {
                                          subscriptions: T,
                                          useCoreData: Bool = false,
                                          useCloudKit: Bool = false,
-                                         options: [String: Any]) where T.Element == BTSubscription {
+                                         options: [String: Any]?) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, options: options)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
@@ -141,7 +141,7 @@ public class BluetoothThingManager: NSObject {
     
     init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                       subscriptions: T,
-                      options: [String: Any]) where T.Element == BTSubscription {
+                      options: [String: Any]?) where T.Element == BTSubscription {
         self.delegate = delegate
         self.subscriptions = Set(subscriptions)
         super.init()
