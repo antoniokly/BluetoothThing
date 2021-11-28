@@ -51,7 +51,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(*, deprecated, message: "Submit your own restore ID")
-    static let centralManagerOptions: [String: Any]? = [
+    static let centralManagerOptions: [String: Any] = [
         CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
     ]
     
@@ -93,7 +93,7 @@ public class BluetoothThingManager: NSObject {
             
     // MARK: - Public Initializer
     
-    @available(*, deprecated, message: "Use options to submit your own restore ID")
+    @available(*, deprecated, message: "Use options to submit your own restore ID, e.g.: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!]")
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
                             useCoreData: Bool = false) where T.Element == BTSubscription {
@@ -115,7 +115,7 @@ public class BluetoothThingManager: NSObject {
         self.knownThings = Set(dataStore.things)
     }
     
-    @available(*, deprecated, message: "Use options to submit your own restore ID")
+    @available(*, deprecated, message: "Use options to submit your own restore ID, e.g.: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!]")
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
