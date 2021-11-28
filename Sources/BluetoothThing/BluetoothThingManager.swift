@@ -50,6 +50,7 @@ public class BluetoothThingManager: NSObject {
         #endif
     }
     
+    @available(*, deprecated, message: "Submit your own restore ID")
     static let centralManagerOptions: [String: Any]? = [
         CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
     ]
@@ -59,10 +60,7 @@ public class BluetoothThingManager: NSObject {
     public internal (set) var delegate: BluetoothThingManagerDelegate
     public internal (set) var dataStore: DataStoreProtocol!
     public internal (set) var subscriptions: Set<BTSubscription>
-            
-    lazy var centralManager = CBCentralManager(delegate: self,
-                                               queue: nil,
-                                               options: Self.centralManagerOptions)
+    public internal (set) var centralManager: CBCentralManager!
     
     var refreshTimer: Timer?
     
@@ -94,16 +92,26 @@ public class BluetoothThingManager: NSObject {
     var knownThings: Set<BluetoothThing> = []
             
     // MARK: - Public Initializer
+    
+    @available(*, deprecated, message: "Use options to submit your own restore ID")
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
                             useCoreData: Bool = false) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions)
+        self.init(delegate: delegate, subscriptions: subscriptions, options: Self.centralManagerOptions!)
+    }
+    
+    public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
+                                         subscriptions: T,
+                                         useCoreData: Bool = false,
+                                         options: [String: Any]) where T.Element == BTSubscription {
+        self.init(delegate: delegate, subscriptions: subscriptions, options: options)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
         )
         self.knownThings = Set(dataStore.things)
     }
     
+    @available(*, deprecated, message: "Use options to submit your own restore ID")
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
@@ -116,13 +124,32 @@ public class BluetoothThingManager: NSObject {
         self.knownThings = Set(dataStore.things)
     }
     
-    init<T: Sequence>(delegate: BluetoothThingManagerDelegate, subscriptions: T) where T.Element == BTSubscription {
+    @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
+    public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
+                                         subscriptions: T,
+                                         useCoreData: Bool = false,
+                                         useCloudKit: Bool = false,
+                                         options: [String: Any]) where T.Element == BTSubscription {
+        self.init(delegate: delegate, subscriptions: subscriptions, options: options)
+        self.dataStore = DataStore(persistentStore:
+            useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
+        )
+        self.knownThings = Set(dataStore.things)
+    }
+    
+    // MARK: - Initializer
+    
+    init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
+                      subscriptions: T,
+                      options: [String: Any]) where T.Element == BTSubscription {
         self.delegate = delegate
         self.subscriptions = Set(subscriptions)
         super.init()
+        self.centralManager = CBCentralManager(delegate: self, queue: nil, options: options)
     }
 
     // MARK: -
+    
     public func startScanning(allowDuplicates: Bool, timeout: TimeInterval = 10) {
         var options: [String: Any]? = nil
         
