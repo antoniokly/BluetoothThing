@@ -49,12 +49,7 @@ public class BluetoothThingManager: NSObject {
         }
         #endif
     }
-    
-    @available(*, deprecated, message: "Submit your own restore ID")
-    static let centralManagerOptions: [String: Any] = [
-        CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!
-    ]
-    
+        
     static let peripheralOptions: [String: Any]? = nil
     
     public internal (set) var delegate: BluetoothThingManagerDelegate
@@ -93,11 +88,11 @@ public class BluetoothThingManager: NSObject {
             
     // MARK: - Public Initializer
     
-    @available(*, deprecated, message: "Use options to submit your own restore ID, e.g.: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!]")
+    @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
                             useCoreData: Bool = false) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, options: Self.centralManagerOptions)
+        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
         )
@@ -107,21 +102,21 @@ public class BluetoothThingManager: NSObject {
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                                          subscriptions: T,
                                          useCoreData: Bool = false,
-                                         options: [String: Any]?) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, options: options)
+                                         restoreID: String? = nil) where T.Element == BTSubscription {
+        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: restoreID)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
         )
         self.knownThings = Set(dataStore.things)
     }
     
-    @available(*, deprecated, message: "Use options to submit your own restore ID, e.g.: [CBCentralManagerOptionRestoreIdentifierKey: Bundle.main.bundleIdentifier!]")
+    @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                             subscriptions: T,
                             useCoreData: Bool = false,
                             useCloudKit: Bool = false) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, options: Self.centralManagerOptions)
+        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
         )
@@ -133,8 +128,8 @@ public class BluetoothThingManager: NSObject {
                                          subscriptions: T,
                                          useCoreData: Bool = false,
                                          useCloudKit: Bool = false,
-                                         options: [String: Any]?) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, options: options)
+                                         restoreID: String? = nil) where T.Element == BTSubscription {
+        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: restoreID)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
         )
@@ -145,10 +140,15 @@ public class BluetoothThingManager: NSObject {
     
     init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
                       subscriptions: T,
-                      options: [String: Any]?) where T.Element == BTSubscription {
+                      restoreID: String?) where T.Element == BTSubscription {
         self.delegate = delegate
         self.subscriptions = Set(subscriptions)
         super.init()
+        
+        var options: [String: Any]?
+        if let id = restoreID {
+            options = [CBCentralManagerOptionRestoreIdentifierKey: id]
+        }
         self.centralManager = CBCentralManager(delegate: self, queue: nil, options: options)
     }
 
