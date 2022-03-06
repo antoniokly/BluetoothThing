@@ -12,12 +12,13 @@ import os.log
 
 public class BluetoothThing: NSObject, Codable, Identifiable {
     
-    static let didChange = Notification.Name("\(String(describing: self)).didChange")
+    static let didChange = Notification.Name("\(String(describing: BluetoothThing.self)).didChange")
     
     public private (set) var id: UUID
     public internal (set) var state: ConnectionState = .disconnected
     public internal (set) var services: Set<BTService> = []
     public internal (set) var subscriptions: Set<BTSubscription> = []
+    public internal (set) var advertisementData: [String : Any] = [:]
     
     public var name: String? = nil {
         didSet {
@@ -45,6 +46,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public var hardwareSerialNumber: String? {
         characteristics[.serialNumber]?.hexEncodedString
+    }
+    
+    public var manufacturerData: Data? { advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
+    }
+    
+    public var advertisedServiceUUIDs: [String] {
+        (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID])?.map { $0.uuidString } ?? []
     }
     
     var pendingConnect = false
