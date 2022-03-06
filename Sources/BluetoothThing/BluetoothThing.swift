@@ -51,8 +51,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var manufacturerData: Data? { advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
     }
     
-    public var advertisedServiceUUIDs: [String] {
-        (advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID])?.map { $0.uuidString } ?? []
+    public var advertisedServiceUUIDs: [CBUUID] {
+        advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? []
     }
     
     var pendingConnect = false
