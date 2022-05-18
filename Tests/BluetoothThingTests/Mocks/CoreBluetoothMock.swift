@@ -47,14 +47,10 @@ extension CBPeripheral {
         }
         
         given(mock.discoverServices(any())).will { (serviceUUIDs: [CBUUID]?) in
-            guard let uuids = serviceUUIDs else { return }
-            given(mock.services).willReturn(uuids.map { CBService.mock(uuid: $0) })
             mock.delegate?.peripheral?(mock, didDiscoverServices: nil)
         }
         
         given(mock.discoverCharacteristics(firstArg(any()), for: secondArg(any()))).will { (characteristicUUIDs: [CBUUID]?, service: CBService) in
-            guard let uuids = characteristicUUIDs else { return }
-            given(service.characteristics).willReturn(uuids.map { CBCharacteristic.mock(uuid: $0) } )
             mock.delegate?.peripheral?(mock, didDiscoverCharacteristicsFor: service, error: nil)
         }
 

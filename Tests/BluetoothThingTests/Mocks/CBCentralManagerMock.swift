@@ -38,7 +38,7 @@ class CBCentralManagerMock: CBCentralManager {
     override func connect(_ peripheral: CBPeripheral, options: [String : Any]?) {
         connectCalled += 1
         connectPeripheral = peripheral
-        peripheral.setState(.connecting)
+        peripheral.setState(.connected)
         delegate?.centralManager?(self, didConnect: peripheral)
     }
     
