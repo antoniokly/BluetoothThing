@@ -6,13 +6,13 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import Foundation
+import CoreBluetooth
 @testable import BluetoothThing
 
 class DataStoreMock: DataStore {
     
-    init(peripherals: [CBPeripheralMock]) {
+    init(peripherals: [CBPeripheral]) {
         super.init(persistentStore: UserDefaults.standard)
         self.things = peripherals.map({BluetoothThing(peripheral: $0)})
     }
@@ -24,4 +24,3 @@ class DataStoreMock: DataStore {
         savedThing = thing
     }
 }
-#endif

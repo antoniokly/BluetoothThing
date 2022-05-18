@@ -18,22 +18,20 @@ class SubscriptionTests: XCTestCase {
     let characteristicUUID1 = CBUUID(string: "FFF1")
     let characteristicUUID2 = CBUUID(string: "FFF2")
     
-    var peripheral: CBPeripheralMock!
+    var peripheral: CBPeripheral!
 
     override func setUp() {
-        let services = [
-            CBServiceMock(uuid: serviceUUID1),
-            CBServiceMock(uuid: serviceUUID2)
+        let characteristics = [
+            CBCharacteristic.mock(uuid: characteristicUUID1),
+            CBCharacteristic.mock(uuid: characteristicUUID2)
         ]
         
-        for service in services {
-            service._characteristics = [
-                CBCharacteristicMock(uuid: characteristicUUID1, service: service),
-                CBCharacteristicMock(uuid: characteristicUUID2, service: service)
-            ]
-        }
+        let services = [
+            CBService.mock(uuid: serviceUUID1, characteristics: characteristics),
+            CBService.mock(uuid: serviceUUID2, characteristics: characteristics)
+        ]
         
-        peripheral = CBPeripheralMock(identifier: UUID(), services: services)
+        peripheral = CBPeripheral.mock(identifier: UUID(), services: services)
     }
 
     override func tearDown() {

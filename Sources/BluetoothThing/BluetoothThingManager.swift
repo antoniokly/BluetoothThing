@@ -90,8 +90,8 @@ public class BluetoothThingManager: NSObject {
     
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: T,
-                            useCoreData: Bool = false) where T.Element == BTSubscription {
+                                         subscriptions: T,
+                                         useCoreData: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
@@ -113,9 +113,9 @@ public class BluetoothThingManager: NSObject {
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: T,
-                            useCoreData: Bool = false,
-                            useCloudKit: Bool = false) where T.Element == BTSubscription {
+                                         subscriptions: T,
+                                         useCoreData: Bool = false,
+                                         useCloudKit: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
@@ -495,6 +495,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             for thing in dataStore.things {
                 let peripheral = peripherals.first(where: {$0.identifier == thing.id})
                 // peripheral can be nil
+                if let state = peripheral?.state {
+                    thing.state = state
+                }
                 setupThing(thing, for: peripheral)
             }
         }
@@ -567,7 +570,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
-        if let thing = didUpdatePeripheral(peripheral){
+        if let thing = didUpdatePeripheral(peripheral) {
             thing.pendingConnect = false
             thing.disconnecting = false
             thing.timer?.invalidate()

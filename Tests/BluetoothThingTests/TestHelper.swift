@@ -6,12 +6,12 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
+import Mockingbird
 
-func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) -> [CBPeripheralMock] where T.Element == BTSubscription {
+func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) -> [CBPeripheral] where T.Element == BTSubscription {
     
     let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
         if let characteristicUUID = subscription.characteristicUUID {
@@ -22,18 +22,18 @@ func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) ->
     }
     
     let services = uuids.map { serviceUUID, characteristicsUUIDs -> CBService in
-        let service = CBServiceMock(uuid: serviceUUID)
+        let service = CBService.mock(uuid: serviceUUID)
         let characteristics = characteristicsUUIDs?.map {
-            CBCharacteristicMock(uuid: $0, service: service)
+            CBCharacteristic.mock(uuid: $0, service: service)
         }
-        service._characteristics = characteristics
+        given(service.characteristics).willReturn(characteristics)
         return service
     }
     
-    var peripherals: [CBPeripheralMock] = []
+    var peripherals: [CBPeripheral] = []
     
     for _ in 0 ..< numberOfPeripherals {
-        peripherals.append(CBPeripheralMock(identifier: UUID(),
+        peripherals.append(CBPeripheral.mock(identifier: UUID(),
                                             services: services))
     }
     
@@ -55,4 +55,3 @@ extension BTSubscription {
         return BTSubscription(serviceUUID: .fff0, characteristicUUID: .fff2)
     }()
 }
-#endif

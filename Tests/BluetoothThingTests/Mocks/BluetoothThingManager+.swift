@@ -6,7 +6,6 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
@@ -17,11 +16,10 @@ extension BluetoothThingManager {
                      subscriptions: T,
                      dataStore: DataStoreProtocol,
                      centralManager: CBCentralManagerMock) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions)
+        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: nil)
         self.dataStore = dataStore
         self.knownThings = Set(dataStore.things)
         self.centralManager = centralManager
         centralManager.delegate = self
     }
 }
-#endif
