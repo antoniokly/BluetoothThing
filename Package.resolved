@@ -9,6 +9,15 @@
           "revision": "2056017452743d713f8bde6f78a1a857acdaf96b",
           "version": "0.0.12"
         }
+      },
+      {
+        "package": "Mockingbird",
+        "repositoryURL": "https://github.com/birdrides/mockingbird.git",
+        "state": {
+          "branch": null,
+          "revision": "6e0d473df6b975719e145f6aebf90990c634700e",
+          "version": "0.20.0"
+        }
       }
     ]
   },

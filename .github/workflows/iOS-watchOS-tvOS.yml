@@ -1,0 +1,24 @@
+name: iOS-watchOS-tvOS
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: iOS
+      run: xcodebuild build -destination 'name=iPhone 13 Pro Max' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
+
+    - name: watchOS
+      run: xcodebuild build -destination 'name=Apple Watch Series 7 - 45mm' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
+
+    - name: tvOS
+      run: xcodebuild build -destination 'name=Apple TV 4K (2nd generation)' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'

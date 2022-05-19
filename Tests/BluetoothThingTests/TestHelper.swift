@@ -6,38 +6,36 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import Foundation
 import CoreBluetooth
 @testable import BluetoothThing
+import Mockingbird
 
-func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) -> [CBPeripheralMock] where T.Element == BTSubscription {
+func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) -> [CBPeripheral] where T.Element == BTSubscription {
     
-    let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
-        if let characteristicUUID = subscription.characteristicUUID {
-            return (subscription.serviceUUID, [characteristicUUID])
+    let services = Dictionary(grouping: subscriptions) {
+        $0.serviceUUID
+    }.mapValues { subscription -> [CBUUID]? in
+        let characteristics = subscription.compactMap {
+            $0.characteristicUUID
+        }
+        if characteristics.isEmpty {
+            return nil
         } else {
-            return (subscription.serviceUUID, nil)
+            return characteristics
         }
-    }
-    
-    let services = uuids.map { serviceUUID, characteristicsUUIDs -> CBService in
-        let service = CBServiceMock(uuid: serviceUUID)
+    }.map { serviceUUID, characteristicsUUIDs -> CBService in
+        let service = CBService.mock(uuid: serviceUUID)
         let characteristics = characteristicsUUIDs?.map {
-            CBCharacteristicMock(uuid: $0, service: service)
+            CBCharacteristic.mock(uuid: $0, service: service)
         }
-        service._characteristics = characteristics
+        given(service.characteristics).willReturn(characteristics)
         return service
     }
     
-    var peripherals: [CBPeripheralMock] = []
-    
-    for _ in 0 ..< numberOfPeripherals {
-        peripherals.append(CBPeripheralMock(identifier: UUID(),
-                                            services: services))
+    return stride(from: 0, to: numberOfPeripherals, by: 1).map { _ in
+        CBPeripheral.mock(identifier: UUID(), services: services)
     }
-    
-    return peripherals
 }
 
 extension CBUUID {
@@ -55,4 +53,3 @@ extension BTSubscription {
         return BTSubscription(serviceUUID: .fff0, characteristicUUID: .fff2)
     }()
 }
-#endif

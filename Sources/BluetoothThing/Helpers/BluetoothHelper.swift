@@ -9,6 +9,23 @@
 import Foundation
 import CoreBluetooth
 
+public extension CBUUID {
+    static let deviceInformation = CBUUID(string: "180A")
+    static let batteryService = CBUUID(string: "180F")
+    
+    // Fitness
+    static let runningSpeedAndCadenceService = CBUUID(string: "1814")
+    static let cyclingSpeedAndCadenceService = CBUUID(string: "1816")
+    static let cyclingPowerService = CBUUID(string: "1818")
+    static let heartRateService = CBUUID(string: "180D")
+    
+    // Characteristics
+    static let serialNumber = CBUUID(string: "2A25")
+    static let cscMeasurement = CBUUID(string: "2A5B")
+    static let cscFeature = CBUUID(string: "2A5C")
+    static let heartRateMeasurement = CBUUID(string: "2A37")
+}
+
 public typealias BluetoothState = CBManagerState
 public extension CBManagerState {
     var description: String {
@@ -67,15 +84,9 @@ func getSubscribedCharateristics<T: Sequence>(for peripheral: CBPeripheral,
 func shouldSubscribe<T: Sequence>(characteristic: CBCharacteristic,
                      subscriptions: T) -> Bool where T.Element == BTSubscription {
     return subscriptions.contains { subscription in
-        #if swift(<5.5)
-        if subscription.serviceUUID != characteristic.service.uuid {
-            return false
-        }
-        #else
         if subscription.serviceUUID != characteristic.service?.uuid {
             return false
         }
-        #endif
         
         if subscription.characteristicUUID != nil &&
             subscription.characteristicUUID != characteristic.uuid {

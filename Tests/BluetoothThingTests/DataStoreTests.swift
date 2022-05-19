@@ -6,7 +6,6 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import XCTest
 import CoreBluetooth
 @testable import BluetoothThing
@@ -15,7 +14,7 @@ class DataStoreTests: XCTestCase {
 
     var sut: DataStore!
     var persistentStore = PersistentStoreMock()
-    var peripherals: [CBPeripheralMock]!
+    var peripherals: [CBPeripheral]!
     var subscriptions: [BTSubscription] = []
     
     override func setUp() {        
@@ -146,4 +145,3 @@ class DataStoreTests: XCTestCase {
         XCTAssertEqual(persistentStore.saveCalled, 1)
     }
 }
-#endif

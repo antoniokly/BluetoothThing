@@ -6,9 +6,9 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import XCTest
 import CoreBluetooth
+import Mockingbird
 @testable import BluetoothThing
 
 class SubscriptionTests: XCTestCase {
@@ -18,22 +18,24 @@ class SubscriptionTests: XCTestCase {
     let characteristicUUID1 = CBUUID(string: "FFF1")
     let characteristicUUID2 = CBUUID(string: "FFF2")
     
-    var peripheral: CBPeripheralMock!
+    var peripheral: CBPeripheral!
 
     override func setUp() {
         let services = [
-            CBServiceMock(uuid: serviceUUID1),
-            CBServiceMock(uuid: serviceUUID2)
+            CBService.mock(uuid: serviceUUID1),
+            CBService.mock(uuid: serviceUUID2)
         ]
         
-        for service in services {
-            service._characteristics = [
-                CBCharacteristicMock(uuid: characteristicUUID1, service: service),
-                CBCharacteristicMock(uuid: characteristicUUID2, service: service)
-            ]
-        }
+        peripheral = CBPeripheral.mock(identifier: UUID())
         
-        peripheral = CBPeripheralMock(identifier: UUID(), services: services)
+        given(peripheral.services).willReturn(services)
+        
+        peripheral.services?.forEach {
+            given($0.characteristics).willReturn([
+                .mock(uuid: characteristicUUID1, service: $0),
+                .mock(uuid: characteristicUUID2, service: $0),
+            ])
+        }
     }
 
     override func tearDown() {
@@ -77,7 +79,7 @@ class SubscriptionTests: XCTestCase {
         XCTAssertEqual(subscribed.count, 2)
         XCTAssertEqual(subscribed.map({$0.uuid}),
                        [characteristicUUID1, characteristicUUID2])
-        XCTAssertEqual(subscribed.map({$0.service.uuid}),
+        XCTAssertEqual(subscribed.compactMap({$0.service?.uuid}),
                        [serviceUUID1, serviceUUID2])
     }
     
@@ -112,7 +114,7 @@ class SubscriptionTests: XCTestCase {
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
         
-        peripheral._services = nil
+        given(peripheral.services).willReturn(nil)
         
         let subscribed = getSubscribedCharateristics(for: peripheral,
                                                      subscriptions: subscriptions)
@@ -125,7 +127,7 @@ class SubscriptionTests: XCTestCase {
             BTSubscription(serviceUUID: serviceUUID1, characteristicUUID: characteristicUUID1)
         ]
                 
-        peripheral._services = [CBServiceMock(uuid: serviceUUID1)]
+        given(peripheral.services).willReturn([.mock(uuid: serviceUUID1)])
         
         let subscribed = getSubscribedCharateristics(for: peripheral,
                                                      subscriptions: subscriptions)
@@ -142,11 +144,14 @@ class SubscriptionTests: XCTestCase {
             BTSubscription(serviceUUID: serviceUUID2, characteristicUUID: characteristicUUID2),
         ]
         
+        given(peripheral.delegate).willReturn(nil)
+
         // When
         peripheral.subscribe(subscriptions: subsriptions)
         
         //Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
+        verify(peripheral.setNotifyValue(true, for: any())).wasCalled(4)
+        
         for service in peripheral.services ?? [] {
             for characteristic in service.characteristics ?? [] {
                 XCTAssertTrue(characteristic.isNotifying)
@@ -157,7 +162,7 @@ class SubscriptionTests: XCTestCase {
         peripheral.unsubscribe(subscriptions: subsriptions)
         
         //Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
+        verify(peripheral.setNotifyValue(false, for: any())).wasCalled(4)
         for service in peripheral.services ?? [] {
             for characteristic in service.characteristics ?? [] {
                 XCTAssertFalse(characteristic.isNotifying)
@@ -165,4 +170,3 @@ class SubscriptionTests: XCTestCase {
         }
     }
 }
-#endif

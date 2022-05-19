@@ -6,25 +6,26 @@
 //  Copyright © 2020 Antonio Yip. All rights reserved.
 //
 
-#if swift(<5.5)
 import Foundation
 import CoreBluetooth
+import Mockingbird
 
 class CBCentralManagerMock: CBCentralManager {
-    var _state: CBManagerState = .unknown {
-        didSet {
-            if _state != .poweredOn {
-                for peripheral in peripherals {
-                    peripheral._state = .disconnected
-                }
-            }
-        }
-    }
     
-    private var peripherals: [CBPeripheralMock] = []
+    private var peripherals: [CBPeripheral] = []
     
     override var state: CBManagerState {
         return _state
+    }
+    
+    private var _state: CBManagerState = .unknown
+    func setState(_ state: CBManagerState) {
+        _state = state
+        if _state != .poweredOn {
+            for peripheral in peripherals {
+                peripheral.setState(.disconnected)
+            }
+        }
     }
     
     var stopScanCalled = 0
@@ -37,10 +38,7 @@ class CBCentralManagerMock: CBCentralManager {
     override func connect(_ peripheral: CBPeripheral, options: [String : Any]?) {
         connectCalled += 1
         connectPeripheral = peripheral
-        if let p = peripheral as? CBPeripheralMock {
-            p._state = .connected
-        }
-        
+        peripheral.setState(.connected)
         delegate?.centralManager?(self, didConnect: peripheral)
     }
     
@@ -63,16 +61,12 @@ class CBCentralManagerMock: CBCentralManager {
     override func cancelPeripheralConnection(_ peripheral: CBPeripheral) {
         cancelConnectionCalled += 1
         cancelConnectionPeripheral = peripheral
-
-        if let peripheral = peripheral as? CBPeripheralMock {
-            peripheral._state = .disconnected
-        }
+        peripheral.setState(.disconnected)
         delegate?.centralManager?(self, didDisconnectPeripheral: peripheral, error: nil)
     }
     
-    init(peripherals: [CBPeripheralMock]) {
+    init(peripherals: [CBPeripheral]) {
         super.init(delegate: nil, queue: nil, options: nil)
         self.peripherals = peripherals
     }
 }
-#endif

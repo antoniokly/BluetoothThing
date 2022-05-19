@@ -10,8 +10,8 @@ import Foundation
 import CoreBluetooth
 
 public struct BTCharacteristic: Hashable, Codable {
-    private var service: String
-    private var characteristic: String
+    private let service: String
+    private let characteristic: String
     
     public var serviceUUID: CBUUID { CBUUID(string: service) }
     public var uuid: CBUUID { CBUUID(string: characteristic) }
@@ -27,11 +27,7 @@ public struct BTCharacteristic: Hashable, Codable {
     }
     
     init(characteristic: CBCharacteristic) {
-        #if swift(<5.5)
-        self.init(service: characteristic.service.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
-        #else
-        self.init(service: characteristic.service!.uuid.uuidString, characteristic: characteristic.uuid.uuidString)
-        #endif
+        self.init(service: characteristic.service?.uuid.uuidString ?? "", characteristic: characteristic.uuid.uuidString)
     }
 }
 

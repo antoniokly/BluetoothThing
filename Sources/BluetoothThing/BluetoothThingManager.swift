@@ -90,8 +90,8 @@ public class BluetoothThingManager: NSObject {
     
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: T,
-                            useCoreData: Bool = false) where T.Element == BTSubscription {
+                                         subscriptions: T,
+                                         useCoreData: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore() : UserDefaults.standard
@@ -113,9 +113,9 @@ public class BluetoothThingManager: NSObject {
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
     public convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: T,
-                            useCoreData: Bool = false,
-                            useCloudKit: Bool = false) where T.Element == BTSubscription {
+                                         subscriptions: T,
+                                         useCoreData: Bool = false,
+                                         useCloudKit: Bool = false) where T.Element == BTSubscription {
         self.init(delegate: delegate, subscriptions: subscriptions, restoreID: Bundle.main.bundleIdentifier)
         self.dataStore = DataStore(persistentStore:
             useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard
@@ -495,6 +495,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
             for thing in dataStore.things {
                 let peripheral = peripherals.first(where: {$0.identifier == thing.id})
                 // peripheral can be nil
+                if let state = peripheral?.state {
+                    thing.state = state
+                }
                 setupThing(thing, for: peripheral)
             }
         }
@@ -548,6 +551,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         delegate.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
 
+        // For backward compatibility
         delegate.bluetoothThingManager(self, didFindThing: foundThing, manufacturerData: manufacturerData, rssi: RSSI)
         
         foundThing.timer?.invalidate()
@@ -567,7 +571,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         os_log("didConnect %@", peripheral)
-        if let thing = didUpdatePeripheral(peripheral){
+        if let thing = didUpdatePeripheral(peripheral) {
             thing.pendingConnect = false
             thing.disconnecting = false
             thing.timer?.invalidate()
@@ -601,7 +605,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 //MARK: - CBPeripheralDelegate
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services))
+        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services?.map{$0.uuid} ?? [] ))
 
         guard let thing = things.first(where: {$0.id == peripheral.identifier}) else {
             return
@@ -647,7 +651,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
-            os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
+            os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics.map{$0.uuid})
             
             guard let thing = getThing(for: peripheral) else {
                 return
