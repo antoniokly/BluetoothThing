@@ -2,7 +2,7 @@
 [![Swift](https://github.com/antoniokly/BluetoothThing/workflows/Swift/badge.svg)](https://github.com/antoniokly/BluetoothThing/actions)
 [![codecov](https://codecov.io/gh/antoniokly/BluetoothThing/branch/master/graph/badge.svg?token=3XY446W8S5)](https://codecov.io/gh/antoniokly/BluetoothThing)
 [![Latest Stable Version](https://img.shields.io/github/v/tag/antoniokly/BluetoothThing?color=orange&label=Swift%20Package)](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app)
-[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/platforms-iOS%2011.0%20%7C%20tvOS%2011.0%20%7C%20watchOS%204.0%20%7C%20macOS%2010.13-orange.svg)](https://developer.apple.com/documentation/swiftui)
+[![Platforms iOS | watchOS | tvOS | macOS](https://img.shields.io/badge/platforms-iOS%2011.0%20%7C%20tvOS%2011.0%20%7C%20watchOS%207.4%20%7C%20macOS%2010.13-orange.svg)](https://developer.apple.com/documentation/swiftui)
 [![GitHub](https://img.shields.io/github/license/antoniokly/HandySwiftUI?color=orange)](https://github.com/antoniokly/BluetoothThing/blob/master/LICENSE)
 
 Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
