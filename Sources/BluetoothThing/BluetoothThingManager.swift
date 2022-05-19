@@ -551,6 +551,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         
         delegate.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
 
+        // For backward compatibility
         delegate.bluetoothThingManager(self, didFindThing: foundThing, manufacturerData: manufacturerData, rssi: RSSI)
         
         foundThing.timer?.invalidate()
@@ -604,7 +605,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 //MARK: - CBPeripheralDelegate
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services))
+        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services?.map{$0.uuid} ?? [] ))
 
         guard let thing = things.first(where: {$0.id == peripheral.identifier}) else {
             return
@@ -650,7 +651,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
-            os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics)
+            os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics.map{$0.uuid})
             
             guard let thing = getThing(for: peripheral) else {
                 return

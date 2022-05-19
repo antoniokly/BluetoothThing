@@ -38,26 +38,68 @@ extension CBPeripheral {
         let mock = Mockingbird.mock(Self.self)
         given(mock.identifier).willReturn(identifier)
         given(mock.name).willReturn(name)
-        given(mock.services).willReturn(services)
+        given(mock.services).willReturn(nil)
         mock.setState(state)
                 
-        given(mock.setNotifyValue(firstArg(any()), for: secondArg(any()))).will { (enabled: Bool, characteristic: CBCharacteristic) in
+        given(mock.setNotifyValue(firstArg(any()), for: any())).will { (enabled: Bool, characteristic: CBCharacteristic) in
             given(characteristic.isNotifying).willReturn(enabled)
             mock.delegate?.peripheral?(mock, didUpdateNotificationStateFor: characteristic, error: nil)
         }
         
-        given(mock.discoverServices(any())).will { (serviceUUIDs: [CBUUID]?) in
+        given(mock.discoverServices(any())).will { (lookFor: [CBUUID]?) in
+            if let uuids = lookFor {
+                given(mock.services).willReturn(uuids.map {.mock(uuid: $0)})
+            } else {
+                given(mock.services).willReturn((services ?? []) + [
+                    .mock(uuid: .batteryService),
+                    .mock(uuid: .deviceInformation),
+                    .mock(uuid: .cyclingSpeedAndCadenceService),
+                    .mock(uuid: .heartRateService)
+                ])
+            }
+            
             mock.delegate?.peripheral?(mock, didDiscoverServices: nil)
         }
         
-        given(mock.discoverCharacteristics(firstArg(any()), for: secondArg(any()))).will { (characteristicUUIDs: [CBUUID]?, service: CBService) in
+        given(mock.discoverCharacteristics(firstArg(any()), for: any())).will { (characteristicUUIDs: [CBUUID]?, service: CBService) in
+            
+            if let uuids = characteristicUUIDs {
+                given(service.characteristics).willReturn(uuids.map {
+                    .mock(uuid: $0, service: service)
+                })
+            } else {
+                if service.uuid == .cyclingSpeedAndCadenceService {
+                    given(service.characteristics).willReturn([
+                        .mock(uuid: .cscFeature, service: service),
+                        .mock(uuid: .cscMeasurement, service: service)
+                    ])
+                } else if service.uuid == .heartRateService {
+                    given(service.characteristics).willReturn([
+                        .mock(uuid: .heartRateMeasurement, service: service)
+                    ])
+                } else if service.uuid == .fff0 {
+                    given(service.characteristics).willReturn([
+                        .mock(uuid: .fff1, service: service),
+                        .mock(uuid: .fff2, service: service)
+                    ])
+                }
+            }
+            
             mock.delegate?.peripheral?(mock, didDiscoverCharacteristicsFor: service, error: nil)
         }
-
+        
         return mock
     }
     
     func setState(_ state: CBPeripheralState) {
         given(self.state.rawValue).willReturn(state.rawValue)
+    }
+    
+    func getService(_ uuid: CBUUID) -> CBService? {
+        services?.first { $0.uuid == uuid }
+    }
+    
+    func getCharacteristic(_ uuid: CBUUID) -> CBCharacteristic? {
+        services?.flatMap { $0.characteristics ?? [] }.first { $0.uuid == uuid }
     }
 }

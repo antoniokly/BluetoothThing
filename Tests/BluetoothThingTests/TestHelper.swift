@@ -13,15 +13,18 @@ import Mockingbird
 
 func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) -> [CBPeripheral] where T.Element == BTSubscription {
     
-    let uuids = subscriptions.map { (subscription) -> (CBUUID, [CBUUID]?) in
-        if let characteristicUUID = subscription.characteristicUUID {
-            return (subscription.serviceUUID, [characteristicUUID])
-        } else {
-            return (subscription.serviceUUID, nil)
+    let services = Dictionary(grouping: subscriptions) {
+        $0.serviceUUID
+    }.mapValues { subscription -> [CBUUID]? in
+        let characteristics = subscription.compactMap {
+            $0.characteristicUUID
         }
-    }
-    
-    let services = uuids.map { serviceUUID, characteristicsUUIDs -> CBService in
+        if characteristics.isEmpty {
+            return nil
+        } else {
+            return characteristics
+        }
+    }.map { serviceUUID, characteristicsUUIDs -> CBService in
         let service = CBService.mock(uuid: serviceUUID)
         let characteristics = characteristicsUUIDs?.map {
             CBCharacteristic.mock(uuid: $0, service: service)
@@ -30,14 +33,9 @@ func initPeripherals<T: Sequence>(subscriptions: T, numberOfPeripherals: Int) ->
         return service
     }
     
-    var peripherals: [CBPeripheral] = []
-    
-    for _ in 0 ..< numberOfPeripherals {
-        peripherals.append(CBPeripheral.mock(identifier: UUID(),
-                                            services: services))
+    return stride(from: 0, to: numberOfPeripherals, by: 1).map { _ in
+        CBPeripheral.mock(identifier: UUID(), services: services)
     }
-    
-    return peripherals
 }
 
 extension CBUUID {

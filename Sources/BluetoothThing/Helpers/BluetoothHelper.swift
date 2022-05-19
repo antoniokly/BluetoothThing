@@ -9,6 +9,23 @@
 import Foundation
 import CoreBluetooth
 
+public extension CBUUID {
+    static let deviceInformation = CBUUID(string: "180A")
+    static let batteryService = CBUUID(string: "180F")
+    
+    // Fitness
+    static let runningSpeedAndCadenceService = CBUUID(string: "1814")
+    static let cyclingSpeedAndCadenceService = CBUUID(string: "1816")
+    static let cyclingPowerService = CBUUID(string: "1818")
+    static let heartRateService = CBUUID(string: "180D")
+    
+    // Characteristics
+    static let serialNumber = CBUUID(string: "2A25")
+    static let cscMeasurement = CBUUID(string: "2A5B")
+    static let cscFeature = CBUUID(string: "2A5C")
+    static let heartRateMeasurement = CBUUID(string: "2A37")
+}
+
 public typealias BluetoothState = CBManagerState
 public extension CBManagerState {
     var description: String {

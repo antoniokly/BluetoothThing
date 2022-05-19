@@ -11,7 +11,7 @@ import os.log
 
 public protocol BluetoothThingManagerDelegate {
     func bluetoothThingManager(_ manager: BluetoothThingManager, didChangeState state: BluetoothState)
-    @available(*, deprecated, message: "Use bluetoothThingManager(_:didFindThing:advertisementData:rssi:)")
+    @available(*, deprecated, renamed: "bluetoothThingManager(_:didFindThing:advertisementData:rssi:)")
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFindThing thing: BluetoothThing, manufacturerData: Data?, rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didFindThing thing: BluetoothThing, advertisementData: [String : Any], rssi: NSNumber)
     func bluetoothThingManager(_ manager: BluetoothThingManager, didLoseThing thing: BluetoothThing)

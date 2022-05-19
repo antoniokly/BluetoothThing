@@ -432,15 +432,6 @@ class BluetoothThingManagerTests: XCTestCase {
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
-        
-        // unsubscribed services
-//        peripheral._services?.append(CBServiceMock(uuid: CBUUID(string: "EEE1")))
-//        peripheral._services?.append(CBServiceMock(uuid: CBUUID(string: "EEE2")))
-        //        let service = CBService.mock(uuid: .fff0)
-        //        given(peripheral.services).willReturn([
-        //            service
-        //        ])
-        
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -451,11 +442,19 @@ class BluetoothThingManagerTests: XCTestCase {
 
         // When
         centralManager.setState(.poweredOn)
-        sut.peripheral(peripheral, didDiscoverServices: nil)
+        peripheral.discoverServices(nil)
         
         // Then
+        let fff0 = peripheral.getService(.fff0)!
+        let deviceInformation = peripheral.getService(.deviceInformation)!
+        let fff1 = peripheral.getCharacteristic(.fff1)!
+        let fff2 = peripheral.getCharacteristic(.fff2)!
         // should not discover unsubscribed services
-        verify(peripheral.discoverCharacteristics(firstArg(any()), for: any())).wasCalled(1)
+        verify(peripheral.discoverCharacteristics(firstArg(any()), for: fff0)).wasCalled(1)
+        verify(peripheral.discoverCharacteristics(firstArg(any()), for: deviceInformation)).wasCalled(1)
+        verify(peripheral.setNotifyValue(true, for: any())).wasCalled(2)
+        XCTAssertTrue(fff1.isNotifying)
+        XCTAssertTrue(fff2.isNotifying)
     }
 
     func testDidDiscoverCharacteristics() {
@@ -474,10 +473,10 @@ class BluetoothThingManagerTests: XCTestCase {
        
         // When
         centralManager.setState(.poweredOn)
-        sut.peripheral(peripheral, didDiscoverCharacteristicsFor: peripheral.services!.first!, error: nil)
-        
+        peripheral.discoverServices([.fff0])
+                
         // Then
-        let characteristic = peripheral.services!.first!.characteristics!.first!
+        let characteristic = peripheral.getCharacteristic(.fff1)!
         verify(peripheral.readValue(for: characteristic)).wasCalled(1)
         verify(peripheral.setNotifyValue(true, for: characteristic)).wasCalled(1)
         XCTAssertTrue(characteristic.isNotifying)
@@ -495,15 +494,16 @@ class BluetoothThingManagerTests: XCTestCase {
                                     subscriptions: subscriptions,
                                     dataStore: dataStore,
                                     centralManager: centralManager)
-        
+        given(peripheral.delegate).willReturn(sut)
+
+        centralManager.setState(.poweredOn)
+        centralManager.connect(peripheral, options: nil)
+        peripheral.discoverServices(nil)
         let characteristic = peripheral.services!.first!.characteristics!.first!
         let value = "test".data(using: .utf8)
         given(characteristic.value).willReturn(value)
-        given(peripheral.delegate).willReturn(sut)
-
+        
         // When
-        centralManager.setState(.poweredOn)
-        centralManager.connect(peripheral, options: nil)
         sut.peripheral(peripheral, didUpdateValueFor: characteristic, error: nil)
         let thing = delegate.didUpdateValueThing
         
@@ -746,10 +746,10 @@ class BluetoothThingManagerTests: XCTestCase {
                                     centralManager: centralManager)
 
         // When
-        let serialNumberCharacter = CBCharacteristic.mock(uuid: BTCharacteristic.serialNumber.uuid,
-                                                          service: .mock(uuid: BTService.deviceInformation.uuid))
-        given(serialNumberCharacter.value).willReturn(Data(hexString: "ffff"))
-        sut.peripheral(peripheral, didUpdateValueFor: serialNumberCharacter, error: nil)
+        let serialNumber = CBCharacteristic.mock(uuid: .serialNumber,
+                                                 service: .mock(uuid: .deviceInformation))
+        given(serialNumber.value).willReturn(Data(hexString: "ffff"))
+        sut.peripheral(peripheral, didUpdateValueFor: serialNumber, error: nil)
         
         // Then
         XCTAssertEqual(dataStore.saveThingCalled, 1)
@@ -757,18 +757,18 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(dataStore.savedThing?.hardwareSerialNumber, "ffff")
     }
     
-#if swift(<5.5)
     func testBluetoothThing() {
-        // Given
+        // Given 1 service with 2 characteristics
         subscriptions = [.fff1, .fff2]
 
         let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
         let peripheral = peripherals.first!
-        peripheral._services = nil
+        given(peripheral.services).willReturn(nil)
+        
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
-        centralManager._state = .poweredOn
+        centralManager.setState(.poweredOn)
         sut = BluetoothThingManager(delegate: delegate,
                                     subscriptions: subscriptions,
                                     dataStore: dataStore,
@@ -777,28 +777,32 @@ class BluetoothThingManagerTests: XCTestCase {
                            didDiscover: peripheral,
                            advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.fff0]],
                            rssi: -10)
-        
+        given(peripheral.delegate).willReturn(sut)
+
         // When
         thing.connect()
         // Then should subscribe
         XCTAssertEqual(peripheral.state, .connected)
         XCTAssertTrue(dataStore.things.contains(thing))
         XCTAssertFalse(thing.pendingConnect)
-        XCTAssertEqual(peripheral.discoverServicesCalled, 1)
-        XCTAssertNil(peripheral.discoverServices)
-        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 2) // read once for subscription plus once for serialNumber
-        XCTAssertEqual(peripheral.discoverCharacteristics,
-                       Set(subscriptions.compactMap({$0.characteristicUUID})))
-        XCTAssertEqual(peripheral.readValueCalled, 3)
-        XCTAssertEqual(Set(peripheral.readValueCharacteristics.map{$0.uuid}),
-                       Set((subscriptions + [BTSubscription(.serialNumber)]).compactMap({$0.characteristicUUID})))
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 2)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.map{$0.uuid}),
-                       Set(subscriptions.compactMap({$0.characteristicUUID})))
         
+        let fff0 = peripheral.getService(.fff0)!
+        let deviceInformation = peripheral.getService(.deviceInformation)!
+        let fff1 = peripheral.getCharacteristic(.fff1)!
+        let fff2 = peripheral.getCharacteristic(.fff2)!
+        
+        verify(peripheral.discoverServices(nil)).wasCalled(1)
+        verify(peripheral.discoverCharacteristics(firstArg(any()), for: fff0)).wasCalled(1)
+        verify(peripheral.discoverCharacteristics(firstArg(any()), for: deviceInformation)).wasCalled(1)
+        verify(peripheral.readValue(for: fff1)).wasCalled(1)
+        verify(peripheral.readValue(for: fff2)).wasCalled(1)
+        verify(peripheral.setNotifyValue(true, for: fff1)).wasCalled(1)
+        verify(peripheral.setNotifyValue(true, for: fff2)).wasCalled(1)
+
         XCTAssertTrue(thing.hasService(.batteryService))
         XCTAssertTrue(thing.hasService(.deviceInformation))
+        XCTAssertTrue(thing.hasService(.heartRateService))
+        XCTAssertTrue(thing.hasService(.cyclingSpeedAndCadenceService))
         XCTAssertTrue(thing.hasService(BTService(service: "FFF0")))
         XCTAssertFalse(thing.hasService(.cyclingPowerService))
         
@@ -806,68 +810,54 @@ class BluetoothThingManagerTests: XCTestCase {
         thing.connect()
         // Then
         XCTAssertTrue(dataStore.things.contains(thing))
-//        XCTAssertTrue(thing.pendingConnect)
-        
+        verify(peripheral.discoverServices(nil)).wasCalled(1) //should not be called again
+                
         // When read unsubscribed characteristic
         thing.read(.cscMeasurement)
         // Then
-        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 3)
-        XCTAssertEqual(peripheral.discoverCharacteristics, [.fff1, .fff2, BTCharacteristic.cscMeasurement.uuid])
-        XCTAssertEqual(peripheral.readValueCalled, 4)
-        XCTAssertEqual(peripheral.readValueCharacteristics.last?.uuid, BTCharacteristic.cscMeasurement.uuid)
-
+        let cscService = peripheral.getService(.cyclingSpeedAndCadenceService)!
+        let cscMeasurement = peripheral.getCharacteristic(.cscMeasurement)!
+        verify(peripheral.setNotifyValue(true, for: cscMeasurement)).wasNeverCalled() // should not subscribe
+        verify(peripheral.discoverCharacteristics([.cscMeasurement], for: cscService)).wasCalled(1)
+        verify(peripheral.readValue(for: cscMeasurement)).wasCalled(1)
+        
         // When
-        thing.write(.cscMeasurement, value: Data(hexString: "ff"))
+        let data = Data(hexString: "ff")
+        thing.write(.cscMeasurement, value: data)
         // Then
-        XCTAssertEqual(peripheral.writeValueCalled, 1)
-        XCTAssertEqual(peripheral.writeValueCharacteristic?.uuid, BTCharacteristic.cscMeasurement.uuid)
-        XCTAssertEqual(peripheral.writeValueData?.int, 255)
+        verify(peripheral.writeValue(data, for: cscMeasurement, type: .withoutResponse)).wasCalled(1)
         
         // When
         thing.unsubscribe()
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 4)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
-        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.suffix(from: 2).map{$0.uuid}),
-                       Set(subscriptions.compactMap({$0.characteristicUUID})))
+        verify(peripheral.setNotifyValue(false, for: fff1)).wasCalled(1)
+        verify(peripheral.setNotifyValue(false, for: fff2)).wasCalled(1)
         
         // When
         thing.subscribe()
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 6)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(Set(peripheral.setNotifyValueCharacteristics.suffix(from: 4).map{$0.uuid}),
-                       Set(subscriptions.compactMap({$0.characteristicUUID})))
-        
-        // When
+        verify(peripheral.setNotifyValue(true, for: fff1)).wasCalled(2)
+        verify(peripheral.setNotifyValue(true, for: fff2)).wasCalled(2)
+
+        // When subscribe others
         thing.subscribe(.heartRateMeasurement)
         // Then
-        XCTAssertEqual(peripheral.discoverServicesCalled, 2)
-        XCTAssertEqual(peripheral.discoverServices, [BTCharacteristic.heartRateMeasurement.serviceUUID])
-        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 4)
-        XCTAssertEqual(peripheral.discoverCharacteristics, [.fff1, .fff2, BTCharacteristic.cscMeasurement.uuid, BTCharacteristic.heartRateMeasurement.uuid])
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 7)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, true)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
-                       BTCharacteristic.heartRateMeasurement.uuid)
+        let heartRateService = peripheral.getService(.heartRateService)!
+        let heartRateMeasurement = peripheral.getCharacteristic(.heartRateMeasurement)!
+        verify(peripheral.discoverCharacteristics([.heartRateMeasurement], for: heartRateService)).wasCalled(1)
+        verify(peripheral.setNotifyValue(true, for: heartRateMeasurement)).wasCalled(1)
 
         // When subscribe duplicated
         thing.subscribe(.heartRateMeasurement)
-        // Then
-        // discovery should not be called again
-        XCTAssertEqual(peripheral.discoverServicesCalled, 2)
-        XCTAssertEqual(peripheral.discoverCharacteristicsCalled, 4)
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 7)
+        // Then should not call the methods again
+        verify(peripheral.discoverCharacteristics([.heartRateMeasurement], for: heartRateService)).wasCalled(1)
+        verify(peripheral.setNotifyValue(true, for: heartRateMeasurement)).wasCalled(1)
 
-        
         // When
         thing.unsubscribe(.heartRateMeasurement)
         // Then
-        XCTAssertEqual(peripheral.setNotifyValueCalled, 8)
-        XCTAssertEqual(peripheral.setNotifyValueEnabled, false)
-        XCTAssertEqual(peripheral.setNotifyValueCharacteristics.last?.uuid,
-                       BTCharacteristic.heartRateMeasurement.uuid)
-        
+        verify(peripheral.setNotifyValue(false, for: heartRateMeasurement)).wasCalled(1)
+
         // When
         thing.disconnect()
         // Then
@@ -876,13 +866,11 @@ class BluetoothThingManagerTests: XCTestCase {
         XCTAssertEqual(peripheral.state, .disconnected)
         XCTAssertFalse(thing.pendingConnect)
                 
-
         thing.forget()
         // Then
-        XCTAssertEqual(centralManager.cancelConnectionCalled, 1) // should call cancel connect only once
+        XCTAssertEqual(centralManager.cancelConnectionCalled, 1, "should call cancel connect only once")
         XCTAssertFalse(thing.pendingConnect)
     }
-#endif
 
     func testNearbyThings() {
         // Given
