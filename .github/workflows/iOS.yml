@@ -14,5 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Resolve Dependencies
+      run: swift package resolve
+
     - name: Build
       run: xcodebuild build -destination 'name=iPhone 13 Pro Max' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'

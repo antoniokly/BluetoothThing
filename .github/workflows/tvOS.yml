@@ -14,5 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Resolve Dependencies
+      run: swift package resolve
+
     - name: Build
       run: xcodebuild build -destination 'name=Apple TV 4K (2nd generation)' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
