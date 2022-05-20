@@ -9,18 +9,35 @@
 import Foundation
 import CoreBluetooth
 
+
 public struct BTService: Hashable, Codable {
-        
-    private var service: String
+    enum CodingKeys: String, CodingKey {
+        case uuid
+    }
     
-    public var uuid: CBUUID { CBUUID(string: service) }
+    public let uuid: CBUUID
     
     public init(service: String) {
-        self.service = service
+        self.uuid = CBUUID(string: service)
+    }
+    
+    public init(uuid: CBUUID) {
+        self.uuid = uuid
     }
     
     init(service: CBService) {
-        self.service = service.uuid.uuidString
+        self.uuid = service.uuid
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let uuidString = try container.decode(String.self, forKey: .uuid)
+        self.init(service: uuidString)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(uuid.uuidString, forKey: .uuid)
     }
 }
 

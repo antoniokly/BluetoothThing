@@ -15,17 +15,19 @@ import CoreBluetooth
  */
 
 public struct BTSubscription: Hashable {
-    public private (set) var serviceUUID: CBUUID
-    public private (set) var characteristicUUID: CBUUID?
+    public let serviceUUID: CBUUID
+    public let characteristicUUID: CBUUID?
     
     public var name: String {
         characteristicUUID?.description ?? serviceUUID.description
     }
     
-    public init(service: String, characteristic: String? = nil, name: String? = nil) {
+    public init(service: String, characteristic: String? = nil) {
         self.serviceUUID = CBUUID(string: service)
         if let characteristic = characteristic {
             self.characteristicUUID = CBUUID(string: characteristic)
+        } else {
+            self.characteristicUUID = nil
         }
     }
     
@@ -41,6 +43,7 @@ public struct BTSubscription: Hashable {
     
     public init(_ service: BTService) {
         self.serviceUUID = service.uuid
+        self.characteristicUUID = nil
     }
 }
 

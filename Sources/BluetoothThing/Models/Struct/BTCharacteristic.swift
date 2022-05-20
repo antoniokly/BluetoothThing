@@ -10,24 +10,45 @@ import Foundation
 import CoreBluetooth
 
 public struct BTCharacteristic: Hashable, Codable {
-    private let service: String
-    private let characteristic: String
-    
-    public var serviceUUID: CBUUID { CBUUID(string: service) }
-    public var uuid: CBUUID { CBUUID(string: characteristic) }
+    enum CodingKeys: String, CodingKey {
+        case uuid, serviceUUID
+    }
+
+    public let serviceUUID: CBUUID
+    public let uuid: CBUUID
     
     public init(service: String, characteristic: String) {
-        self.service = service
-        self.characteristic = characteristic
+        self.init(service: CBUUID(string: service), characteristic: CBUUID(string: characteristic))
+    }
+    
+    public init(service: CBUUID, characteristic: CBUUID) {
+        self.serviceUUID = service
+        self.uuid = characteristic
+    }
+    
+    public init(service: BTService, characteristic: CBUUID) {
+        self.init(service: service.uuid, characteristic: characteristic)
     }
     
     public init(service: BTService, characteristic: String) {
-        self.service = service.uuid.uuidString
-        self.characteristic = characteristic
+        self.init(service: service.uuid, characteristic: CBUUID(string: characteristic))
     }
     
     init(characteristic: CBCharacteristic) {
         self.init(service: characteristic.service?.uuid.uuidString ?? "", characteristic: characteristic.uuid.uuidString)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let uuidString = try container.decode(String.self, forKey: .uuid)
+        let serviceUUIDString = try container.decode(String.self, forKey: .serviceUUID)
+        self.init(service: serviceUUIDString, characteristic: uuidString)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(uuid.uuidString, forKey: .uuid)
+        try container.encode(serviceUUID.uuidString, forKey: .serviceUUID)
     }
 }
 
