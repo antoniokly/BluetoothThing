@@ -170,7 +170,13 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     public func hasService(_ service: BTService) -> Bool {
-        services.contains(service)
+        hasService(service.uuid)
+    }
+    
+    public func hasService(_ serviceUUID: CBUUID) -> Bool {
+        Set(services.map{ $0.uuid }).union(
+            advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? []
+        ).contains(serviceUUID)
     }
             
     private enum CodingKeys: String, CodingKey {

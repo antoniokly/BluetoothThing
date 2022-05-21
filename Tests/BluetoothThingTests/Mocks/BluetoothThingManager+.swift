@@ -11,14 +11,15 @@ import CoreBluetooth
 @testable import BluetoothThing
 
 extension BluetoothThingManager {
-    // MARK: - Internal Initializer
-    convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate,
-                     subscriptions: T,
-                     dataStore: DataStoreProtocol,
-                     centralManager: CBCentralManagerMock) where T.Element == BTSubscription {
-        self.init(delegate: delegate, subscriptions: subscriptions, restoreID: nil)
-        self.dataStore = dataStore
-        self.knownThings = Set(dataStore.things)
+    // MARK: - Convenience Initializer for Testing
+    convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate? = nil,
+                                  subscriptions: T,
+                                  dataStore: DataStoreProtocol,
+                                  centralManager: CBCentralManager) where T.Element == BTSubscription {
+        self.init(delegate: delegate,
+                  subscriptions: subscriptions,
+                  dataStore: dataStore,
+                  restoreID: nil)
         self.centralManager = centralManager
         centralManager.delegate = self
     }

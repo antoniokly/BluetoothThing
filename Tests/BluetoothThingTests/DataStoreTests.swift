@@ -20,7 +20,11 @@ class DataStoreTests: XCTestCase {
     override func setUp() {        
         subscriptions = [.fff1]
         
-        peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 3)
+        peripherals = [
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions)
+        ]
         
         sut = DataStore(persistentStore: persistentStore, queue: DispatchQueue.main)
     }
