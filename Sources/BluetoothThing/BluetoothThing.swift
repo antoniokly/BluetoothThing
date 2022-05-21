@@ -16,9 +16,18 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     static let didChange = Notification.Name("\(String(describing: BluetoothThing.self)).didChange")
     
     public private (set) var id: UUID
-    public internal (set) var state: ConnectionState = .disconnected
     public internal (set) var services: Set<BTService> = []
     public internal (set) var subscriptions: Set<BTSubscription> = []
+
+    public internal (set) var state: ConnectionState = .disconnected {
+        didSet {
+            if state != oldValue {
+                if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                    statePublisher.send(state)
+                }
+            }
+        }
+    }
     
     public internal (set) var advertisementData: [String : Any] = [:] {
         didSet {
@@ -86,6 +95,12 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public private(set) lazy var customDataPublisher: CurrentValueSubject<[String: Data], Never> = .init(customData)
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var statePublisher: CurrentValueSubject<ConnectionState, Error> = .init(.disconnected)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var inRangePublisher: CurrentValueSubject<Bool, Never> = .init(false)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
         advertisementDataPublisher
             .debounce(for: 0.1, scheduler: DispatchQueue.main)
@@ -116,6 +131,45 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
             .eraseToAnyPublisher()
     }
     
+    // MARK: - Async
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func connect(pending: Bool) async throws {
+        if !pending && !inRangePublisher.value {
+            throw BTError.notInRange
+        }
+        
+        let group = DispatchGroup()
+        group.enter()
+                
+        var error: Error?
+        
+        let sub = statePublisher.receive(on: DispatchQueue.main).filter{
+            $0 == .connected
+        }.sink { completion in
+            switch completion {
+            case .finished:
+                break
+            case .failure(let e):
+                error = e
+            }
+            group.leave()
+        } receiveValue: { _ in
+            group.leave()
+        }
+        
+        if !connect() {
+            throw BTError.pendingConnect
+        }
+        
+        group.wait()
+        sub.cancel()
+
+        if let error = error {
+            throw error
+        }
+    }
+    
     // MARK: -
     
     var pendingConnect = false
@@ -138,15 +192,17 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         connect()
     }
     
-    public func connect(completion: @escaping () -> Void = {}) {
+    @discardableResult
+    public func connect(completion: @escaping () -> Void = {}) -> Bool {
         disconnecting = false
         _onConnected = completion
         guard let _connect = _connect else {
             pendingConnect = true
             os_log("pending to connect %@", self.name ?? self.id.uuidString)
-            return
+            return false
         }
         _connect()
+        return true
     }
     
     @available(*, deprecated, message: "Connection will be restored if disconnected y the peripheral, other connection logic should be implemented by the app.")

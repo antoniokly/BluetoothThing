@@ -69,6 +69,7 @@ class BluetoothThingCombineTests: XCTestCase {
         let sub = receiver.$manufacturerData.sink { data in
             exp.fulfill()
         }
+        given(peripheral.delegate).willReturn(manager)
         
         // When
         centralManager.delegate?.centralManager?(centralManager,
@@ -93,7 +94,6 @@ class BluetoothThingCombineTests: XCTestCase {
         let sub1 = receiver.$cscMeasurement.sink { _ in
             exp1.fulfill() // debounced
         }
-        given(peripheral.delegate).willReturn(manager)
 
         // When
         (0..<times).forEach { _ in
@@ -106,5 +106,68 @@ class BluetoothThingCombineTests: XCTestCase {
         
         // Then
         XCTAssertEqual(receiver.cscMeasurement?.hexEncodedString, "ffff")
+    }
+    
+    func testConnectAsync() async throws {
+        // Given
+        XCTAssertEqual(sut.state, .disconnected)
+        
+        // When
+        do {
+            try await sut.connect(pending: false)
+            XCTFail("not discovered yet")
+        } catch {
+            XCTAssertEqual(error as? BTError, BTError.notInRange)
+        }
+        
+        // Then
+        XCTAssertEqual(sut.state, .disconnected)
+        
+        // Given
+        sut.inRangePublisher.value = true
+        
+        // When
+        do {
+            try await sut.connect(pending: false)
+            XCTFail("not discovered yet")
+        } catch {
+            XCTAssertEqual(error as? BTError, BTError.pendingConnect)
+        }
+        
+        // Then
+        XCTAssertEqual(sut.state, .disconnected)
+        
+        // Given
+        given(peripheral.delegate).willReturn(manager)
+        centralManager.delegate?.centralManager?(centralManager,
+                                                 didDiscover: peripheral,
+                                                 advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.cyclingSpeedAndCadenceService], CBAdvertisementDataManufacturerDataKey: "test".data(using: .utf8) as Any],
+                                                 rssi: 100)
+        
+        
+        let exp = expectation(description: "state")
+        let sub = sut.statePublisher.sink { competion in
+            switch competion {
+            case .finished:
+                XCTFail()
+            case .failure:
+                XCTFail()
+            }
+        } receiveValue: { state in
+            XCTAssertEqual(state, .connected)
+            exp.fulfill()
+        }
+        
+        // When
+        do {
+            try await sut.connect(pending: false)
+        } catch {
+            XCTAssertEqual(error as? BTError, BTError.pendingConnect)
+        }
+        
+        // Then
+        wait(for: [exp], timeout: 1)
+        sub.cancel()
+        XCTAssertEqual(sut.state, .connected)
     }
 }

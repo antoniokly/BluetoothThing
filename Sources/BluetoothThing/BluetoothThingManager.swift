@@ -392,8 +392,7 @@ public class BluetoothThingManager: NSObject {
                     // force to discover on next connect
                     thing.services.removeAll()
                 }
-                thing.state = peripheral.state
-                delegate?.bluetoothThing(thing, didChangeState: peripheral.state)
+                updateThing(thing, state: peripheral.state)
             }
         }
         
@@ -432,6 +431,9 @@ public class BluetoothThingManager: NSObject {
         thing.timer?.invalidate()
         thing.timer = nil
         
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            thing.inRangePublisher.send(false)
+        }
         delegate?.bluetoothThingManager(self, didLoseThing: thing)
     }
     
@@ -445,7 +447,7 @@ public class BluetoothThingManager: NSObject {
             centralManager.connect(peripheral, options: Self.peripheralOptions)
             
             // update for connecting state
-            delegate?.bluetoothThing(thing, didChangeState: peripheral.state)
+            updateThing(thing, state: peripheral.state)
         }
     }
         
@@ -455,11 +457,10 @@ public class BluetoothThingManager: NSObject {
                 centralManager.cancelPeripheralConnection(peripheral)
                 
                 // update for disconnecting state
-                delegate?.bluetoothThing(thing, didChangeState: peripheral.state)
+                updateThing(thing, state: peripheral.state)
             }
         } else {
-            thing.state = .disconnected
-            delegate?.bluetoothThing(thing, didChangeState: thing.state)
+            updateThing(thing, state: .disconnected)
         }
         
         if forget {
@@ -471,6 +472,11 @@ public class BluetoothThingManager: NSObject {
     func didConnectThing(_ thing: BluetoothThing, peripheral: CBPeripheral) {
         // peripheral's services are always nil on connect
         peripheral.discoverServices(nil)
+    }
+    
+    func updateThing(_ thing: BluetoothThing, state: CBPeripheralState) {
+        thing.state = state
+        delegate?.bluetoothThing(thing, didChangeState: state)
     }
 }
 
@@ -494,7 +500,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
                     if peripheral.state == .connected {
                         // retsore state
                         didConnectThing(thing, peripheral: peripheral)
-                        delegate?.bluetoothThing(thing, didChangeState: peripheral.state)
+                        updateThing(thing, state: peripheral.state)
                     } else if thing.pendingConnect {
                         central.connect(peripheral, options: Self.peripheralOptions)
                     }
@@ -588,6 +594,9 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
         foundThing.advertisementData = advertisementData
         knownThings.insert(foundThing)
 
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            foundThing.inRangePublisher.send(true)
+        }
         delegate?.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
 
         // For backward compatibility
@@ -619,11 +628,15 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        os_log("didDisconnectPeripheral %@", peripheral)
-        if let error = error {
-            os_log("error %@", error as CVarArg)
-        }
+        os_log("didDisconnectPeripheral %@: %@", peripheral, error?.localizedDescription ?? "unknown error")
+        
         if let thing = didUpdatePeripheral(peripheral) {
+            if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                if let error = error {
+                    thing.statePublisher.send(completion: .failure(error))
+                }
+            }
+            
             // reconnect if lost connection unintentionally
             if !thing.disconnecting {
                 central.connect(peripheral, options: Self.peripheralOptions)
@@ -633,9 +646,14 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        os_log("didFailToConnect %@", peripheral)
+        os_log("didFailToConnect %@: %@", peripheral, error?.localizedDescription ?? "unknown error")
 
         if let thing = didUpdatePeripheral(peripheral) {
+            if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                if let error = error {
+                    thing.statePublisher.send(completion: .failure(error))
+                }
+            }
             delegate?.bluetoothThingManager(self, didFailToConnect: thing, error: error)
         }
     }
@@ -683,8 +701,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
 
         // delay setting connected state until discovered services
         if thing.state != peripheral.state {
-            thing.state = peripheral.state
-            delegate?.bluetoothThing(thing, didChangeState: peripheral.state)
+            updateThing(thing, state: peripheral.state)
         }
     }
     
