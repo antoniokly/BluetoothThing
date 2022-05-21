@@ -349,7 +349,6 @@ class BluetoothThingManagerTests: XCTestCase {
         subscriptions = [.fff1]
 
         let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
-        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: [])
         sut = BluetoothThingManager(delegate: delegate,

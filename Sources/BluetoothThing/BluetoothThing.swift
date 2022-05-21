@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 import os.log
+import Combine
 
 public class BluetoothThing: NSObject, Codable, Identifiable {
     
@@ -18,11 +19,22 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public internal (set) var state: ConnectionState = .disconnected
     public internal (set) var services: Set<BTService> = []
     public internal (set) var subscriptions: Set<BTSubscription> = []
-    public internal (set) var advertisementData: [String : Any] = [:]
+    
+    public internal (set) var advertisementData: [String : Any] = [:] {
+        didSet {
+            if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                advertisementDataPublisher.send(advertisementData)
+            }
+            NotificationCenter.default.post(name: Self.didChange, object: self.id)
+        }
+    }
     
     public var name: String? = nil {
         didSet {
             if name != oldValue {
+                if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                    namePublisher.send(name)
+                }
                 NotificationCenter.default.post(name: Self.didChange, object: self.id)
             }
         }
@@ -30,15 +42,19 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     public var characteristics: [BTCharacteristic: Data] = [:] {
         didSet {
-            if characteristics != oldValue {
-                NotificationCenter.default.post(name: Self.didChange, object: self.id)
+            if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                characteristicsPublisher.send(characteristics)
             }
+            NotificationCenter.default.post(name: Self.didChange, object: self.id)
         }
     }
     
     public var customData: [String: Data] = [:] {
         didSet {
             if customData != oldValue {
+                if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                    customDataPublisher.send(customData)
+                }
                 NotificationCenter.default.post(name: Self.didChange, object: self.id)
             }
         }
@@ -54,6 +70,53 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public var advertisedServiceUUIDs: [CBUUID] {
         advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? []
     }
+    
+    // MARK: - Publisher
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never> = .init(advertisementData)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var namePublisher: CurrentValueSubject<String?, Never> = .init(name)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never> = .init(characteristics)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var customDataPublisher: CurrentValueSubject<[String: Data], Never> = .init(customData)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
+        advertisementDataPublisher
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .map { $0[key] as? T }
+            .eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func manufacturerDataPublisher() -> AnyPublisher<Data?, Never> {
+        advertisementDataPublisher(for: CBAdvertisementDataManufacturerDataKey)
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func characteristicPublisher(for characteristic: BTCharacteristic) -> AnyPublisher<Data?, Never> {
+        characteristicsPublisher
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .map{ $0[characteristic] }
+            .eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func customDataPublisher(for key: String) -> AnyPublisher<Data?, Never> {
+        customDataPublisher
+            .debounce(for: 0.1, scheduler: DispatchQueue.main)
+            .map{ $0[key] }
+            .eraseToAnyPublisher()
+    }
+    
+    // MARK: -
     
     var pendingConnect = false
     var disconnecting = false

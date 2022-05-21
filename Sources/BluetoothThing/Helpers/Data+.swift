@@ -16,6 +16,10 @@ public extension Data {
     var int: Int? {
         Int(hexEncodedString, radix: 16)
     }
+
+    func string(encoding: String.Encoding) -> String? {
+        String(data: self, encoding: encoding)
+    }
     
     init(hexString string: String) {
         self.init()

@@ -73,7 +73,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     var serviceUUIDs: [CBUUID] {
-        [CBUUID](Set(subscriptions.map({$0.serviceUUID})))
+        .init(Set(subscriptions.map({$0.serviceUUID})))
     }
         
     var isPendingToStart = false
@@ -94,8 +94,9 @@ public class BluetoothThingManager: NSObject {
     }
     
     // MARK: - Publisher
+    
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
+    public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never> {

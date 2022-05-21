@@ -39,14 +39,6 @@ class BluetoothThingManagerCombineTests: XCTestCase {
     }
     
     override func setUpWithError() throws {
-        
-    }
-    
-    override func tearDownWithError() throws {
-        
-    }
-    
-    func testPublisher() {
         subscriptions = [
             BTSubscription(serviceUUID: .fff0),
             BTSubscription(serviceUUID: .cyclingPowerService),
@@ -54,21 +46,26 @@ class BluetoothThingManagerCombineTests: XCTestCase {
         ]
         
         let peripherals = [CBPeripheral.mock(subscriptions: subscriptions)]
-        let dataStore = DataStoreMock(peripherals: peripherals)
-        let centralManager = CBCentralManagerMock(peripherals: peripherals)
+        dataStore = DataStoreMock(peripherals: peripherals)
+        centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(subscriptions: subscriptions,
                                     dataStore: dataStore,
                                     centralManager: centralManager)
+    }
+    
+    override func tearDownWithError() throws {
         
-        // When
+    }
+    
+    func testPublisher() throws {
+        // Given
         let receiver = Receiver(manager: sut)
         
-        // Then
         XCTAssertEqual(sut.knownThings.count, 1)
         XCTAssertEqual(receiver.cyclingPowers.count, 0)
         XCTAssertEqual(receiver.cadences.count, 0)
         XCTAssertEqual(receiver.things.count, 1)
-        XCTAssertEqual(receiver.things.map{ $0.id }, peripherals.map{ $0.identifier })
+        XCTAssertEqual(receiver.things.map{ $0.id }, dataStore.things.map{ $0.id })
         
         // Given new fff0 Peripheral
         let newPeripheral = CBPeripheral.mock(subscriptions: subscriptions)
