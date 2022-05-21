@@ -98,9 +98,28 @@ public class BluetoothThingManager: NSObject {
     public lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func thingsPublisher(with serviceUUID: CBUUID) -> AnyPublisher<Set<BluetoothThing>, Never> {
+    public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never> {
+        thingsPublisher(with: serviceUUIDs)
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func thingsPublisher<T: Sequence>(with serviceUUIDs: T) -> AnyPublisher<Set<BluetoothThing>, Never> where T.Element == CBUUID {
         thingsPublisher.map {
-            $0.filter { $0.hasService(serviceUUID) }
+            $0.filter { $0.hasServices(serviceUUIDs) }
+        }.eraseToAnyPublisher()
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func thingsPublisher(with services: BTService...) -> AnyPublisher<Set<BluetoothThing>, Never> {
+        thingsPublisher(with: services)
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public func thingsPublisher<T: Sequence>(with services: T) -> AnyPublisher<Set<BluetoothThing>, Never> where T.Element == BTService {
+        thingsPublisher.map {
+            $0.filter {
+                $0.hasServices(services)
+            }
         }.eraseToAnyPublisher()
     }
             

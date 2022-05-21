@@ -173,10 +173,18 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         hasService(service.uuid)
     }
     
+    public func hasServices<T: Sequence>(_ services: T) -> Bool where T.Element == BTService {
+        services.reduce(true) { $0 && hasService($1) }
+    }
+    
     public func hasService(_ serviceUUID: CBUUID) -> Bool {
         Set(services.map{ $0.uuid }).union(
             advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID] ?? []
         ).contains(serviceUUID)
+    }
+    
+    public func hasServices<T: Sequence>(_ serviceUUIDs: T) -> Bool where T.Element == CBUUID {
+        serviceUUIDs.reduce(true) { $0 && hasService($1) }
     }
             
     private enum CodingKeys: String, CodingKey {
