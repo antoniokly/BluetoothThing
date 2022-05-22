@@ -103,7 +103,6 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
         advertisementDataPublisher
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .map { $0[key] as? T }
             .eraseToAnyPublisher()
     }
@@ -111,29 +110,28 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func manufacturerDataPublisher() -> AnyPublisher<Data?, Never> {
         advertisementDataPublisher(for: CBAdvertisementDataManufacturerDataKey)
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func characteristicPublisher(for characteristic: BTCharacteristic) -> AnyPublisher<Data?, Never> {
         characteristicsPublisher
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
-            .map{ $0[characteristic] }
+            .map { $0[characteristic] }
             .eraseToAnyPublisher()
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func customDataPublisher(for key: String) -> AnyPublisher<Data?, Never> {
         customDataPublisher
-            .debounce(for: 0.1, scheduler: DispatchQueue.main)
-            .map{ $0[key] }
+            .map { $0[key] }
             .eraseToAnyPublisher()
     }
     
     // MARK: - Async
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    /// Async connect, with pending options in case of the device is unreachable.
+    /// - Parameter pending: A flag to enable pending connection if the device is out of range. Error will be throw if pending = false adn the device is unreachable.
     public func connect(pending: Bool) async throws {
         if !pending && !inRangePublisher.value {
             throw BTError.notInRange
@@ -144,7 +142,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
                 
         var error: Error?
         
-        let sub = statePublisher.receive(on: DispatchQueue.main).filter{
+        let sub = statePublisher.receive(on: DispatchQueue.main).filter {
             $0 == .connected
         }.sink { completion in
             switch completion {
@@ -193,6 +191,9 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     }
     
     @discardableResult
+    /// Connect with completion handler
+    /// - Parameter completion: One time handler will be executed when connected successfully.
+    /// - Returns: Returns false if the connection cannot be performed immedialtely, however, the operation will be perfromed as soon as it is available. The operation will not be remembered after app restart.
     public func connect(completion: @escaping () -> Void = {}) -> Bool {
         disconnecting = false
         _onConnected = completion
@@ -205,7 +206,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         return true
     }
     
-    @available(*, deprecated, message: "Connection will be restored if disconnected y the peripheral, other connection logic should be implemented by the app.")
+    @available(*, deprecated, message: "Connection will be restored if disconnected by the peripheral, other connection logic should be implemented by the app.")
     public func register() {
         connect()
     }

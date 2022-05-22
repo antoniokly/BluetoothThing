@@ -89,14 +89,15 @@ class BluetoothThingCombineTests: XCTestCase {
         // Given cscMeasurement
         let data = Data(hexString: "FFFF")
         let exp1 = expectation(description: "cscMeasurement")
-        let times = 50
-        exp1.expectedFulfillmentCount = 2
-        let sub1 = receiver.$cscMeasurement.sink { _ in
-            exp1.fulfill() // debounced
+        let repeats = Int.random(in: 1..<50)
+        exp1.expectedFulfillmentCount = repeats + 1 // + 1 initial
+        let sub1 = receiver.$cscMeasurement
+            .sink { _ in
+            exp1.fulfill()
         }
 
         // When
-        (0..<times).forEach { _ in
+        (0 ..< repeats).forEach { _ in
             peripheral.delegate?.peripheral?(peripheral, didUpdateValueFor: .mock(uuid: .cscMeasurement, service: .mock(uuid: .cyclingSpeedAndCadenceService), value: data), error: nil)
         }
 
