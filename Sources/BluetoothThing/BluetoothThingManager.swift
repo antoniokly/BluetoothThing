@@ -107,7 +107,7 @@ public class BluetoothThingManager: NSObject {
     public func thingsPublisher<T: Sequence>(with serviceUUIDs: T) -> AnyPublisher<Set<BluetoothThing>, Never> where T.Element == CBUUID {
         thingsPublisher.map {
             $0.filter { $0.hasServices(serviceUUIDs) }
-        }.eraseToAnyPublisher()
+        }.share().eraseToAnyPublisher()
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
@@ -121,7 +121,7 @@ public class BluetoothThingManager: NSObject {
             $0.filter {
                 $0.hasServices(services)
             }
-        }.eraseToAnyPublisher()
+        }.share().eraseToAnyPublisher()
     }
             
     // MARK: - Public Initializer
