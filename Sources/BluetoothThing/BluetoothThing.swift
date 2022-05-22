@@ -101,6 +101,9 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public private(set) lazy var inRangePublisher: CurrentValueSubject<Bool, Never> = .init(false)
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var rssiPublisher: CurrentValueSubject<Int?, Never> = .init(nil)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
         advertisementDataPublisher
             .map { $0[key] as? T }

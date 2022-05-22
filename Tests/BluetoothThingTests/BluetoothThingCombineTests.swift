@@ -21,9 +21,11 @@ class BluetoothThingCombineTests: XCTestCase {
     var dataStore: DataStore!
     var centralManager: CBCentralManager!
     
+    // Pretending a view model
     class Receiver: ObservableObject {
         @Published var manufacturerData: Data?
         @Published var cscMeasurement: Data?
+        @Published var rssi: Int?
 
         init(device: BluetoothThing) {
             device.manufacturerDataPublisher()
@@ -32,6 +34,11 @@ class BluetoothThingCombineTests: XCTestCase {
             
             device.characteristicPublisher(for: .cscMeasurement)
                 .assign(to: &$cscMeasurement)
+            
+            device.rssiPublisher
+                .removeDuplicates()
+                .debounce(for: 0.1, scheduler: DispatchQueue.main)
+                .assign(to: &$rssi)
         }
     }
     
@@ -71,13 +78,23 @@ class BluetoothThingCombineTests: XCTestCase {
         }
         given(peripheral.delegate).willReturn(manager)
         
+        let rssi = Int.random(in: -100..<0)
+        let expRSSI = expectation(description: "rssi")
+        let subRSSI = receiver.$rssi
+            .dropFirst() // ignore initial value
+            .sink {
+                XCTAssertEqual($0, rssi)
+                expRSSI.fulfill()
+            }
+        
         // When
         centralManager.delegate?.centralManager?(centralManager,
                                                  didDiscover: peripheral,
                                                  advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.cyclingSpeedAndCadenceService], CBAdvertisementDataManufacturerDataKey: "test".data(using: .utf8) as Any],
-                                                 rssi: 100)
+                                                 rssi: rssi as NSNumber)
         waitForExpectations(timeout: 1)
         sub.cancel()
+        subRSSI.cancel()
 
         // Then
         XCTAssertEqual(sut.advertisementData[CBAdvertisementDataServiceUUIDsKey] as? [CBUUID], [CBUUID.cyclingSpeedAndCadenceService])

@@ -397,6 +397,9 @@ public class BluetoothThingManager: NSObject {
         }
         
         if let rssi = rssi {
+            if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+                thing.rssiPublisher.send(rssi.intValue)
+            }
             delegate?.bluetoothThing(thing, didChangeRSSI: rssi)
         }
         
