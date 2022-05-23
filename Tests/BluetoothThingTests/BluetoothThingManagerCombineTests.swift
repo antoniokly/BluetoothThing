@@ -75,12 +75,19 @@ class BluetoothThingManagerCombineTests: XCTestCase {
             exp.fulfill()
         }
         
+        let expNewDiscovery = expectation(description: "newDiscovery")
+        let subNewDiscovery = sut.newDiscoveryPublisher.sink { thing in
+            XCTAssertEqual(thing.id, newPeripheral.identifier)
+            expNewDiscovery.fulfill()
+        }
+        
         // When
         centralManager.delegate?.centralManager?(centralManager, didDiscover: newPeripheral, advertisementData: [CBAdvertisementDataServiceUUIDsKey: [CBUUID.fff0]], rssi: 100)
         
         // Then
         waitForExpectations(timeout: 1)
         sub.cancel()
+        subNewDiscovery.cancel()
         
         XCTAssertEqual(sut.knownThings.count, 2)
         XCTAssertEqual(receiver.cyclingPowers.count, 0)

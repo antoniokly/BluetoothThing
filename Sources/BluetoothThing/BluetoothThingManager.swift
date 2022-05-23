@@ -97,6 +97,9 @@ public class BluetoothThingManager: NSObject {
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> = .init()
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never> {
@@ -599,6 +602,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
             foundThing.inRangePublisher.send(true)
+            newDiscoveryPublisher.send(foundThing)
         }
         delegate?.bluetoothThingManager(self, didFindThing: foundThing, advertisementData: advertisementData, rssi: RSSI)
 
