@@ -10,6 +10,6 @@ import os.log
 
 extension OSLog {
     static let subsystem = "BluetoothThing"
-    static let coreData = OSLog(subsystem: subsystem, category: "coreData")
-    static let bluetooth = OSLog(subsystem: subsystem, category: "bluetooth")
+    static let storage = OSLog(subsystem: subsystem, category: "BluetoothThingStorage")
+    static let bluetooth = OSLog(subsystem: subsystem, category: "BluetoothThing")
 }
