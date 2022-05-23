@@ -235,7 +235,7 @@ public class BluetoothThingManager: NSObject {
                 }
             }
             
-            os_log("start scanning", serviceUUIDs)
+            os_log("start scanning", log: .bluetooth, type: .debug, serviceUUIDs)
             centralManager.scanForPeripherals(withServices: serviceUUIDs, options: options)
         default:
             isPendingToStart = true
@@ -252,7 +252,7 @@ public class BluetoothThingManager: NSObject {
             return
         }
         
-        os_log("stop scanning")
+        os_log("stop scanning", log: .bluetooth, type: .debug)
         centralManager.stopScan()
     }
     
@@ -307,7 +307,7 @@ public class BluetoothThingManager: NSObject {
         
         // MARK: Data Request
         thing._request = { [weak thing, weak peripheral] (request) in
-            os_log("request %@", request.method.rawValue)
+            os_log("request %@", log: .bluetooth, type: .debug, request.method.rawValue)
             guard
                 let thing = thing,
                 let peripheral = peripheral,
@@ -432,7 +432,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     func loseThing(_ thing: BluetoothThing) {
-        os_log("didLoseThing %@", thing.name ?? thing.id.uuidString)
+        os_log("didLoseThing %@", log: .bluetooth, type: .debug, thing.name ?? thing.id.uuidString)
         
         thing.timer?.invalidate()
         thing.timer = nil
@@ -497,7 +497,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
          case poweredOff
          case poweredOn
          */
-        os_log("centralManagerDidUpdateState: %@", central.state.description)
+        os_log("centralManagerDidUpdateState: %@", log: .bluetooth, type: .debug, central.state.description)
 
         switch central.state {
         case .poweredOn:
@@ -534,7 +534,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, willRestoreState dict: [String: Any]) {
-        os_log("willRestoreState: %@", dict)
+        os_log("willRestoreState: %@", log: .bluetooth, type: .debug, dict)
         
         if let peripherals = dict[CBCentralManagerRestoredStatePeripheralsKey] as? [CBPeripheral] {
             knownPeripherals = Set(peripherals)
@@ -562,7 +562,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-        os_log("didDiscover %@ %@ %@", peripheral, advertisementData, RSSI)
+        os_log("didDiscover %@ %@ %@", log: .bluetooth, type: .debug, peripheral, advertisementData, RSSI)
         knownPeripherals.insert(peripheral)
         peripheral.delegate = self
         
@@ -625,7 +625,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        os_log("didConnect %@", peripheral)
+        os_log("didConnect %@", log: .bluetooth, type: .debug, peripheral)
         if let thing = didUpdatePeripheral(peripheral) {
             thing.pendingConnect = false
             thing.disconnecting = false
@@ -635,7 +635,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
-        os_log("didDisconnectPeripheral %@: %@", peripheral, error?.localizedDescription ?? "unknown error")
+        os_log("didDisconnectPeripheral %@: %@", log: .bluetooth, type: .debug, peripheral, error?.localizedDescription ?? "unknown error")
         
         if let thing = didUpdatePeripheral(peripheral) {
             if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
@@ -653,7 +653,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
     }
     
     public func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
-        os_log("didFailToConnect %@: %@", peripheral, error?.localizedDescription ?? "unknown error")
+        os_log("didFailToConnect %@: %@", log: .bluetooth, type: .debug, peripheral, error?.localizedDescription ?? "unknown error")
 
         if let thing = didUpdatePeripheral(peripheral) {
             if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
@@ -669,7 +669,7 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
 //MARK: - CBPeripheralDelegate
 extension BluetoothThingManager: CBPeripheralDelegate {
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
-        os_log("didDiscoverServices %@ %@", peripheral, String(describing: peripheral.services?.map{$0.uuid} ?? [] ))
+        os_log("didDiscoverServices %@ %@", log: .bluetooth, type: .debug, peripheral, String(describing: peripheral.services?.map{$0.uuid} ?? [] ))
 
         guard let thing = things.first(where: {$0.id == peripheral.identifier}) else {
             return
@@ -714,7 +714,7 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if let characteristics = service.characteristics {
-            os_log("didDiscoverCharacteristicsFor %@ %@", service, characteristics.map{$0.uuid})
+            os_log("didDiscoverCharacteristicsFor %@ %@", log: .bluetooth, type: .debug, service, characteristics.map{$0.uuid})
             
             guard let thing = getThing(for: peripheral) else {
                 return
@@ -747,17 +747,17 @@ extension BluetoothThingManager: CBPeripheralDelegate {
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
-        os_log("didUpdateValueFor %@ %@", peripheral, characteristic)
+        os_log("didUpdateValueFor %@ %@", log: .bluetooth, type: .debug, peripheral, characteristic)
         didUpdateCharacteristic(characteristic, for: peripheral)
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didUpdateNotificationStateFor characteristic: CBCharacteristic, error: Error?) {
-        os_log("didUpdateNotificationStateFor %@", characteristic)
+        os_log("didUpdateNotificationStateFor %@", log: .bluetooth, type: .debug, characteristic)
         peripheral.readValue(for: characteristic)
     }
     
     public func peripheral(_ peripheral: CBPeripheral, didReadRSSI RSSI: NSNumber, error: Error?) {
-        os_log("didReadRSSI %d", RSSI.stringValue)
+        os_log("didReadRSSI %d", log: .bluetooth, type: .debug, RSSI.stringValue)
         didUpdatePeripheral(peripheral, rssi: RSSI)
     }
 }

@@ -37,12 +37,12 @@ extension BTPeripheral {
     func insertDiscovery(centralId: UUID) {
         if let set = self.discoveries as? Set<BTDiscovery>, let discovery = set.first(where: {$0.central?.id == centralId.uuidString}) {
             discovery.peripheral = self
-            os_log("updated discovery central: %@, peripheral: %@", centralId.uuidString, String(describing: self.id))
+            os_log("updated discovery central: %@, peripheral: %@", log: .coreData, type: .debug, centralId.uuidString, String(describing: self.id))
         } else {
             let discovery = BTDiscovery(context: self.managedObjectContext!) 
             discovery.insertCentral()
             self.addToDiscoveries(discovery)
-            os_log("created discovery %@", discovery.debugDescription)
+            os_log("created discovery %@", log: .coreData, type: .debug, discovery.debugDescription)
             self.insertDiscovery(centralId: centralId)
         }
     }
@@ -54,13 +54,13 @@ extension BTPeripheral {
                     .value: value,
                     .modifiedAt: Date()
                 ])
-                os_log("Updated customData %@: %@", key, String(describing: value))
+                os_log("Updated customData %@: %@", log: .coreData, type: .debug, key, String(describing: value))
             } else {
                 let customData = CustomData(context: self.managedObjectContext!)
                 customData.peripheral = self
                 customData.key = key
                 self.addToCustomData(customData)
-                os_log("Created customData")
+                os_log("Created customData", log: .coreData, type: .debug)
                 self.insertCustomData(dictionary)
             }
         }
@@ -76,7 +76,7 @@ extension BTPeripheral {
         service.id = serviceUUID.uuidString
         service.name = serviceUUID.description
         self.addToServices(service)
-        os_log("Created GATTService")
+        os_log("Created GATTService", log: .coreData, type: .debug)
         return service
     }
     

@@ -50,7 +50,7 @@ class CoreDataStore {
                  * The store could not be migrated to the current model version.
                  Check the error message to determine what the actual problem was.
                  */
-                os_log("loadPersistentStores error: %@", error.localizedDescription)
+                os_log("loadPersistentStores error: %@", log: .coreData, type: .error, error.localizedDescription)
             }
         })
         return container
@@ -71,7 +71,7 @@ class CoreDataStore {
             do {
                 try context.save()
             } catch {
-                os_log("save error: %@", error.localizedDescription)
+                os_log("save error: %@", log: .coreData, type: .error, error.localizedDescription)
             }
         }
     }
@@ -84,9 +84,9 @@ class CoreDataStore {
         
         do {
             entities = try persistentContainer.viewContext.fetch(fetchRequest)
-            os_log("fetched %@: %@", String(describing: Entity.self), entities)
+            os_log("fetched %@: %@", log: .coreData, type: .debug, String(describing: Entity.self), entities)
         } catch {
-            os_log("fetch error: %@", error.localizedDescription)
+            os_log("fetch error: %@", log: .coreData, type: .error, error.localizedDescription)
         }
 
         return entities
@@ -131,7 +131,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         do {
             try persistentContainer.viewContext.execute(deleteRequest)
         } catch  {
-            os_log("delete error: %@", error.localizedDescription)
+            os_log("delete error: %@", log: .coreData, type: .error, error.localizedDescription)
         }
     }
 
@@ -148,7 +148,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         var peripheral: BTPeripheral
         
         if let entity = peripherals.first(where: {$0.id == thing.id.uuidString || $0.hardwareId == hardwareId}) {
-            os_log("Periperal with hardwareId: %@ exists", hardwareId)
+            os_log("Periperal with hardwareId: %@ exists", log: .coreData, type: .debug, hardwareId)
             peripheral = entity
         } else {
             peripheral = BTPeripheral(context: persistentContainer.viewContext)
@@ -157,7 +157,7 @@ extension CoreDataStore: PersistentStoreProtocol {
                 .name: thing.name as Any
             ])
             
-            os_log("Created an BTPeripheral")
+            os_log("Created an BTPeripheral", log: .coreData, type: .debug)
             
             update(context: context, object: thing, keyValues: [
                 String.customData: thing.customData,
@@ -183,7 +183,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         ).first
         
         guard let peripheralId = peripheral?.id, let centralId = central?.id else {
-            os_log("No discovery found")
+            os_log("No discovery found", log: .coreData, type: .debug)
             return
         }
         
@@ -193,7 +193,7 @@ extension CoreDataStore: PersistentStoreProtocol {
 
         for discovery in discoveries {
             persistentContainer.viewContext.delete(discovery)
-            os_log("Removed discovery: %@", discovery.debugDescription)
+            os_log("Removed discovery: %@", log: .coreData, type: .debug, discovery.debugDescription)
         }
     }
     
@@ -209,7 +209,7 @@ extension CoreDataStore: PersistentStoreProtocol {
         )
         
         guard let peripheral = peripherals.first else {
-            os_log("CoreData cannot found peripheral for %@", thing)
+            os_log("CoreData cannot found peripheral for %@", log: .coreData, type: .debug, thing)
             return
         }        
         
@@ -225,7 +225,7 @@ extension CoreDataStore: PersistentStoreProtocol {
                 }
             default:
                 peripheral.setValue(value, forKey: key)
-                os_log("Updated %@: %@", key, String(describing: value))
+                os_log("Updated %@: %@", log: .coreData, type: .debug, key, String(describing: value))
             }
         }
     }

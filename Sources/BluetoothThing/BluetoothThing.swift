@@ -202,7 +202,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         _onConnected = completion
         guard let _connect = _connect else {
             pendingConnect = true
-            os_log("pending to connect %@", self.name ?? self.id.uuidString)
+            os_log("pending to connect %@", log: .bluetooth, type: .debug, self.name ?? self.id.uuidString)
             return false
         }
         _connect()
