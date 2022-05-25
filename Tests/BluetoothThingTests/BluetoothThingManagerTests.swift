@@ -970,4 +970,51 @@ class BluetoothThingManagerTests: XCTestCase {
         wait(for: [exp], timeout: 2)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
     }
+    
+    func testSetSubscriptions() {
+        // Given
+        subscriptions = [.batteryService]
+
+        
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        centralManager.setState(.poweredOn)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 0)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 0)
+        
+        sut.startScanning(options: nil)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 1)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+        
+        sut.insertSubscription(BTSubscription(BTService(service: "180F")))
+
+        XCTAssertEqual(centralManager.stopScanCalled, 1)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+        
+        sut.insertSubscription(.deviceInfomation)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 2)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
+        
+        sut.removeSubscription(.fff1)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 2)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
+        
+        sut.removeSubscription(.deviceInfomation)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 3)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 3)
+        
+        sut.setSubscription([.fff1, .fff2])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 4)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 4)
+    }
 }

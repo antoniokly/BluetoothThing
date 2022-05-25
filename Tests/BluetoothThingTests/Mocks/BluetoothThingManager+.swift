@@ -12,10 +12,10 @@ import CoreBluetooth
 
 extension BluetoothThingManager {
     // MARK: - Convenience Initializer for Testing
-    convenience init<T: Sequence>(delegate: BluetoothThingManagerDelegate? = nil,
-                                  subscriptions: T,
-                                  dataStore: DataStoreProtocol,
-                                  centralManager: CBCentralManager) where T.Element == BTSubscription {
+    convenience init(delegate: BluetoothThingManagerDelegate? = nil,
+                     subscriptions: [BTSubscription],
+                     dataStore: DataStoreProtocol,
+                     centralManager: CBCentralManager) {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: dataStore,
