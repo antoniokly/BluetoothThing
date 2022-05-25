@@ -1016,5 +1016,26 @@ class BluetoothThingManagerTests: XCTestCase {
         
         XCTAssertEqual(centralManager.stopScanCalled, 4)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 4)
+        
+        sut.insertSubscriptions([.fff1, .fff2])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 4)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 4)
+        
+        sut.insertSubscriptions([.fff1, .fff2, .batteryService])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 5)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 5)
+        
+        sut.removeSubscriptions([.deviceInfomation])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 5)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 5)
+        
+        sut.removeSubscriptions([.batteryService])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 6)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 6)
+
     }
 }

@@ -107,7 +107,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func thingsPublisher<T: Sequence>(with serviceUUIDs: T) -> AnyPublisher<Set<BluetoothThing>, Never> where T.Element == CBUUID {
+    public func thingsPublisher<S: Sequence>(with serviceUUIDs: S) -> AnyPublisher<Set<BluetoothThing>, Never> where S.Element == CBUUID {
         thingsPublisher.map {
             $0.filter { $0.hasServices(serviceUUIDs) }
         }.share().eraseToAnyPublisher()
@@ -119,7 +119,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func thingsPublisher<T: Sequence>(with services: T) -> AnyPublisher<Set<BluetoothThing>, Never> where T.Element == BTService {
+    public func thingsPublisher<S: Sequence>(with services: S) -> AnyPublisher<Set<BluetoothThing>, Never> where S.Element == BTService {
         thingsPublisher.map {
             $0.filter {
                 $0.hasServices(services)
@@ -130,19 +130,19 @@ public class BluetoothThingManager: NSObject {
     // MARK: - Public Initializer
     
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
-    public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [BTSubscription],
-                            useCoreData: Bool = false) {
+    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
+                                         subscriptions: S,
+                                         useCoreData: Bool = false) where S.Element == BTSubscription {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   useCoreData: useCoreData,
                   restoreID: Bundle.main.bundleIdentifier)
     }
     
-    public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [BTSubscription],
-                            useCoreData: Bool = false,
-                            restoreID: String? = nil) {
+    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
+                                         subscriptions: S,
+                                         useCoreData: Bool = false,
+                                         restoreID: String? = nil) where S.Element == BTSubscription {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
@@ -152,10 +152,10 @@ public class BluetoothThingManager: NSObject {
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
-    public convenience init(delegate: BluetoothThingManagerDelegate,
-                            subscriptions: [BTSubscription],
-                            useCoreData: Bool = false,
-                            useCloudKit: Bool = false) {
+    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
+                                         subscriptions: S,
+                                         useCoreData: Bool = false,
+                                         useCloudKit: Bool = false) where S.Element == BTSubscription{
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
@@ -164,11 +164,11 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public convenience init(delegate: BluetoothThingManagerDelegate? = nil,
-                            subscriptions: [BTSubscription] = [],
-                            useCoreData: Bool = false,
-                            useCloudKit: Bool = false,
-                            restoreID: String? = nil) {
+    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate? = nil,
+                                         subscriptions: S,
+                                         useCoreData: Bool = false,
+                                         useCloudKit: Bool = false,
+                                         restoreID: String? = nil) where S.Element == BTSubscription {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
@@ -178,10 +178,10 @@ public class BluetoothThingManager: NSObject {
     
     // MARK: - Base Initializer
     
-    init(delegate: BluetoothThingManagerDelegate?,
-         subscriptions: [BTSubscription],
-         dataStore: DataStoreProtocol,
-         restoreID: String?) {
+    init<S: Sequence>(delegate: BluetoothThingManagerDelegate?,
+                      subscriptions: S,
+                      dataStore: DataStoreProtocol,
+                      restoreID: String?) where S.Element == BTSubscription {
         self.delegate = delegate
         self.dataStore = dataStore
         self.subscriptions = Set(subscriptions)
@@ -196,6 +196,20 @@ public class BluetoothThingManager: NSObject {
     }
 
     // MARK: -
+    
+    public func insertSubscriptions<S: Sequence>(_ subscriptions: S) where S.Element == BTSubscription {
+        if !self.subscriptions.isSuperset(of: subscriptions) {
+            self.subscriptions.formUnion(subscriptions)
+            startScanning(options: scanningOptions)
+        }
+    }
+    
+    public func removeSubscriptions<S: Sequence>(_ subscriptions: S) where S.Element == BTSubscription {
+        if !self.subscriptions.isDisjoint(with: subscriptions){
+            self.subscriptions.subtract(subscriptions)
+            startScanning(options: scanningOptions)
+        }
+    }
     
     public func insertSubscription(_ subscription: BTSubscription) {
         if subscriptions.insert(subscription).inserted {
