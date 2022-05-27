@@ -10,7 +10,12 @@
 
 Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
-Integrates CoreBluetooth with CoreData and CloudKit. Stores last known data and meta data of subscribed Bluetooth peripherals in CoreData database and synchronized on iCloud. (iCloud sync requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+)
+Integrates` CoreBluetooth` with `CoreData` and `CloudKit`. Stores last known data and meta data of subscribed Bluetooth peripherals in `CoreData` database and synchronized onto `iCloud` (requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+).
+
+With iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+, no delegate needed, using Apple's feature-rich `Combine` framework, start listening to bluetooth devices with just a single line of codes:
+```swift
+BluetoothThingManager(subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool).newDiscoveryPublisher.sink { // your codes here }
+```
 
 ## Usage
 
@@ -28,7 +33,7 @@ let subscriptions = [
 ]
 ```
 
-CoreData Storage with iCloud sync (requires iCloud and remote notification background mode capability)
+`CoreData` Storage with `iCloud` sync (requires iCloud and remote notification background mode capability)
 ```swift
 @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
 BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
@@ -38,12 +43,12 @@ BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [S
 BluetoothThingManager(subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
 ```
 
-CoreData local Storage for older versions
+`CoreData` local Storage for older versions
 ```swift
 let btManager = BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
 ```
 
-Combine Publisher available from macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, No delegate needed.
+`Combine` Publisher available from macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, No delegate needed.
 ```swift
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
