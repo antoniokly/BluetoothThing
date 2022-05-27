@@ -9,6 +9,7 @@
 import Foundation
 import CoreBluetooth
 import Mockingbird
+@testable import BluetoothThing
 
 extension CBCharacteristic {
     static func mock(uuid: CBUUID, service: CBService? = nil, value: Data? = nil, isNotifying: Bool = false) -> Self {
@@ -34,6 +35,30 @@ extension CBService {
 }
 
 extension CBPeripheral {
+    static func mock<T: Sequence>(subscriptions: T) -> Self where T.Element == BTSubscription {
+        let services = Dictionary(grouping: subscriptions) {
+            $0.serviceUUID
+        }.mapValues { subscription -> [CBUUID]? in
+            let characteristics = subscription.compactMap {
+                $0.characteristicUUID
+            }
+            if characteristics.isEmpty {
+                return nil
+            } else {
+                return characteristics
+            }
+        }.map { serviceUUID, characteristicsUUIDs -> CBService in
+            let service = CBService.mock(uuid: serviceUUID)
+            let characteristics = characteristicsUUIDs?.map {
+                CBCharacteristic.mock(uuid: $0, service: service)
+            }
+            given(service.characteristics).willReturn(characteristics)
+            return service
+        }
+        
+        return Self.mock(identifier: UUID(), services: services)
+    }
+    
     static func mock(identifier: UUID, name: String? = nil, services: [CBService]? = nil, state: CBPeripheralState = .disconnected) -> Self {
         let mock = Mockingbird.mock(Self.self)
         given(mock.identifier).willReturn(identifier)

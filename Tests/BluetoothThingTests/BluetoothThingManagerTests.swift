@@ -97,7 +97,11 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
         
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 3)
+        let peripherals = [
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions)
+        ]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
 
@@ -136,15 +140,14 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 2)
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
                                     subscriptions: subscriptions,
                                     dataStore: dataStore,
                                     centralManager: centralManager)
-        
-        sut.knownThings = Set(dataStore.things.suffix(1))
         
         // When
         centralManager.setState(.poweredOff)
@@ -187,8 +190,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
         
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
@@ -226,7 +229,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
         
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
+        let peripherals = [CBPeripheral.mock(subscriptions: subscriptions)]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -253,8 +256,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
@@ -284,8 +287,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -307,8 +310,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
@@ -345,8 +348,7 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: [])
         sut = BluetoothThingManager(delegate: delegate,
@@ -430,8 +432,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1, .fff2]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -461,8 +463,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -486,8 +488,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -531,8 +533,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -553,8 +555,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -579,8 +581,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -605,8 +607,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: [])
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -649,8 +651,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1, .serialNumber]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         thing.pendingConnect = true
@@ -695,8 +697,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let thing = dataStore.things.first!
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
@@ -736,8 +738,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.fff1]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         sut = BluetoothThingManager(delegate: delegate,
@@ -761,8 +763,8 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given 1 service with 2 characteristics
         subscriptions = [.fff1, .fff2]
 
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 1)
-        let peripheral = peripherals.first!
+        let peripheral = CBPeripheral.mock(subscriptions: subscriptions)
+        let peripherals = [peripheral]
         given(peripheral.services).willReturn(nil)
         
         let dataStore = DataStoreMock(peripherals: peripherals)
@@ -799,12 +801,12 @@ class BluetoothThingManagerTests: XCTestCase {
         verify(peripheral.setNotifyValue(true, for: fff1)).wasCalled(1)
         verify(peripheral.setNotifyValue(true, for: fff2)).wasCalled(1)
 
-        XCTAssertTrue(thing.hasService(.batteryService))
-        XCTAssertTrue(thing.hasService(.deviceInformation))
-        XCTAssertTrue(thing.hasService(.heartRateService))
-        XCTAssertTrue(thing.hasService(.cyclingSpeedAndCadenceService))
+        XCTAssertTrue(thing.hasService(CBUUID.batteryService))
+        XCTAssertTrue(thing.hasService(CBUUID.deviceInformation))
+        XCTAssertTrue(thing.hasService(CBUUID.heartRateService))
+        XCTAssertTrue(thing.hasService(CBUUID.cyclingSpeedAndCadenceService))
         XCTAssertTrue(thing.hasService(BTService(service: "FFF0")))
-        XCTAssertFalse(thing.hasService(.cyclingPowerService))
+        XCTAssertFalse(thing.hasService(CBUUID.cyclingPowerService))
         
         // When
         thing.connect()
@@ -876,7 +878,12 @@ class BluetoothThingManagerTests: XCTestCase {
         // Given
         subscriptions = [.batteryService]
         
-        let peripherals = initPeripherals(subscriptions: subscriptions, numberOfPeripherals: 4)
+        let peripherals = [
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions),
+            CBPeripheral.mock(subscriptions: subscriptions)
+        ]
         let dataStore = DataStoreMock(peripherals: peripherals)
         let centralManager = CBCentralManagerMock(peripherals: peripherals)
         centralManager.setState(.poweredOn)
@@ -962,5 +969,73 @@ class BluetoothThingManagerTests: XCTestCase {
         }
         wait(for: [exp], timeout: 2)
         XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
+    }
+    
+    func testSetSubscriptions() {
+        // Given
+        subscriptions = [.batteryService]
+
+        
+        let dataStore = DataStoreMock(peripherals: [])
+        let centralManager = CBCentralManagerMock(peripherals: [])
+        centralManager.setState(.poweredOn)
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    dataStore: dataStore,
+                                    centralManager: centralManager)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 0)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 0)
+        
+        sut.startScanning(options: nil)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 1)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+        
+        sut.insertSubscription(BTSubscription(BTService(service: "180F")))
+
+        XCTAssertEqual(centralManager.stopScanCalled, 1)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 1)
+        
+        sut.insertSubscription(.deviceInfomation)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 2)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
+        
+        sut.removeSubscription(.fff1)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 2)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 2)
+        
+        sut.removeSubscription(.deviceInfomation)
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 3)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 3)
+        
+        sut.setSubscription([.fff1, .fff2])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 4)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 4)
+        
+        sut.insertSubscriptions([.fff1, .fff2])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 4)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 4)
+        
+        sut.insertSubscriptions([.fff1, .fff2, .batteryService])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 5)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 5)
+        
+        sut.removeSubscriptions([.deviceInfomation])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 5)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 5)
+        
+        sut.removeSubscriptions([.batteryService])
+        
+        XCTAssertEqual(centralManager.stopScanCalled, 6)
+        XCTAssertEqual(centralManager.scanForPeripheralsCalled, 6)
+
     }
 }
