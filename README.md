@@ -12,7 +12,7 @@ Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
 Integrates` CoreBluetooth` with `CoreData` and `CloudKit`. Stores last known data and meta data of subscribed Bluetooth peripherals in `CoreData` database and synchronized onto `iCloud` (requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+).
 
-With iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+, no delegate needed, with Apple's feature-rich `Combine` framework, start listening to Bluetooth devices with just a single line of codes:
+With iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+, no delegate needed, with Apple's feature-rich `Combine` framework, start listening to Bluetooth devices with minimum one line of codes:
 ```swift
 BluetoothThingManager(subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool).newDiscoveryPublisher.sink { // your codes here }
 ```
@@ -51,10 +51,10 @@ let btManager = BluetoothThingManager(delegate: BluetoothThingManagerDelegate, s
 `Combine` Publisher available from macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, No delegate needed.
 ```swift
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
+public var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never>
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public private(set) lazy var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> = .init()
+public var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never>
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
 public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never>
@@ -72,12 +72,11 @@ public func thingsPublisher<S: Sequence>(with services: S) -> AnyPublisher<Set<B
 Listen to discovered device:
 ```swift
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public private(set) lazy var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never> = .init(advertisementData)
+public var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never>
 
 @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-public private(set) lazy var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never> = .init(characteristics)
+public var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never>
 ```
-
 
 Implement `BluetoothThingManagerDelegate`
 ```swift
