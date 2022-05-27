@@ -69,6 +69,16 @@ public func thingsPublisher(with services: BTService...) -> AnyPublisher<Set<Blu
 public func thingsPublisher<S: Sequence>(with services: S) -> AnyPublisher<Set<BluetoothThing>, Never> where S.Element == BTService 
 ```
 
+Listen to discovered device:
+```swift
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public private(set) lazy var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never> = .init(advertisementData)
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public private(set) lazy var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never> = .init(characteristics)
+```
+
+
 Implement `BluetoothThingManagerDelegate`
 ```swift
 protocol BluetoothThingManagerDelegate {
@@ -93,9 +103,7 @@ thing.connect() // Can be called anytime, will connect once comes in range
 
 thing.disconnect()
 
-thing.register() // always reconnect if reachable
-
-thing.deregister() //
+thing.forget() // remove local storage
 
 thing.read(characteristic) // read once, no notify
 
