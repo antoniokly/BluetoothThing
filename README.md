@@ -15,7 +15,7 @@ Integrates CoreBluetooth with CoreData and CloudKit. Stores last known data and 
 ## Usage
 
 ```swift
-import BluetoothThing  
+import BluetoothThing
 ```
 
 Subscribe to GATT services or GATT Characteristics
@@ -32,11 +32,36 @@ CoreData Storage with iCloud sync (requires iCloud and remote notification backg
 ```swift
 @available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
 BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
+
+// No delegate needed for Combine Publisher
+@available(iOS 13.0, watchOS 6.0, macOS 10.15, tvOS 13.0, *)
+BluetoothThingManager(subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool)
 ```
 
 CoreData local Storage for older versions
 ```swift
 let btManager = BluetoothThingManager(delegate: BluetoothThingManagerDelegate, subscriptions: [Subscription], useCoreData: Bool)
+```
+
+Combine Publisher available from macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, No delegate needed.
+```swift
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public private(set) lazy var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> = .init()
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never>
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public func thingsPublisher<S: Sequence>(with serviceUUIDs: S) -> AnyPublisher<Set<BluetoothThing>, Never> where S.Element == CBUUID
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public func thingsPublisher(with services: BTService...) -> AnyPublisher<Set<BluetoothThing>, Never>
+
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+public func thingsPublisher<S: Sequence>(with services: S) -> AnyPublisher<Set<BluetoothThing>, Never> where S.Element == BTService 
 ```
 
 Implement `BluetoothThingManagerDelegate`
