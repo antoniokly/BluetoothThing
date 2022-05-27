@@ -12,7 +12,7 @@ Find, connect and subscribe to Bluetooth LE peripherals without the hard works.
 
 Integrates` CoreBluetooth` with `CoreData` and `CloudKit`. Stores last known data and meta data of subscribed Bluetooth peripherals in `CoreData` database and synchronized onto `iCloud` (requires iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+).
 
-With iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+, no delegate needed, with Apple's feature-rich `Combine` framework, start listening to Bluetooth devices with minimum one line of codes:
+From iOS 13.0+, watchOS 6.0+, macOS 10.15+ or tvOS 13.0+, no delegate needed, with Apple's feature-rich `Combine` framework, start listening to Bluetooth devices with minimum one line of codes:
 ```swift
 BluetoothThingManager(subscriptions: [Subscription], useCoreData: Bool, useCloudKit: Bool).newDiscoveryPublisher.sink { // your codes here }
 ```
