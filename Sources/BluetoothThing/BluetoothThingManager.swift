@@ -128,21 +128,10 @@ public class BluetoothThingManager: NSObject {
     }
             
     // MARK: - Public Initializer
-    
-    @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
                                          subscriptions: S,
-                                         useCoreData: Bool = false) where S.Element == BTSubscription {
-        self.init(delegate: delegate,
-                  subscriptions: subscriptions,
-                  useCoreData: useCoreData,
-                  restoreID: Bundle.main.bundleIdentifier)
-    }
-    
-    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
-                                         subscriptions: S,
-                                         useCoreData: Bool = false,
-                                         restoreID: String? = nil) where S.Element == BTSubscription {
+                                         useCoreData: Bool = true,
+                                         restoreID: String? = Bundle.main.bundleIdentifier) where S.Element == BTSubscription {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
@@ -151,25 +140,24 @@ public class BluetoothThingManager: NSObject {
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    @available(*, deprecated, message: "Use restoreID to submit your CBCentralManagerOptionRestoreIdentifierKey")
     public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate,
                                          subscriptions: S,
-                                         useCoreData: Bool = false,
-                                         useCloudKit: Bool = false) where S.Element == BTSubscription{
+                                         useCoreData: Bool = true,
+                                         useCloudKit: Bool = false,
+                                         restoreID: String? = Bundle.main.bundleIdentifier) where S.Element == BTSubscription {
         self.init(delegate: delegate,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
                     persistentStore: useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard),
-                  restoreID: Bundle.main.bundleIdentifier)
+                  restoreID: restoreID)
     }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public convenience init<S: Sequence>(delegate: BluetoothThingManagerDelegate? = nil,
-                                         subscriptions: S,
-                                         useCoreData: Bool = false,
+    public convenience init<S: Sequence>(subscriptions: S,
+                                         useCoreData: Bool = true,
                                          useCloudKit: Bool = false,
-                                         restoreID: String? = nil) where S.Element == BTSubscription {
-        self.init(delegate: delegate,
+                                         restoreID: String? = Bundle.main.bundleIdentifier) where S.Element == BTSubscription {
+        self.init(delegate: nil,
                   subscriptions: subscriptions,
                   dataStore: DataStore(
                     persistentStore: useCoreData ? CoreDataStore(useCloudKit: useCloudKit) : UserDefaults.standard),

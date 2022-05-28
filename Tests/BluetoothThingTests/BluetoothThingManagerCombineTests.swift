@@ -7,6 +7,7 @@
 
 import XCTest
 import CoreBluetooth
+import CoreData
 import Combine
 import Mockingbird
 @testable import BluetoothThing
@@ -55,6 +56,21 @@ class BluetoothThingManagerCombineTests: XCTestCase {
     
     override func tearDownWithError() throws {
         
+    }
+    
+    func testPublicInitializerCloudKit() {
+        // Given
+        subscriptions = [.fff1]
+        
+        sut = BluetoothThingManager(subscriptions: subscriptions,
+                                    useCoreData: true,
+                                    useCloudKit: true,
+                                    restoreID: nil)
+        
+        XCTAssertNil(sut.delegate)
+        XCTAssertNotNil((sut.dataStore.persistentStore as? CoreDataStore)?.persistentContainer as? NSPersistentCloudKitContainer)
+        XCTAssertEqual(sut.subscriptions, Set(subscriptions))
+        sut.dataStore.persistentStore.reset()
     }
     
     func testPublisher() throws {

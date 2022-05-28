@@ -8,6 +8,7 @@
 
 import XCTest
 import CoreBluetooth
+import CoreData
 import Mockingbird
 @testable import BluetoothThing
 
@@ -132,6 +133,24 @@ class BluetoothThingManagerTests: XCTestCase {
         
         XCTAssertNotNil(sut.delegate)
         XCTAssertTrue(sut.dataStore.persistentStore is UserDefaults)
+        XCTAssertEqual(sut.subscriptions, Set(subscriptions))
+        sut.dataStore.persistentStore.reset()
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    func testPublicInitializerCoreData() {
+        // Given
+        subscriptions = [.fff1]
+        
+        sut = BluetoothThingManager(delegate: delegate,
+                                    subscriptions: subscriptions,
+                                    useCoreData: true,
+                                    useCloudKit: false,
+                                    restoreID: nil)
+        
+        XCTAssertNotNil(sut.delegate)
+        XCTAssertNotNil((sut.dataStore.persistentStore as? CoreDataStore)?.persistentContainer as? NSPersistentContainer)
+        XCTAssertFalse((sut.dataStore.persistentStore as? CoreDataStore)?.persistentContainer is NSPersistentCloudKitContainer)
         XCTAssertEqual(sut.subscriptions, Set(subscriptions))
         sut.dataStore.persistentStore.reset()
     }
