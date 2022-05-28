@@ -18,6 +18,10 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public private (set) var id: UUID
     public internal (set) var services: Set<BTService> = []
     public internal (set) var subscriptions: Set<BTSubscription> = []
+    
+    public override var debugDescription: String {
+        name ?? id.uuidString
+    }
 
     public internal (set) var state: ConnectionState = .disconnected {
         didSet {
