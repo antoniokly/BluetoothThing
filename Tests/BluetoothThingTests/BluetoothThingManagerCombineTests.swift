@@ -18,7 +18,7 @@ class BluetoothThingManagerCombineTests: XCTestCase {
     var sut: BluetoothThingManager!
     var subscriptions: [BTSubscription]!
     var dataStore: DataStore!
-    var centralManager: CBCentralManager!
+    var centralManager: CBCentralManagerMock!
     
     class Receiver: ObservableObject {
         @Published var things: Set<BluetoothThing> = []
@@ -71,6 +71,21 @@ class BluetoothThingManagerCombineTests: XCTestCase {
         XCTAssertNotNil((sut.dataStore.persistentStore as? CoreDataStore)?.persistentContainer as? NSPersistentCloudKitContainer)
         XCTAssertEqual(sut.subscriptions, Set(subscriptions))
         sut.dataStore.persistentStore.reset()
+    }
+    
+    func testStatePublisher() throws {
+        let exp = expectation(description: "state")
+        let sub = sut.statePublisher.dropFirst().sink { state in
+            XCTAssertEqual(state, .poweredOn)
+            exp.fulfill()
+        }
+        
+        XCTAssertEqual(centralManager.state, .unknown)
+        
+        centralManager.setState(.poweredOn)
+        
+        waitForExpectations(timeout: 1)
+        sub.cancel()
     }
     
     func testPublisher() throws {

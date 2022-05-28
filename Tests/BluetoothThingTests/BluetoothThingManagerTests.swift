@@ -232,7 +232,6 @@ class BluetoothThingManagerTests: XCTestCase {
         sut.centralManager(sut.centralManager, willRestoreState: restoreState)
         
         centralManager.setState(.poweredOn)
-        sut.centralManagerDidUpdateState(centralManager)
         
         // Then
         XCTAssertNotNil(thing._disconnect)

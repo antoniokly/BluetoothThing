@@ -21,6 +21,7 @@ class CBCentralManagerMock: CBCentralManager {
     private var _state: CBManagerState = .unknown
     func setState(_ state: CBManagerState) {
         _state = state
+        delegate?.centralManagerDidUpdateState(self)
         if _state != .poweredOn {
             for peripheral in peripherals {
                 peripheral.setState(.disconnected)

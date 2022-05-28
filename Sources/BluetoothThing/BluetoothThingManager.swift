@@ -96,6 +96,9 @@ public class BluetoothThingManager: NSObject {
     // MARK: - Publisher
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public private(set) lazy var statePublisher: CurrentValueSubject<BluetoothState, Never> = .init(.unknown)
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
@@ -520,6 +523,10 @@ extension BluetoothThingManager: CBCentralManagerDelegate {
          */
         os_log("centralManagerDidUpdateState: %@", log: .bluetooth, type: .debug, central.state.description)
 
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            statePublisher.send(central.state)
+        }
+        
         switch central.state {
         case .poweredOn:
             for peripheral in knownPeripherals {
