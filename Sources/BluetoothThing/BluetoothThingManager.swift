@@ -453,7 +453,7 @@ public class BluetoothThingManager: NSObject {
     }
     
     func loseThing(_ thing: BluetoothThing) {
-        os_log("didLoseThing %@", log: .bluetooth, type: .debug, thing.name ?? thing.id.uuidString)
+        os_log("didLoseThing %@", log: .bluetooth, type: .debug, thing.debugDescription)
         
         thing.timer?.invalidate()
         thing.timer = nil

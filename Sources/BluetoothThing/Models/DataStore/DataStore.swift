@@ -67,7 +67,7 @@ class DataStore: DataStoreProtocol {
             }
             
             self.lastUpdated[thing.id] = Date()
-            os_log("saving bluetoothThing %@", log: .storage, type: .debug, thing.id.uuidString)
+            os_log("saving bluetoothThing %@", log: .storage, type: .debug, thing.debugDescription)
             self.persistentStore.update(context: self.things,
                                         object: thing,
                                         keyValues: [
