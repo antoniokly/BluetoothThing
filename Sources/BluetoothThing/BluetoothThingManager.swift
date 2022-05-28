@@ -439,7 +439,7 @@ public class BluetoothThingManager: NSObject {
         let btCharacteristic = BTCharacteristic(characteristic: characteristic)
         let isNewThing = thing.hardwareSerialNumber == nil
         
-        thing.characteristics[btCharacteristic] = characteristic.value
+        thing.setCharateristic(btCharacteristic, value: characteristic.value)
         
         if isNewThing && btCharacteristic == .serialNumber {
             dataStore.saveThing(thing)

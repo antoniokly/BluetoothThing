@@ -115,7 +115,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             
             for service in entity.services as! Set<GATTService> {
                 for characteristic in service.characteristics as! Set<GATTCharacteristic> {
-                    thing.characteristics[BTCharacteristic(service: service.id!, characteristic: characteristic.id!)] = characteristic.value
+                    thing.setCharateristic(BTCharacteristic(service: service.id!, characteristic: characteristic.id!), value: characteristic.value)
                 }
             }
             

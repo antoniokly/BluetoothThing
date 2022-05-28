@@ -53,12 +53,20 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    public var characteristics: [BTCharacteristic: Data] = [:] {
+    public private(set) var characteristics: [BTCharacteristic: Data] = [:] {
         didSet {
             if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
                 characteristicsPublisher.send(characteristics)
             }
             NotificationCenter.default.post(name: Self.didChange, object: self.id)
+        }
+    }
+    
+    func setCharateristic(_ key: BTCharacteristic, value: Data?) {
+        characteristics[key] = value
+        
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            characteristicPublishers[key]?.send(value)
         }
     }
     
@@ -77,7 +85,8 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         characteristics[.serialNumber]?.hexEncodedString
     }
     
-    public var manufacturerData: Data? { advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
+    public var manufacturerData: Data? {
+        advertisementData[CBAdvertisementDataManufacturerDataKey] as? Data
     }
     
     public var advertisedServiceUUIDs: [CBUUID] {
@@ -106,6 +115,9 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public private(set) lazy var rssiPublisher: CurrentValueSubject<Int?, Never> = .init(nil)
+
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    private lazy var characteristicPublishers: [BTCharacteristic: CurrentValueSubject<Data?, Never>] = [:]
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
@@ -122,16 +134,16 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func characteristicPublisher(for characteristic: BTCharacteristic) -> AnyPublisher<Data?, Never> {
-        characteristicsPublisher
-            .map { $0[characteristic] }
-            .eraseToAnyPublisher()
-    }
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public func customDataPublisher(for key: String) -> AnyPublisher<Data?, Never> {
-        customDataPublisher
-            .map { $0[key] }
-            .eraseToAnyPublisher()
+        let subject: CurrentValueSubject<Data?, Never>
+        
+        if let pub = characteristicPublishers[characteristic] {
+            subject = pub
+        } else {
+            subject = .init(characteristics[characteristic])
+            characteristicPublishers[characteristic] = subject
+        }
+        
+        return subject.eraseToAnyPublisher()
     }
     
     // MARK: - Async

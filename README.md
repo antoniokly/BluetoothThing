@@ -98,17 +98,20 @@ let thing = btManager.things.first
 
 Methods
 ```swift
+@available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+thing.connect(pending:) async throws
+    
 thing.connect() // Can be called anytime, will connect once comes in range
 
 thing.disconnect()
 
 thing.forget() // remove local storage
 
-thing.read(characteristic) // read once, no notify
+thing.read(characteristic:) // read once, no notify
 
-thing.subscribe(characteristic) // get notified when data changes
+thing.subscribe(characteristic:) // get notified when data changes
 
-thing.write(characteristic) // write to characteristic
+thing.write(characteristic:) // write to characteristic
 ```
 
 ## Donation

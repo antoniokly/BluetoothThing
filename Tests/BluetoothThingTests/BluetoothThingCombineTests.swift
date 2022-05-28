@@ -108,14 +108,16 @@ class BluetoothThingCombineTests: XCTestCase {
         let exp1 = expectation(description: "cscMeasurement")
         let repeats = Int.random(in: 1..<50)
         exp1.expectedFulfillmentCount = repeats + 1 // + 1 initial
-        let sub1 = receiver.$cscMeasurement
-            .sink { _ in
+        let sub1 = receiver.$cscMeasurement.sink { _ in
             exp1.fulfill()
         }
-
+        
         // When
         (0 ..< repeats).forEach { _ in
             peripheral.delegate?.peripheral?(peripheral, didUpdateValueFor: .mock(uuid: .cscMeasurement, service: .mock(uuid: .cyclingSpeedAndCadenceService), value: data), error: nil)
+            
+            // should not be received by cscMeasurement
+            peripheral.delegate?.peripheral?(peripheral, didUpdateValueFor: .mock(uuid: .cscFeature, service: .mock(uuid: .cyclingSpeedAndCadenceService), value: Data(hexString: "0001")), error: nil)
         }
 
 

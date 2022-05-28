@@ -12,6 +12,6 @@ import Foundation
 extension BluetoothThing {
     convenience init(id: UUID, name: String? = nil, serialNumber: Data? = nil) {
         self.init(id: id, name: name)
-        self.characteristics[.serialNumber] = serialNumber
+        self.setCharateristic(.serialNumber, value: serialNumber)
     }
 }
