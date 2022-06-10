@@ -66,7 +66,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         characteristics[key] = value
         
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-            characteristicPublishers[key]?.send(value)
+            (characteristicPublishers[key] as? CurrentValueSubject<Data?, Never>)?.send(value)
         }
     }
     
@@ -95,29 +95,63 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     
     // MARK: - Publisher
     
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never> = .init(advertisementData)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var namePublisher: CurrentValueSubject<String?, Never> = .init(name)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never> = .init(characteristics)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var customDataPublisher: CurrentValueSubject<[String: Data], Never> = .init(customData)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var statePublisher: CurrentValueSubject<ConnectionState, Error> = .init(.disconnected)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var inRangePublisher: CurrentValueSubject<Bool, Never> = .init(false)
-    
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var rssiPublisher: CurrentValueSubject<Int?, Never> = .init(nil)
+    private var _advertisementDataPublisher: Any?
+    private var _namePublisher: Any?
+    private var _characteristicsPublisher: Any?
+    private var _customDataPublisher: Any?
+    private var _statePublisher: Any?
+    private var _inRangePublisher: Any?
+    private var _rssiPublisher: Any?
+    private lazy var characteristicPublishers: [BTCharacteristic: Any] = [:]
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    private lazy var characteristicPublishers: [BTCharacteristic: CurrentValueSubject<Data?, Never>] = [:]
+    public var advertisementDataPublisher: CurrentValueSubject<[String : Any], Never> {
+        cache(&_advertisementDataPublisher) {
+            .init(self.advertisementData)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var namePublisher: CurrentValueSubject<String?, Never> {
+        cache(&_namePublisher) {
+            .init(self.name)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var characteristicsPublisher: CurrentValueSubject<[BTCharacteristic: Data], Never> {
+        cache(&_characteristicsPublisher) {
+            .init(self.characteristics)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var customDataPublisher: CurrentValueSubject<[String: Data], Never> {
+        cache(&_customDataPublisher) {
+            .init(self.customData)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var statePublisher: CurrentValueSubject<ConnectionState, Error> {
+        cache(&_statePublisher) {
+            .init(.disconnected)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var inRangePublisher: CurrentValueSubject<Bool, Never> {
+        cache(&_inRangePublisher) {
+            .init(false)
+        }
+    }
+    
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var rssiPublisher: CurrentValueSubject<Int?, Never> {
+        cache(&_rssiPublisher) {
+            .init(nil)
+        }
+    }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func advertisementDataPublisher<T>(for key: String) -> AnyPublisher<T?, Never> {
@@ -136,10 +170,10 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     public func characteristicPublisher(for characteristic: BTCharacteristic) -> AnyPublisher<Data?, Never> {
         let subject: CurrentValueSubject<Data?, Never>
         
-        if let pub = characteristicPublishers[characteristic] {
+        if let pub = characteristicPublishers[characteristic] as? CurrentValueSubject<Data?, Never> {
             subject = pub
         } else {
-            subject = .init(characteristics[characteristic])
+            subject = CurrentValueSubject<Data?, Never>(characteristics[characteristic])
             characteristicPublishers[characteristic] = subject
         }
         

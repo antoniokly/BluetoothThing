@@ -23,6 +23,18 @@ import WatchKit
 import TVUIKit
 #endif
 
+/// Helper to solve Stored properties cannot be marked potentially unavailable with '@available'
+/// https://stackoverflow.com/questions/64797366/stored-properties-cannot-be-marked-potentially-unavailable-with-available
+func cache<T>(_ storage: inout Any?, _ new: @escaping () -> T) -> T {
+    if let cache = storage as? T {
+        return cache
+    } else {
+        let new = new()
+        storage = new
+        return new
+    }
+}
+
 public class BluetoothThingManager: NSObject {
     public static var deviceName: String {
         #if os(iOS)
@@ -94,15 +106,38 @@ public class BluetoothThingManager: NSObject {
     }
     
     // MARK: - Publisher
+    private var _statePublisher: Any?
+    private var _thingsPublisher: Any?
+    private var _newDiscoveryPublisher: Any?
+    private var _undiscoveryPublisher: Any?
+
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+    public var statePublisher: CurrentValueSubject<BluetoothState, Never> {
+        cache(&_statePublisher) {
+            CurrentValueSubject<BluetoothState, Never>(.unknown)
+        }
+    }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var statePublisher: CurrentValueSubject<BluetoothState, Never> = .init(.unknown)
+    public var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> {
+        cache(&_thingsPublisher) {
+            CurrentValueSubject<Set<BluetoothThing>, Never>(self.knownThings)
+        }
+    }
     
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var thingsPublisher: CurrentValueSubject<Set<BluetoothThing>, Never> = .init(knownThings)
-    
+    public var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> {
+        cache(&_newDiscoveryPublisher) {
+            PassthroughSubject<BluetoothThing, Never>()
+        }
+    }
+
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    public private(set) lazy var newDiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> = .init()
+    public var undiscoveryPublisher: PassthroughSubject<BluetoothThing, Never> {
+        cache(&_undiscoveryPublisher) {
+            PassthroughSubject<BluetoothThing, Never>()
+        }
+    }
 
     @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     public func thingsPublisher(with serviceUUIDs: CBUUID...) -> AnyPublisher<Set<BluetoothThing>, Never> {
