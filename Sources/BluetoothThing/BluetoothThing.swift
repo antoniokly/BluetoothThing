@@ -62,7 +62,7 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
         }
     }
     
-    func setCharateristic(_ key: BTCharacteristic, value: Data?) {
+    public func setCharateristic(_ key: BTCharacteristic, value: Data?) {
         characteristics[key] = value
         
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
