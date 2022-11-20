@@ -158,6 +158,7 @@ class BluetoothThingCombineTests: XCTestCase {
         XCTAssertEqual(sut.state, .disconnected)
         
         // Given
+        // Discovered now
         given(peripheral.delegate).willReturn(manager)
         centralManager.delegate?.centralManager?(centralManager,
                                                  didDiscover: peripheral,

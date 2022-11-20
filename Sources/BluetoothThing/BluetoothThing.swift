@@ -186,38 +186,28 @@ public class BluetoothThing: NSObject, Codable, Identifiable {
     /// Async connect, with pending options in case of the device is unreachable.
     /// - Parameter pending: A flag to enable pending connection if the device is out of range. Error will be throw if pending = false adn the device is unreachable.
     public func connect(pending: Bool) async throws {
-        if !pending && !inRangePublisher.value {
-            throw BTError.notInRange
-        }
-        
-        let group = DispatchGroup()
-        group.enter()
-                
-        var error: Error?
-        
-        let sub = statePublisher.receive(on: DispatchQueue.main).filter {
-            $0 == .connected
-        }.sink { completion in
-            switch completion {
-            case .finished:
-                break
-            case .failure(let e):
-                error = e
+        try await withCheckedThrowingContinuation{ (continuation: CheckedContinuation<Void, Error>) in
+            if !pending && !inRangePublisher.value {
+                continuation.resume(throwing: BTError.notInRange)
+                return
             }
-            group.leave()
-        } receiveValue: { _ in
-            group.leave()
-        }
-        
-        if !connect() {
-            throw BTError.pendingConnect
-        }
-        
-        group.wait()
-        sub.cancel()
-
-        if let error = error {
-            throw error
+                        
+            let sub = statePublisher.receive(on: DispatchQueue.main).filter {
+                $0 == .connected
+            }.sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let e):
+                    continuation.resume(throwing: e)
+                }
+            } receiveValue: { _ in
+                continuation.resume()
+            }
+            
+            if !connect(completion: { sub.cancel() } ) {
+                continuation.resume(throwing: BTError.pendingConnect)
+            }
         }
     }
     
