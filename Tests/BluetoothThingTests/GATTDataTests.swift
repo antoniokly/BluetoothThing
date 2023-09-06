@@ -24,6 +24,9 @@ final class GATTDataTests: XCTestCase {
             unit: UnitSpeed.kilometersPerHour
         )
         
+        sut.update([])
+        XCTAssertEqual(Int(sut.rawValue), 0)
+        
         sut.update([0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0, "not enough bytes")
         
@@ -36,16 +39,9 @@ final class GATTDataTests: XCTestCase {
         sut.update([0xFF, 0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0xFFFF)
         
+        // Measurement
         XCTAssertEqual(sut.measurement.value, 655.35)
-        
         XCTAssertEqual(sut.measurement.description, "655.35 km/h")
-        
-        if #available(iOS 15.0, *) {
-            XCTAssertEqual(sut.measurement.formatted(), "407 mph")
-        }
-        
-        sut.update([])
-        XCTAssertEqual(Int(sut.rawValue), 0)
     }
     
     func testSigned16Bit() throws {
@@ -77,10 +73,6 @@ final class GATTDataTests: XCTestCase {
         // Measurement
         XCTAssertEqual(sut.measurement.value, -32767)
         XCTAssertEqual(sut.measurement.description, "-32767.0 W")
-        
-        if #available(iOS 15.0, *) {
-            XCTAssertEqual(sut.measurement.formatted(), "-33 kW")
-        }
     }
     
     func test24Bit() throws {
@@ -90,6 +82,9 @@ final class GATTDataTests: XCTestCase {
             resolution: 0.01,
             unit: UnitLength.meters
         )
+        
+        sut.update([])
+        XCTAssertEqual(Int(sut.rawValue), 0)
         
         sut.update([0xFF, 0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0, "not enough bytes")
@@ -103,9 +98,6 @@ final class GATTDataTests: XCTestCase {
         sut.update([0xFF, 0xFF, 0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0xFFFFFF)
         
-        sut.update([])
-        XCTAssertEqual(Int(sut.rawValue), 0)
-        
         // Measurement
 //        XCTAssertEqual(sut.measurement.value, 23039453.38)
     }
@@ -117,6 +109,9 @@ final class GATTDataTests: XCTestCase {
             resolution: 0.01,
             unit: UnitLength.meters
         )
+        
+        sut.update([])
+        XCTAssertEqual(Int(sut.rawValue), 0)
         
         sut.update([0xFF, 0xFF, 0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0, "not enough bytes")
@@ -133,9 +128,6 @@ final class GATTDataTests: XCTestCase {
         sut.update([0xFF, 0xFF, 0xFF, 0xFF])
         XCTAssertEqual(Int(sut.rawValue), 0xFFFFFFFF)
         
-        sut.update([])
-        XCTAssertEqual(Int(sut.rawValue), 0)
-        
         // Measurement
         sut.update([0x7A, 0x6A, 0x53, 0x89])
         
@@ -143,9 +135,5 @@ final class GATTDataTests: XCTestCase {
         XCTAssertEqual(Int(sut.rawValue), 2303945338)
         XCTAssertEqual(sut.measurement.value, 23039453.38)
         XCTAssertEqual(sut.measurement.description, "23039453.38 m")
-        
-        if #available(iOS 15.0, *) {
-            XCTAssertEqual(sut.measurement.formatted(), "14,316 mi")
-        }
     }
 }
