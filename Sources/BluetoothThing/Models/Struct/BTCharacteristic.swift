@@ -67,7 +67,7 @@ public extension BTCharacteristic {
     static let cscFeature = BTCharacteristic(service: "1816", characteristic: "2A5C")
 
     // Cycling Power
-    static let sensorLocation = BTSubscription(service: "1818", characteristic: "2A5D")
+    static let cyclingPowerSensorLocation = BTSubscription(service: "1818", characteristic: "2A5D")
     static let cyclingPowerMeasurement = BTSubscription(service: "1818", characteristic: "2A63")
     static let cyclingPowerVector = BTSubscription(service: "1818", characteristic: "2A64")
     static let cyclingPowerFeature = BTSubscription(service: "1818", characteristic: "2A65")
@@ -78,4 +78,11 @@ public extension BTCharacteristic {
     static let latitude = BTSubscription(service: "1819", characteristic: "2AAF")
     static let locationName = BTSubscription(service: "1819", characteristic: "2AB5")
     static let locationTime = BTSubscription(service: "1819", characteristic: "2A0F")
+    
+    // FTMS
+    static let fitnessMachineControlPoint = BTCharacteristic(service: "1826", characteristic: "2AD9")
+    static let fitnessMachineFeature = BTCharacteristic(service: "1826", characteristic: "2ACC")
+    static let fitnessMachineStatus = BTCharacteristic(service: "1826", characteristic: "2ADA")
+    static let fitnessMachineIndoorBikeData = BTCharacteristic(service: "1826", characteristic: "2AD2")
+    static let fitnessMachineSensorLocation = BTCharacteristic(service: "1826", characteristic: "2A5D")
 }

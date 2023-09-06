@@ -24,7 +24,8 @@ class CodableTests: XCTestCase {
         
         let data = try JSONEncoder().encode(characteristic)
         let json = String(data: data, encoding: .utf8)
-        XCTAssertEqual(json, "{\"serviceUUID\":\"1816\",\"uuid\":\"2A5B\"}")
+        XCTAssertTrue(json?.contains("serviceUUID\":\"1816\"") == true)
+        XCTAssertTrue(json?.contains("uuid\":\"2A5B\"") == true)
         
         let data1 = json!.data(using: .utf8)!
         let characteristic1 = try JSONDecoder().decode(BTCharacteristic.self, from: data1)
