@@ -18,4 +18,4 @@ jobs:
       run: swift package resolve
 
     - name: Build
-      run: xcodebuild build -destination 'name=iPhone 13 Pro Max' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
+      run: xcodebuild build -destination 'platform=iOS Simulator' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
