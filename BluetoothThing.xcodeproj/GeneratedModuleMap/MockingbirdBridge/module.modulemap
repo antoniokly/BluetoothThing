@@ -1,4 +1,0 @@
-module MockingbirdBridge {
-    umbrella "/Users/antonio.yip/Developer/Working/BluetoothThing/.build/checkouts/mockingbird/Sources/MockingbirdFramework/Objective-C/Bridge/include"
-    export *
-}

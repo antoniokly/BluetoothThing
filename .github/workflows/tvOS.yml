@@ -18,4 +18,4 @@ jobs:
       run: swift package resolve
 
     - name: Build
-      run: xcodebuild build -destination 'name=Apple TV 4K (2nd generation)' -scheme 'BluetoothThing-Package' -derivedDataPath '.build'
+      run: xcodebuild test -destination 'name=Apple TV 4K (2nd generation)' -scheme 'BluetoothThing' -derivedDataPath '.build'
