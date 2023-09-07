@@ -27,4 +27,10 @@ public class CSCMeasurement: GATTCharacteristic {
         
         return Measurement(value: rpm, unit: UnitFrequency.rpm)
     }
+    
+    public func speed(wheelCircumfrence: Double) -> Measurement<UnitSpeed> {
+        let rph = Double(cumulativeWheelRevolutions.delta) * 3600 / Double(lastWheelEventTime.delta) / pow(Double(2), Double(lastWheelEventTime.binaryExponent))
+        
+        return Measurement(value: rph * wheelCircumfrence, unit: UnitSpeed.metersPerSecond)
+    }
 }
