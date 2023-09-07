@@ -14,8 +14,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Resolve Dependencies
-      run: swift package resolve
-
-    - name: Build
+    - name: Run tests
       run: xcodebuild test -destination 'name=Apple Watch Series 8 (45mm)' -scheme 'BluetoothThing' -derivedDataPath '.build'
