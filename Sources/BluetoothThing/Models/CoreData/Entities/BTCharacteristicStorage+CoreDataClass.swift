@@ -1,5 +1,5 @@
 //
-//  BTDiscovery+CoreDataClass.swift
+//  BTCharacteristicStorage+CoreDataClass.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(BTDiscovery)
-public class BTDiscovery: NSManagedObject {
+@objc(BTCharacteristicStorage)
+public class BTCharacteristicStorage: NSManagedObject {
 
 }

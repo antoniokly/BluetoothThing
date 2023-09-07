@@ -1,5 +1,5 @@
 //
-//  GATTService+CoreDataClass.swift
+//  BTCustomDataStorage+CoreDataClass.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(GATTService)
-public class GATTService: NSManagedObject {
+@objc(BTCustomDataStorage)
+public class BTCustomDataStorage: NSManagedObject {
 
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension FixedWidthInteger {
+public extension FixedWidthInteger {
     func subtract(_ other: Self) -> Self {
         let dist = other.distance(to: self)
         if dist < 0 {
@@ -23,7 +23,7 @@ extension FixedWidthInteger {
     }
 }
 
-extension Numeric {
+public extension Numeric {
     var bytes: [UInt8] {
         return self.convertToBytes(withCapacity: MemoryLayout<Self>.size)
     }

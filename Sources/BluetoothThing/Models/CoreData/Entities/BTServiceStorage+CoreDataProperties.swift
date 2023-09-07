@@ -1,5 +1,5 @@
 //
-//  GATTService+CoreDataProperties.swift
+//  BTServiceStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,23 +11,23 @@ import Foundation
 import CoreData
 
 
-extension GATTService {
+extension BTServiceStorage {
 
     @NSManaged public var id: String?
     @NSManaged public var name: String?
     @NSManaged public var characteristics: NSSet?
-    @NSManaged public var peripheral: BTPeripheral?
+    @NSManaged public var peripheral: BTPeripheralStorage?
 
 }
 
 // MARK: Generated accessors for characteristics
-extension GATTService {
+extension BTServiceStorage {
 
     @objc(addCharacteristicsObject:)
-    @NSManaged public func addToCharacteristics(_ value: GATTCharacteristic)
+    @NSManaged public func addToCharacteristics(_ value: BTCharacteristicStorage)
 
     @objc(removeCharacteristicsObject:)
-    @NSManaged public func removeFromCharacteristics(_ value: GATTCharacteristic)
+    @NSManaged public func removeFromCharacteristics(_ value: BTCharacteristicStorage)
 
     @objc(addCharacteristics:)
     @NSManaged public func addToCharacteristics(_ values: NSSet)

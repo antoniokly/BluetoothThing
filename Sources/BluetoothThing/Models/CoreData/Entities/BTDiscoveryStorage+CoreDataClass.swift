@@ -1,5 +1,5 @@
 //
-//  GATTCharacteristic+CoreDataClass.swift
+//  BTDiscoveryStorage+CoreDataClass.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(GATTCharacteristic)
-public class GATTCharacteristic: NSManagedObject {
+@objc(BTDiscoveryStorage)
+public class BTDiscoveryStorage: NSManagedObject {
 
 }

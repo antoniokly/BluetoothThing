@@ -1,5 +1,5 @@
 //
-//  BTDiscovery+CoreDataProperties.swift
+//  BTDiscoveryStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,12 +11,12 @@ import Foundation
 import CoreData
 
 
-extension BTDiscovery {
+extension BTDiscoveryStorage {
 
     @NSManaged public var lastConnected: Date?
     @NSManaged public var lastDisconnected: Date?
     @NSManaged public var lastFound: Date?
-    @NSManaged public var central: BTCentral?
-    @NSManaged public var peripheral: BTPeripheral?
+    @NSManaged public var central: BTCentralStorage?
+    @NSManaged public var peripheral: BTPeripheralStorage?
 
 }

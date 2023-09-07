@@ -1,48 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="BTCentral" representedClassName="BTCentral" syncable="YES">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21754" systemVersion="22G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="BTCentralStorage" representedClassName="BTCentralStorage" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="discoveries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BTDiscovery" inverseName="central" inverseEntity="BTDiscovery"/>
+        <relationship name="discoveries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BTDiscoveryStorage" inverseName="central" inverseEntity="BTDiscoveryStorage"/>
     </entity>
-    <entity name="BTDiscovery" representedClassName="BTDiscovery" syncable="YES">
-        <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="lastFound" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="central" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTCentral" inverseName="discoveries" inverseEntity="BTCentral"/>
-        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="discoveries" inverseEntity="BTPeripheral"/>
-    </entity>
-    <entity name="BTPeripheral" representedClassName="BTPeripheral" syncable="YES">
+    <entity name="BTCharacteristicStorage" representedClassName="BTCharacteristicStorage" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="customData" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CustomData" inverseName="peripheral" inverseEntity="CustomData"/>
-        <relationship name="discoveries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BTDiscovery" inverseName="peripheral" inverseEntity="BTDiscovery"/>
-        <relationship name="services" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GATTService" inverseName="peripheral" inverseEntity="GATTService"/>
+        <attribute name="value" optional="YES" attributeType="Binary"/>
+        <relationship name="service" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTServiceStorage" inverseName="characteristics" inverseEntity="BTServiceStorage"/>
     </entity>
-    <entity name="CustomData" representedClassName="CustomData" syncable="YES">
+    <entity name="BTCustomDataStorage" representedClassName="BTCustomDataStorage" syncable="YES">
         <attribute name="key" optional="YES" attributeType="String"/>
         <attribute name="modifiedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="value" optional="YES" attributeType="Binary"/>
-        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="customData" inverseEntity="BTPeripheral"/>
+        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheralStorage" inverseName="customData" inverseEntity="BTPeripheralStorage"/>
     </entity>
-    <entity name="GATTCharacteristic" representedClassName="GATTCharacteristic" syncable="YES">
+    <entity name="BTDiscoveryStorage" representedClassName="BTDiscoveryStorage" syncable="YES">
+        <attribute name="lastConnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastDisconnected" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="lastFound" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="central" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTCentralStorage" inverseName="discoveries" inverseEntity="BTCentralStorage"/>
+        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheralStorage" inverseName="discoveries" inverseEntity="BTPeripheralStorage"/>
+    </entity>
+    <entity name="BTPeripheralStorage" representedClassName="BTPeripheralStorage" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="value" optional="YES" attributeType="Binary"/>
-        <relationship name="service" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GATTService" inverseName="characteristics" inverseEntity="GATTService"/>
+        <relationship name="customData" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BTCustomDataStorage" inverseName="peripheral" inverseEntity="BTCustomDataStorage"/>
+        <relationship name="discoveries" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BTDiscoveryStorage" inverseName="peripheral" inverseEntity="BTDiscoveryStorage"/>
+        <relationship name="services" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BTServiceStorage" inverseName="peripheral" inverseEntity="BTServiceStorage"/>
     </entity>
-    <entity name="GATTService" representedClassName="GATTService" syncable="YES">
+    <entity name="BTServiceStorage" representedClassName="BTServiceStorage" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <relationship name="characteristics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="GATTCharacteristic" inverseName="service" inverseEntity="GATTCharacteristic"/>
-        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheral" inverseName="services" inverseEntity="BTPeripheral"/>
+        <relationship name="characteristics" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="BTCharacteristicStorage" inverseName="service" inverseEntity="BTCharacteristicStorage"/>
+        <relationship name="peripheral" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="BTPeripheralStorage" inverseName="services" inverseEntity="BTPeripheralStorage"/>
     </entity>
-    <elements>
-        <element name="BTCentral" positionX="2.6328125" positionY="-16.01953125" width="128" height="88"/>
-        <element name="BTDiscovery" positionX="-178.13671875" positionY="27.0859375" width="128" height="118"/>
-        <element name="BTPeripheral" positionX="4.875" positionY="101.9296875" width="128" height="118"/>
-        <element name="CustomData" positionX="221.8125" positionY="-22.41796875" width="128" height="103"/>
-        <element name="GATTCharacteristic" positionX="414.20703125" positionY="208.8515625" width="128" height="103"/>
-        <element name="GATTService" positionX="221.6484375" positionY="148.81640625" width="128" height="103"/>
-    </elements>
 </model>

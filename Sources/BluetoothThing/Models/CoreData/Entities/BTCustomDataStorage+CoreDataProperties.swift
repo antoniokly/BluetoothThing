@@ -1,5 +1,5 @@
 //
-//  CustomData+CoreDataProperties.swift
+//  BTCustomDataStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,11 +11,11 @@ import Foundation
 import CoreData
 
 
-extension CustomData {
+extension BTCustomDataStorage {
 
     @NSManaged public var key: String?
     @NSManaged public var modifiedAt: Date?
     @NSManaged public var value: Data?
-    @NSManaged public var peripheral: BTPeripheral?
+    @NSManaged public var peripheral: BTPeripheralStorage?
 
 }

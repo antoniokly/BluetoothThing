@@ -1,5 +1,5 @@
 //
-//  GATTCharacteristic+CoreDataProperties.swift
+//  BTCharacteristicStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,11 +11,11 @@ import Foundation
 import CoreData
 
 
-extension GATTCharacteristic {
+extension BTCharacteristicStorage {
 
     @NSManaged public var id: String?
     @NSManaged public var name: String?
     @NSManaged public var value: Data?
-    @NSManaged public var service: GATTService?
+    @NSManaged public var service: BTServiceStorage?
 
 }

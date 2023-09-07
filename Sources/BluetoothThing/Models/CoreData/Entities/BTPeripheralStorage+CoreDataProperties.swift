@@ -1,5 +1,5 @@
 //
-//  BTPeripheral+CoreDataProperties.swift
+//  BTPeripheralStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,7 +11,7 @@ import Foundation
 import CoreData
 
 
-extension BTPeripheral {
+extension BTPeripheralStorage {
 
     @NSManaged public var id: String?
     @NSManaged public var name: String?
@@ -22,13 +22,13 @@ extension BTPeripheral {
 }
 
 // MARK: Generated accessors for customData
-extension BTPeripheral {
+extension BTPeripheralStorage {
 
     @objc(addCustomDataObject:)
-    @NSManaged public func addToCustomData(_ value: CustomData)
+    @NSManaged public func addToCustomData(_ value: BTCustomDataStorage)
 
     @objc(removeCustomDataObject:)
-    @NSManaged public func removeFromCustomData(_ value: CustomData)
+    @NSManaged public func removeFromCustomData(_ value: BTCustomDataStorage)
 
     @objc(addCustomData:)
     @NSManaged public func addToCustomData(_ values: NSSet)
@@ -39,13 +39,13 @@ extension BTPeripheral {
 }
 
 // MARK: Generated accessors for discoveries
-extension BTPeripheral {
+extension BTPeripheralStorage {
 
     @objc(addDiscoveriesObject:)
-    @NSManaged public func addToDiscoveries(_ value: BTDiscovery)
+    @NSManaged public func addToDiscoveries(_ value: BTDiscoveryStorage)
 
     @objc(removeDiscoveriesObject:)
-    @NSManaged public func removeFromDiscoveries(_ value: BTDiscovery)
+    @NSManaged public func removeFromDiscoveries(_ value: BTDiscoveryStorage)
 
     @objc(addDiscoveries:)
     @NSManaged public func addToDiscoveries(_ values: NSSet)
@@ -56,13 +56,13 @@ extension BTPeripheral {
 }
 
 // MARK: Generated accessors for services
-extension BTPeripheral {
+extension BTPeripheralStorage {
 
     @objc(addServicesObject:)
-    @NSManaged public func addToServices(_ value: GATTService)
+    @NSManaged public func addToServices(_ value: BTServiceStorage)
 
     @objc(removeServicesObject:)
-    @NSManaged public func removeFromServices(_ value: GATTService)
+    @NSManaged public func removeFromServices(_ value: BTServiceStorage)
 
     @objc(addServices:)
     @NSManaged public func addToServices(_ values: NSSet)

@@ -8,17 +8,21 @@
 import Foundation
 
 public struct GATTData<UnitType: Unit> {
-    public let bitSize: Int
+    let bitWidth: Int
     public let signed: Bool
     public let decimalExponent: Int
     public let resolution: Double
     public let unit: UnitType
-        
+    
     public private(set) var bytes: [UInt8] = []
     public private(set) var rawValue: any FixedWidthInteger = 0
     
+    public var byteWidth: Int {
+        bitWidth * UInt8.bitWidth
+    }
+    
     public init(bitSize: Int, signed: Bool = false, decimalExponent: Int = 0, resolution: Double = 1, unit: UnitType) {
-        self.bitSize = bitSize
+        self.bitWidth = bitSize
         self.signed = signed
         self.decimalExponent = decimalExponent
         self.resolution = resolution
@@ -28,14 +32,14 @@ public struct GATTData<UnitType: Unit> {
     public mutating func update(_ buffer: [UInt8]) {
         bytes = buffer
         
-        guard bitSize > 0, bytes.count * UInt8.bitWidth == bitSize else {
+        guard bitWidth > 0, bytes.count * UInt8.bitWidth == bitWidth else {
             rawValue = 0
             return
         }
         
         let integerType: any FixedWidthInteger.Type
         
-        switch bitSize {
+        switch bitWidth {
         case ...8:
             if signed {
                 integerType = Int8.self
@@ -64,7 +68,7 @@ public struct GATTData<UnitType: Unit> {
             fatalError("Not implemented")
         }
         
-        let diff = Int(ceil(Double((integerType.bitWidth - buffer.count) / UInt8.bitWidth)))
+        let diff = Int(ceil(Double((integerType.bitWidth - bytes.count) / UInt8.bitWidth)))
         rawValue = integerType.init(bytes + .init(repeating: 0, count: diff)) ?? 0
     }
     

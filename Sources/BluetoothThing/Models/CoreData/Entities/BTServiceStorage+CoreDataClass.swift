@@ -1,5 +1,5 @@
 //
-//  BTPeripheral+CoreDataClass.swift
+//  BTServiceStorage+CoreDataClass.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(BTPeripheral)
-public class BTPeripheral: NSManagedObject {
+@objc(BTServiceStorage)
+public class BTServiceStorage: NSManagedObject {
 
 }

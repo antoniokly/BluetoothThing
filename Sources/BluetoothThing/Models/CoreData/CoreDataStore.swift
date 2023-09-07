@@ -100,7 +100,7 @@ extension CoreDataStore: PersistentStoreProtocol {
     }
     
     func fetch(forCentralId centralId: UUID) -> Any? {
-        let periperals: [BTPeripheral] = fetchEntities()
+        let periperals: [BTPeripheralStorage] = fetchEntities()
 
         return periperals.compactMap({ entity in
             guard let peripheralId = entity.peripheralId(for: centralId) else {
@@ -109,12 +109,12 @@ extension CoreDataStore: PersistentStoreProtocol {
           
             let thing = BluetoothThing(id: peripheralId, name: entity.name)
             
-            for data in entity.customData as! Set<CustomData> {
+            for data in entity.customData as! Set<BTCustomDataStorage> {
                 thing.customData[data.key!] = data.value
             }
             
-            for service in entity.services as! Set<GATTService> {
-                for characteristic in service.characteristics as! Set<GATTCharacteristic> {
+            for service in entity.services as! Set<BTServiceStorage> {
+                for characteristic in service.characteristics as! Set<BTCharacteristicStorage> {
                     thing.setCharateristic(BTCharacteristic(service: service.id!, characteristic: characteristic.id!), value: characteristic.value)
                 }
             }
@@ -125,7 +125,7 @@ extension CoreDataStore: PersistentStoreProtocol {
     }
     
     func reset() {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "BTPeripheral")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: BTPeripheralStorage.self))
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
 
         do {
@@ -144,14 +144,14 @@ extension CoreDataStore: PersistentStoreProtocol {
             return
         }
         
-        let peripherals: [BTPeripheral] = fetchEntities()
-        var peripheral: BTPeripheral
+        let peripherals: [BTPeripheralStorage] = fetchEntities()
+        var peripheral: BTPeripheralStorage
         
         if let entity = peripherals.first(where: {$0.id == thing.id.uuidString || $0.hardwareId == hardwareId}) {
             os_log("Periperal with hardwareId: %@ exists", log: .storage, type: .debug, hardwareId)
             peripheral = entity
         } else {
-            peripheral = BTPeripheral(context: persistentContainer.viewContext)
+            peripheral = BTPeripheralStorage(context: persistentContainer.viewContext)
             peripheral.setValuesForKeys([
                 .id: thing.id.uuidString,
                 .name: thing.name as Any
@@ -174,11 +174,11 @@ extension CoreDataStore: PersistentStoreProtocol {
             return
         }
         
-        let peripheral: BTPeripheral? = fetchEntities(
+        let peripheral: BTPeripheralStorage? = fetchEntities(
             predicate: NSPredicate(format: "id == %@", thing.id.uuidString)
         ).first
         
-        let central: BTCentral? = fetchEntities(
+        let central: BTCentralStorage? = fetchEntities(
             predicate: NSPredicate(format: "id == %@", BluetoothThingManager.centralId.uuidString)
         ).first
         
@@ -187,7 +187,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             return
         }
         
-        let discoveries: [BTDiscovery] = fetchEntities(predicate:
+        let discoveries: [BTDiscoveryStorage] = fetchEntities(predicate:
             NSPredicate(format: "central.id == %@ AND peripheral.id == %@", centralId, peripheralId)
         )
 
@@ -204,7 +204,7 @@ extension CoreDataStore: PersistentStoreProtocol {
             return
         }
 
-        let peripherals : [BTPeripheral] = fetchEntities(predicate:
+        let peripherals : [BTPeripheralStorage] = fetchEntities(predicate:
             NSPredicate(format: "id == %@", thing.id.uuidString)
         )
         

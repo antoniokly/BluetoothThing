@@ -1,5 +1,5 @@
 //
-//  BTCentral+CoreDataProperties.swift
+//  BTCentralStorage+CoreDataProperties.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -11,7 +11,7 @@ import Foundation
 import CoreData
 
 
-extension BTCentral {
+extension BTCentralStorage {
 
     @NSManaged public var id: String?
     @NSManaged public var name: String?
@@ -20,13 +20,13 @@ extension BTCentral {
 }
 
 // MARK: Generated accessors for discoveries
-extension BTCentral {
+extension BTCentralStorage {
 
     @objc(addDiscoveriesObject:)
-    @NSManaged public func addToDiscoveries(_ value: BTDiscovery)
+    @NSManaged public func addToDiscoveries(_ value: BTDiscoveryStorage)
 
     @objc(removeDiscoveriesObject:)
-    @NSManaged public func removeFromDiscoveries(_ value: BTDiscovery)
+    @NSManaged public func removeFromDiscoveries(_ value: BTDiscoveryStorage)
 
     @objc(addDiscoveries:)
     @NSManaged public func addToDiscoveries(_ values: NSSet)

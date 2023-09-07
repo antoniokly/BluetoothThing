@@ -16,71 +16,71 @@ struct BTModel {
     static let modelDescription = CoreDataModelDescription(
         entities: [
             .entity(
-                name: BTDiscovery.name,
-                managedObjectClass: BTDiscovery.self,
+                name: BTDiscoveryStorage.name,
+                managedObjectClass: BTDiscoveryStorage.self,
                 attributes: [
                     .attribute(name: "lastConnected", type: .dateAttributeType, isOptional: true),
                     .attribute(name: "lastDisconnected", type: .dateAttributeType, isOptional: true),
                     .attribute(name: "lastFound", type: .dateAttributeType, isOptional: true)
                 ],
                 relationships: [
-                    .relationship(name: "central", destination: BTCentral.name, inverse: "discoveries"),
-                    .relationship(name: "peripheral", destination: BTPeripheral.name, inverse: "discoveries")
+                    .relationship(name: "central", destination: BTCentralStorage.name, inverse: "discoveries"),
+                    .relationship(name: "peripheral", destination: BTPeripheralStorage.name, inverse: "discoveries")
                 ]),
             .entity(
-                name: BTCentral.name,
-                managedObjectClass: BTCentral.self,
+                name: BTCentralStorage.name,
+                managedObjectClass: BTCentralStorage.self,
                 attributes: [
                     .attribute(name: "id", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "name", type: .stringAttributeType, isOptional: true)
                 ],
                 relationships: [
-                    .relationship(name: "discoveries", destination: BTDiscovery.name, toMany: true, deleteRule: .nullifyDeleteRule, inverse: "central"),
+                    .relationship(name: "discoveries", destination: BTDiscoveryStorage.name, toMany: true, deleteRule: .nullifyDeleteRule, inverse: "central"),
                 ]),
             .entity(
-                name: BTPeripheral.name,
-                managedObjectClass: BTPeripheral.self,
+                name: BTPeripheralStorage.name,
+                managedObjectClass: BTPeripheralStorage.self,
                 attributes: [
                     .attribute(name: "id", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "name", type: .stringAttributeType, isOptional: true)
                 ],
                 relationships: [
-                    .relationship(name: "customData", destination: CustomData.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
-                    .relationship(name: "discoveries", destination: BTDiscovery.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
-                    .relationship(name: "services", destination: GATTService.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
+                    .relationship(name: "customData", destination: BTCustomDataStorage.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
+                    .relationship(name: "discoveries", destination: BTDiscoveryStorage.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
+                    .relationship(name: "services", destination: BTServiceStorage.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "peripheral"),
                 ]),
             .entity(
-                name: CustomData.name,
-                managedObjectClass: CustomData.self,
+                name: BTCustomDataStorage.name,
+                managedObjectClass: BTCustomDataStorage.self,
                 attributes: [
                     .attribute(name: "key", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "modifiedAt", type: .dateAttributeType, isOptional: true),
                     .attribute(name: "value", type: .binaryDataAttributeType, isOptional: true),
                 ],
                 relationships: [
-                    .relationship(name: "peripheral", destination: BTPeripheral.name, inverse: "customData"),
+                    .relationship(name: "peripheral", destination: BTPeripheralStorage.name, inverse: "customData"),
                 ]),
             .entity(
-                name: GATTService.name,
-                managedObjectClass: GATTService.self,
+                name: BTServiceStorage.name,
+                managedObjectClass: BTServiceStorage.self,
                 attributes: [
                     .attribute(name: "id", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "name", type: .stringAttributeType, isOptional: true)
                 ],
                 relationships: [
-                    .relationship(name: "peripheral", destination: BTPeripheral.name, inverse: "services"),
-                    .relationship(name: "characteristics", destination: GATTCharacteristic.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "service"),
+                    .relationship(name: "peripheral", destination: BTPeripheralStorage.name, inverse: "services"),
+                    .relationship(name: "characteristics", destination: BTCharacteristicStorage.name, toMany: true, deleteRule: .cascadeDeleteRule, inverse: "service"),
                 ]),
             .entity(
-                name: GATTCharacteristic.name,
-                managedObjectClass: GATTCharacteristic.self,
+                name: BTCharacteristicStorage.name,
+                managedObjectClass: BTCharacteristicStorage.self,
                 attributes: [
                     .attribute(name: "id", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "name", type: .stringAttributeType, isOptional: true),
                     .attribute(name: "value", type: .binaryDataAttributeType, isOptional: true),
                 ],
                 relationships: [
-                    .relationship(name: "service", destination: GATTService.name, inverse: "characteristics"),
+                    .relationship(name: "service", destination: BTServiceStorage.name, inverse: "characteristics"),
                 ]),
         ]
     )

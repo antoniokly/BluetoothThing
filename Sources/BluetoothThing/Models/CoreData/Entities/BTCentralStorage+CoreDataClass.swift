@@ -1,5 +1,5 @@
 //
-//  BTCentral+CoreDataClass.swift
+//  BTCentralStorage+CoreDataClass.swift
 //  BluetoothThing
 //
 //  Created by Antonio Yip on 30/05/20.
@@ -10,7 +10,7 @@
 import Foundation
 import CoreData
 
-@objc(BTCentral)
-public class BTCentral: NSManagedObject {
+@objc(BTCentralStorage)
+public class BTCentralStorage: NSManagedObject {
 
 }
