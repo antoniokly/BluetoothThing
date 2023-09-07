@@ -8,18 +8,10 @@
 import Foundation
 
 public struct FitnessMachineFeature: GATTCharacteristic {
-    
     public let characteristic: BTCharacteristic = .fitnessMachineFeature
     
     public let fitnessMachineFeatures = GATTData(bytes: 4)
     public let targetSettingFeatures = GATTData(bytes: 4)
-    
-    var gattData: [any GATTDataUpdatable] {
-        [
-            fitnessMachineFeatures,
-            targetSettingFeatures
-        ]
-    }
     
     public var averageSpeedSupported: Bool { fitnessMachineFeatures.flag(0) }
     public var cadenceSupported: Bool { fitnessMachineFeatures.flag(1) }

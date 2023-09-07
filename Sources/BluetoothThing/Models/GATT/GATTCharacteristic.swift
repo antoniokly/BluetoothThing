@@ -9,24 +9,20 @@ import Foundation
 
 protocol GATTCharacteristic {
     var characteristic: BTCharacteristic { get }
-    
-    var gattData: [any GATTDataUpdatable] { get }
-    
-//    mutating func update(_ data: Data)
-//
-//    mutating func updateFlags()
-
 }
 
 extension GATTCharacteristic {
     mutating func update(_ data: Data) {
         var bytes = [UInt8](data)
         
-        gattData.forEach {
+        Mirror(reflecting: self).children.compactMap {
+            $0.value as? GATTDataUpdatable
+        }.forEach {
+            if bytes.count < $0.byteWidth {
+                return
+            }
             $0.update(bytes.prefix(upTo: $0.byteWidth))
             bytes.removeFirst($0.byteWidth)
         }
-        
-//        updateFlags()
     }
 }

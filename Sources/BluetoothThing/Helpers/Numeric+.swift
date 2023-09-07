@@ -8,10 +8,10 @@
 
 import Foundation
 
-public extension FixedWidthInteger {
+extension FixedWidthInteger {
     func subtract(_ other: Self) -> Self {
         let dist = other.distance(to: self)
-        if dist < 0 {
+        if !Self.isSigned, dist < 0 {
             return Self.max.advanced(by: dist)
         }
         return Self(dist)

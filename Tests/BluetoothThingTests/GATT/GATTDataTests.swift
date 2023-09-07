@@ -18,6 +18,7 @@ final class GATTDataTests: XCTestCase {
 
     func test16Bit() throws {
         let sut = GATTData(
+            UInt16.self,
             bytes: 2,
             decimalExponent: -2,
             resolution: 0.01,
@@ -47,8 +48,8 @@ final class GATTDataTests: XCTestCase {
     
     func testSigned16Bit() throws {
         let sut = GATTData(
+            Int16.self,
             bytes: 2,
-            signed: true,
             unit: UnitPower.watts
         )
         
@@ -80,6 +81,7 @@ final class GATTDataTests: XCTestCase {
     
     func test24Bit() throws {
         let sut = GATTData(
+            UInt32.self,
             bytes: 3,
             decimalExponent: -2,
             resolution: 0.01,
@@ -107,6 +109,7 @@ final class GATTDataTests: XCTestCase {
     
     func test32Bit() throws {
         let sut = GATTData(
+            UInt32.self,
             bytes: 4,
             decimalExponent: -2,
             resolution: 0.01,
