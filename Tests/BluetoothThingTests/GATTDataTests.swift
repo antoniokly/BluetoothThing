@@ -18,7 +18,7 @@ final class GATTDataTests: XCTestCase {
 
     func test16Bit() throws {
         var sut = GATTData(
-            bitSize: 16,
+            bytes: 2,
             decimalExponent: -2,
             resolution: 0.01,
             unit: UnitSpeed.kilometersPerHour
@@ -42,11 +42,12 @@ final class GATTDataTests: XCTestCase {
         // Measurement
         XCTAssertEqual(sut.measurement.value, 655.35)
         XCTAssertEqual(sut.measurement.description, "655.35 km/h")
+        XCTAssertEqual(sut.measurement.converted(to: .milesPerHour).value, 407.2159366052256)
     }
     
     func testSigned16Bit() throws {
         var sut = GATTData(
-            bitSize: 16,
+            bytes: 2,
             signed: true,
             unit: UnitPower.watts
         )
@@ -73,11 +74,13 @@ final class GATTDataTests: XCTestCase {
         // Measurement
         XCTAssertEqual(sut.measurement.value, -32767)
         XCTAssertEqual(sut.measurement.description, "-32767.0 W")
+        XCTAssertEqual(sut.measurement.converted(to: .kilowatts).value, -32.767)
+        XCTAssertEqual(sut.measurement.converted(to: .horsepower).value, -43.94126324259085)
     }
     
     func test24Bit() throws {
         var sut = GATTData(
-            bitSize: 24,
+            bytes: 3,
             decimalExponent: -2,
             resolution: 0.01,
             unit: UnitLength.meters
@@ -104,7 +107,7 @@ final class GATTDataTests: XCTestCase {
     
     func test32Bit() throws {
         var sut = GATTData(
-            bitSize: 32,
+            bytes: 4,
             decimalExponent: -2,
             resolution: 0.01,
             unit: UnitLength.meters
@@ -135,5 +138,6 @@ final class GATTDataTests: XCTestCase {
         XCTAssertEqual(Int(sut.rawValue), 2303945338)
         XCTAssertEqual(sut.measurement.value, 23039453.38)
         XCTAssertEqual(sut.measurement.description, "23039453.38 m")
+        XCTAssertEqual(sut.measurement.converted(to: .miles).value, 14316.052615227072)
     }
 }

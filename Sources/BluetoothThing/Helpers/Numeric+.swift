@@ -17,7 +17,7 @@ public extension FixedWidthInteger {
         return Self(dist)
     }
     
-    func flag(_ bitIndex: Int) -> Bool {
+    func bit(_ bitIndex: Int) -> Bool {
         guard bitIndex < self.bitWidth else { return false }
         return self & (1 << bitIndex) > 0
     }
