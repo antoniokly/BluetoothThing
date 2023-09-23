@@ -18,6 +18,7 @@ protocol GATTDataMeasureable {
 
 protocol GATTDataUpdatable {
     var byteWidth: Int { get }
+    var flagIndex: Int? { get }
     func update(_ buffer: [UInt8])
     func update(_ buffer: ArraySlice<UInt8>)
     func flag(_ bitIndex: Int) -> Bool
@@ -29,13 +30,15 @@ public class GATTData<RawValue: FixedWidthInteger, UnitType: Dimension>: GATTDat
     public let binaryExponent: Int
     public let resolution: Double
     public let unit: UnitType
-        
+    
+    let flagIndex: Int?
+    
     public private(set) var bytes: [UInt8] = []
     public private(set) var rawValue: RawValue = 0
     
     private var previousRawValue: RawValue?
     
-    public init(_ storageType: RawValue.Type = UInt32.self, bytes: Int, decimalExponent: Int = 0, binaryExponent: Int = 0, resolution: Double = 1, unit: UnitType = .unitless) {
+    public init(_ storageType: RawValue.Type = UInt32.self, bytes: Int, decimalExponent: Int = 0, binaryExponent: Int = 0, resolution: Double = 1, unit: UnitType = .unitless, flagIndex: Int? = nil) {
         assert(bytes * UInt8.bitWidth <= RawValue.bitWidth, "Not enough storage bitWidth")
 
         self.byteWidth = bytes
@@ -43,6 +46,7 @@ public class GATTData<RawValue: FixedWidthInteger, UnitType: Dimension>: GATTDat
         self.binaryExponent = binaryExponent
         self.resolution = resolution
         self.unit = unit
+        self.flagIndex = flagIndex
     }
     
     public func update(_ buffer: [UInt8]) {
