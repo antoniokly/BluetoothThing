@@ -16,11 +16,11 @@ public struct FitnessMachineFeature: GATTCharacteristic {
     public let fitnessMachineFeatures = GATTData(bytes: 4)
     public let targetSettingFeatures = GATTData(bytes: 4)
     
-    func fitnessMachineFeaturesFlag(_ bitIndex: Int) -> Bool {
+    func fitnessMachineFeaturesFlag(_ bitIndex: UInt) -> Bool {
         fitnessMachineFeatures.rawValue.bit(bitIndex)
     }
     
-    func targetSettingFeaturesFlag(_ bitIndex: Int) -> Bool {
+    func targetSettingFeaturesFlag(_ bitIndex: UInt) -> Bool {
         targetSettingFeatures.rawValue.bit(bitIndex)
     }
     

@@ -7,40 +7,66 @@
 
 import Foundation
 
+protocol GATTOpCodes {
+    associatedtype T: FixedWidthInteger
+    var opCodeData: GATTData<T, Dimension> { get }
+}
+
+extension GATTOpCodes {
+    var opCode: UInt {
+        UInt(opCodeData.rawValue)
+    }
+}
+
 protocol GATTFeatureFlags {
     associatedtype T: FixedWidthInteger
     var flags: GATTData<T, Dimension> { get }
 }
 
 extension GATTFeatureFlags {
-    func featureFlag(_ bitIndex: Int) -> Bool {
+    func featureFlag(_ bitIndex: UInt) -> Bool {
         flags.rawValue.bit(bitIndex)
     }
 }
 
-protocol GATTCharacteristic {
+protocol GATTCharacteristic: GATTCharacteristicUpdatable {
     var characteristic: BTCharacteristic { get }
 }
 
-extension GATTCharacteristic {
-    mutating func update(_ data: Data) {
-        var bytes = [UInt8](data)
-        
+protocol GATTCharacteristicUpdatable {
+    
+}
+
+extension GATTCharacteristicUpdatable {
+    func update( _ bytes: inout [UInt8]) {
         Mirror(reflecting: self).children.compactMap {
-            $0.value as? GATTDataUpdatable
+            $0.value as? DataUpdatable
         }.forEach {
-            if bytes.count < $0.byteWidth {
+            if let gattData = $0 as? GATTDataUpdatable,
+               bytes.count < gattData.byteWidth {
                 return
             }
             
             if let self = self as? (any GATTFeatureFlags),
-               let i = $0.flagIndex,
+               let featureUpdatable = $0 as? GATTFeatureUpdatable,
+               let i = featureUpdatable.flagIndex,
                self.featureFlag(i) == false {
                 return
             }
             
-            $0.update(bytes.prefix(upTo: $0.byteWidth))
-            bytes.removeFirst($0.byteWidth)
+            if let self = self as? (any GATTOpCodes),
+               let opCodeUpdatable = $0 as? GATTOpCodeUpdatable,
+               let opCode = opCodeUpdatable.opCode,
+               self.opCode != opCode {
+                return
+            }
+            
+            $0.update(&bytes)
         }
+    }
+    
+    func update(_ data: Data) {
+        var bytes = [UInt8](data)
+        update(&bytes)
     }
 }
