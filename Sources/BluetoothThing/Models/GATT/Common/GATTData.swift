@@ -7,10 +7,6 @@
 
 import Foundation
 
-public extension Dimension {
-    static let unitless = Dimension(symbol: "")
-}
-
 protocol GATTDataMeasureable {
     associatedtype UnitType: Dimension
     var unit: UnitType { get }
@@ -21,7 +17,6 @@ protocol GATTDataUpdatable {
     var flagIndex: Int? { get }
     func update(_ buffer: [UInt8])
     func update(_ buffer: ArraySlice<UInt8>)
-    func flag(_ bitIndex: Int) -> Bool
 }
 
 public class GATTData<RawValue: FixedWidthInteger, UnitType: Dimension>: GATTDataUpdatable, GATTDataMeasureable {
@@ -70,10 +65,6 @@ public class GATTData<RawValue: FixedWidthInteger, UnitType: Dimension>: GATTDat
     
     public var measurement: Measurement<UnitType> {
         Measurement(value: Double(rawValue) * pow(10, Double(decimalExponent)) * pow(2, Double(binaryExponent)), unit: unit)
-    }
-    
-    public func flag(_ bitIndex: Int) -> Bool {
-        rawValue.bit(bitIndex)
     }
     
     public var delta: RawValue {

@@ -7,6 +7,17 @@
 
 import Foundation
 
+protocol GATTFeatureFlags {
+    associatedtype T: FixedWidthInteger
+    var flags: GATTData<T, Dimension> { get }
+}
+
+extension GATTFeatureFlags {
+    func featureFlag(_ bitIndex: Int) -> Bool {
+        flags.rawValue.bit(bitIndex)
+    }
+}
+
 protocol GATTCharacteristic {
     var characteristic: BTCharacteristic { get }
 }
@@ -15,8 +26,6 @@ extension GATTCharacteristic {
     mutating func update(_ data: Data) {
         var bytes = [UInt8](data)
         
-        let flags = Mirror(reflecting: self).children.first { $0.label == "flags" }?.value as? GATTDataUpdatable
-        
         Mirror(reflecting: self).children.compactMap {
             $0.value as? GATTDataUpdatable
         }.forEach {
@@ -24,7 +33,9 @@ extension GATTCharacteristic {
                 return
             }
             
-            if let i = $0.flagIndex, flags?.flag(i) == false {
+            if let self = self as? (any GATTFeatureFlags),
+               let i = $0.flagIndex,
+               self.featureFlag(i) == false {
                 return
             }
             

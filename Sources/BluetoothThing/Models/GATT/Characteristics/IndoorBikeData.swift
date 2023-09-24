@@ -11,10 +11,24 @@ import Foundation
  IndoorBikeData
  https://github.com/oesmith/gatt-xml/blob/master/org.bluetooth.characteristic.indoor_bike_data.xml
  */
-public struct IndoorBikeData: GATTCharacteristic {
+public struct IndoorBikeData: GATTCharacteristic, GATTFeatureFlags {
     public let characteristic: BTCharacteristic = .fitnessMachineIndoorBikeData
     
     let flags = GATTData(bytes: 2)
+    public var moreData: Bool { featureFlag(0) }
+    public var instantaneousCadencePresent: Bool { featureFlag(1) }
+    public var averageSpeedPresent: Bool { featureFlag(2) }
+    public var averageCandencePresent: Bool { featureFlag(3) }
+    public var totalDistancePresent: Bool { featureFlag(4) }
+    public var resistanceLevelPresent: Bool { featureFlag(5) }
+    public var instantaneousPowerPresent: Bool { featureFlag(6) }
+    public var averagePowerPresent: Bool { featureFlag(7) }
+    public var expendedEnergyPresent: Bool { featureFlag(8) }
+    public var heartRatePresent: Bool { featureFlag(9) }
+    public var metabolicEquivalentPresent: Bool { featureFlag(10) }
+    public var elapsedTimePresent: Bool { featureFlag(11) }
+    public var remainingTimePresent: Bool { featureFlag(12) }
+    
     public let instantaneousSpeed = GATTData(bytes: 2, decimalExponent: -2, resolution: 0.01, unit: UnitSpeed.kilometersPerHour)
     public let averageSpeed = GATTData(bytes: 2, decimalExponent: -2, resolution: 0.01, unit: UnitSpeed.kilometersPerHour, flagIndex: 2)
     public let instantaneousCadence = GATTData(bytes: 2, decimalExponent: -1, resolution: 0.5, unit: UnitFrequency.rpm, flagIndex: 1)
@@ -30,20 +44,6 @@ public struct IndoorBikeData: GATTCharacteristic {
     public let metabolicEquivalent = GATTData(bytes: 2, decimalExponent: -1, resolution: 0.1, flagIndex: 10)
     public let elapsedTime = GATTData(bytes: 2, flagIndex: 11)
     public let remainingTime = GATTData(bytes: 2, flagIndex: 12)
-    
-    public var moreData: Bool { flags.flag(0) }
-    public var instantaneousCadencePresent: Bool { flags.flag(1) }
-    public var averageSpeedPresent: Bool { flags.flag(2) }
-    public var averageCandencePresent: Bool { flags.flag(3) }
-    public var totalDistancePresent: Bool { flags.flag(4) }
-    public var resistanceLevelPresent: Bool { flags.flag(5) }
-    public var instantaneousPowerPresent: Bool { flags.flag(6) }
-    public var averagePowerPresent: Bool { flags.flag(7) }
-    public var expendedEnergyPresent: Bool { flags.flag(8) }
-    public var heartRatePresent: Bool { flags.flag(9) }
-    public var metabolicEquivalentPresent: Bool { flags.flag(10) }
-    public var elapsedTimePresent: Bool { flags.flag(11) }
-    public var remainingTimePresent: Bool { flags.flag(12) }
 }
 
 

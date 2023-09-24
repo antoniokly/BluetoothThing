@@ -12,10 +12,24 @@ import Foundation
  Cycling Power Measurement
  https://github.com/oesmith/gatt-xml/blob/master/org.bluetooth.characteristic.cycling_power_measurement.xml
  */
-public struct CyclingPowerMeasurement: GATTCharacteristic, CrankRevolutionsData, WheelRevolutionsData {
+public struct CyclingPowerMeasurement: GATTCharacteristic, GATTFeatureFlags, CrankRevolutionData, WheelRevolutionData {
     public let characteristic: BTCharacteristic = .cyclingPowerMeasurement
     
     let flags = GATTData(bytes: 2)
+    public var pedalPowerBalancePresent: Bool { featureFlag(0) }
+    public var pedalPowerBalanceReference: PedalPowerBalanceReference { featureFlag(1) ? .left : .unknown }
+    public var accumulatedTorquePresent: Bool { featureFlag(2) }
+    public var accumulatedTorqueSource: AccumulatedTorqueSource { featureFlag(3) ? .crankBased : .wheelBased }
+    public var wheelRevolutionDataPresent: Bool { featureFlag(4) }
+    public var crankRevolutionDataPresent: Bool { featureFlag(5) }
+    public var extremeForceMagnitudesPresent: Bool { featureFlag(6) }
+    public var extremeTorqueMagnitudesPresent: Bool { featureFlag(7) }
+    public var extremeAnglesPresent: Bool { featureFlag(8) }
+    public var topDeadSpotAnglePresent: Bool { featureFlag(9) }
+    public var bottomDeadSpotAnglePresent: Bool { featureFlag(10) }
+    public var accumulatedEnergyPresent: Bool { featureFlag(11) }
+    public var offsetCompensationIndicator: Bool { featureFlag(12) }
+    
     public let instantaneousPower = GATTData(Int16.self, bytes: 2, unit: UnitPower.watts)
     public let pedalPowerBalance = GATTData(UInt8.self, bytes: 1, binaryExponent: -1, resolution: 1/2, flagIndex: 0)
     public let accumulatedTorque = GATTData(UInt16.self, bytes: 2, binaryExponent: -5, resolution: 1/32, flagIndex: 2) // TODO: unit newtonMeter
@@ -31,21 +45,6 @@ public struct CyclingPowerMeasurement: GATTCharacteristic, CrankRevolutionsData,
     public let topDeadSpotAngle = GATTData(UInt16.self, bytes: 2, flagIndex: 9)
     public let bottomDeadSpotAngle = GATTData(UInt16.self, bytes: 2, flagIndex: 10)
     public let accumulatedEnergy = GATTData(UInt16.self, bytes: 2, decimalExponent: 3, unit: UnitEnergy.joules, flagIndex: 11)
-    
-    // Flags
-    public var pedalPowerBalancePresent: Bool { flags.flag(0) }
-    public var pedalPowerBalanceReference: PedalPowerBalanceReference { flags.flag(1) ? .left : .unknown }
-    public var accumulatedTorquePresent: Bool { flags.flag(2) }
-    public var accumulatedTorqueSource: AccumulatedTorqueSource { flags.flag(3) ? .crankBased : .wheelBased }
-    public var wheelRevolutionDataPresent: Bool { flags.flag(4) }
-    public var crankRevolutionDataPresent: Bool { flags.flag(5) }
-    public var extremeForceMagnitudesPresent: Bool { flags.flag(6) }
-    public var extremeTorqueMagnitudesPresent: Bool { flags.flag(7) }
-    public var extremeAnglesPresent: Bool { flags.flag(8) }
-    public var topDeadSpotAnglePresent: Bool { flags.flag(9) }
-    public var bottomDeadSpotAnglePresent: Bool { flags.flag(10) }
-    public var accumulatedEnergyPresent: Bool { flags.flag(11) }
-    public var offsetCompensationIndicator: Bool { flags.flag(12) }
 }
 
 public extension CyclingPowerMeasurement {
