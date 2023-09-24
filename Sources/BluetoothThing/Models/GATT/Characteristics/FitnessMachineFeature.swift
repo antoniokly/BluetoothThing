@@ -13,8 +13,8 @@ import Foundation
 public struct FitnessMachineFeature: GATTCharacteristic {
     public let characteristic: BTCharacteristic = .fitnessMachineFeature
     
-    public let fitnessMachineFeatures = GATTData(bytes: 4)
-    public let targetSettingFeatures = GATTData(bytes: 4)
+    let fitnessMachineFeatures = GATTData(bytes: 4)
+    let targetSettingFeatures = GATTData(bytes: 4)
     
     func fitnessMachineFeaturesFlag(_ bitIndex: UInt) -> Bool {
         fitnessMachineFeatures.rawValue.bit(bitIndex)
