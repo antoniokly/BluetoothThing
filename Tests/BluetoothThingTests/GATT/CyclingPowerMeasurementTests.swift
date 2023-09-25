@@ -25,9 +25,8 @@ final class CyclingPowerMeasurementTests: XCTestCase {
         //0x140049007731550600008F7C
         //0x14002F007F30510600009A75
         //0x14002700A32F4C0600009D6C
-        let data = Data(hexString: "140049007731550600008F7C")
         
-        sut.update(data)
+        sut.update(Data(hexString: "140049007731550600008F7C"))
         
         XCTAssertFalse(sut.pedalPowerBalancePresent)
         XCTAssertEqual(sut.pedalPowerBalanceReference, .unknown)
@@ -42,15 +41,11 @@ final class CyclingPowerMeasurementTests: XCTestCase {
         XCTAssertFalse(sut.bottomDeadSpotAnglePresent)
         XCTAssertFalse(sut.accumulatedEnergyPresent)
         XCTAssertFalse(sut.offsetCompensationIndicator)
-        
         XCTAssertEqual(sut.instantaneousPower.measurement.value, 73)
         XCTAssertEqual(sut.pedalPowerBalance.rawValue, 0)
         XCTAssertEqual(sut.accumulatedTorque.measurement.value, 395.71875)
         XCTAssertEqual(sut.cumulativeWheelRevolutions.rawValue, 1621)
         XCTAssertEqual(sut.lastWheelEventTime.rawValue, 31887)
-        
-//        XCTAssertEqual(sut.speed(wheelCircumfrence: 2110).converted(to: .kilometersPerHour).value, 0)
-        
         XCTAssertEqual(sut.cumulativeCrankRevolutions.rawValue, 0)
         XCTAssertEqual(sut.lastCrankEventTime.rawValue, 0)
         XCTAssertEqual(sut.maximumForceMagnitude.rawValue, 0)
@@ -61,5 +56,9 @@ final class CyclingPowerMeasurementTests: XCTestCase {
         XCTAssertEqual(sut.topDeadSpotAngle.rawValue, 0)
         XCTAssertEqual(sut.bottomDeadSpotAngle.rawValue, 0)
         XCTAssertEqual(sut.accumulatedEnergy.rawValue, 0)
+        
+        sut.update(Data(hexString: "14004C000B335A060000F484"))
+        
+        XCTAssertEqual(sut.speed(wheelCircumfrence: 2.110).converted(to: .kilometersPerHour).value, 36.2, accuracy: 0.1)
     }
 }

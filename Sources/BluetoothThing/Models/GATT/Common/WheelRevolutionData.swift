@@ -14,7 +14,7 @@ public protocol WheelRevolutionData {
 
 public extension WheelRevolutionData {
     func speed(wheelCircumfrence: Double) -> Measurement<UnitSpeed> {
-        let rph = Double(cumulativeWheelRevolutions.delta) * 3600 / Double(lastWheelEventTime.delta) / pow(Double(2), Double(lastWheelEventTime.binaryExponent))
+        let rph = Double(cumulativeWheelRevolutions.delta) / Double(lastWheelEventTime.delta) / pow(Double(2), Double(lastWheelEventTime.binaryExponent))
         
         return Measurement(value: rph * wheelCircumfrence, unit: UnitSpeed.metersPerSecond)
     }
