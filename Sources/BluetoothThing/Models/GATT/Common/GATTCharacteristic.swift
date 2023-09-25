@@ -42,9 +42,13 @@ extension GATTCharacteristicUpdatable {
         Mirror(reflecting: self).children.compactMap {
             $0.value as? DataUpdatable
         }.forEach {
+            if bytes.isEmpty {
+                return
+            }
+            
             if let gattData = $0 as? GATTDataUpdatable,
                bytes.count < gattData.byteWidth {
-                return
+                bytes.append(contentsOf: [UInt8](repeating: 0, count: gattData.byteWidth - bytes.count))
             }
             
             if let self = self as? (any GATTFeatureFlags),

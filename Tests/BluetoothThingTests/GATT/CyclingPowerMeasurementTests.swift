@@ -48,6 +48,9 @@ final class CyclingPowerMeasurementTests: XCTestCase {
         XCTAssertEqual(sut.accumulatedTorque.measurement.value, 395.71875)
         XCTAssertEqual(sut.cumulativeWheelRevolutions.rawValue, 1621)
         XCTAssertEqual(sut.lastWheelEventTime.rawValue, 31887)
+        
+//        XCTAssertEqual(sut.speed(wheelCircumfrence: 2110).converted(to: .kilometersPerHour).value, 0)
+        
         XCTAssertEqual(sut.cumulativeCrankRevolutions.rawValue, 0)
         XCTAssertEqual(sut.lastCrankEventTime.rawValue, 0)
         XCTAssertEqual(sut.maximumForceMagnitude.rawValue, 0)

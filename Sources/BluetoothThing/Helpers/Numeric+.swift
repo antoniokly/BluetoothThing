@@ -21,6 +21,18 @@ extension FixedWidthInteger {
         guard bitIndex < self.bitWidth else { return false }
         return self & (1 << bitIndex) > 0
     }
+    
+    func bits(_ range: ClosedRange<UInt>) -> Self {
+        guard range.lowerBound < self.bitWidth || range.upperBound < self.bitWidth else { return 0 }
+        
+        var x: Self = 0
+        
+        range.forEach {
+            x = x | (self & (1 << $0))
+        }
+        
+        return x
+    }
 }
 
 public extension Numeric {
