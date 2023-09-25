@@ -45,5 +45,3 @@ public struct IndoorBikeData: GATTCharacteristic, GATTFeatureFlags {
     public let elapsedTime = GATTData(bytes: 2, flagIndex: 11)
     public let remainingTime = GATTData(bytes: 2, flagIndex: 12)
 }
-
-

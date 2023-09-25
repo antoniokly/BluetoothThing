@@ -87,5 +87,4 @@ public extension BTCharacteristic {
     static let fitnessMachineSensorLocation = BTCharacteristic(service: "1826", characteristic: "2A5D")
     
     static let cyclingPowerMeasurement = BTCharacteristic(service: "1818", characteristic: "2A63")
-
 }
